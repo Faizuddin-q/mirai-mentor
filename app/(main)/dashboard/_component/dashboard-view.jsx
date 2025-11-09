@@ -35,12 +35,6 @@ import { refreshIndustryInsights, fixIndustryData } from "@/actions/dashboard";
 const DashboardView = ({ insights }) => {
   const [isRefreshing, setIsRefreshing] = useState(false);
   
-  // Debug timestamp information
-  console.log("🔍 Timestamp Debug Info:");
-  console.log("Raw lastUpdated:", insights.lastUpdated);
-  console.log("Current time:", new Date().toISOString());
-  console.log("User timezone:", Intl.DateTimeFormat().resolvedOptions().timeZone);
-  
   // Transform salary data for the chart
   const salaryData = insights.salaryRanges.map((range) => ({
     name: range.role,
