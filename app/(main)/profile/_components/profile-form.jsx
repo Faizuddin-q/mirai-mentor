@@ -116,7 +116,7 @@ const ProfileForm = ({ industries, initialData }) => {
 
   return (
     <div className="flex items-center justify-center bg-background min-h-screen py-10">
-      <Card className="w-full max-w-lg mx-2">
+      <Card className="w-full mx-2">
         <CardHeader>
           <CardTitle className="gradient-title text-4xl">
             Update Your Profile
