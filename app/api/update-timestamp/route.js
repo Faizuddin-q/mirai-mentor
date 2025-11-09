@@ -9,8 +9,6 @@ export async function POST() {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    console.log("🕐 Manual timestamp update requested");
-
     // Get user's industry
     const user = await db.user.findUnique({
       where: { clerkUserId: userId },
@@ -23,8 +21,7 @@ export async function POST() {
 
     // Update the timestamp to current time
     const now = new Date();
-    console.log("Current time:", now.toISOString());
-    
+
     const updatedInsight = await db.industryInsight.update({
       where: { industry: user.industry },
       data: {
@@ -33,8 +30,6 @@ export async function POST() {
       },
     });
 
-    console.log("✅ Timestamp updated successfully");
-
     return NextResponse.json({
       success: true,
       message: "Timestamp updated successfully",
@@ -42,7 +37,7 @@ export async function POST() {
       industry: user.industry,
     });
   } catch (error) {
-    console.error("❌ Error updating timestamp:", error);
+    console.error("Error updating timestamp:", error);
     return NextResponse.json(
       {
         success: false,

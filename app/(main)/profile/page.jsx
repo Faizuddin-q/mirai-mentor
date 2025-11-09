@@ -24,7 +24,7 @@ export default async function ProfilePage() {
       },
     });
 
-    if (!user || !user.industry) {
+    if (!user) {
       redirect("/onboarding");
     }
 

@@ -156,8 +156,6 @@ export async function getIndustryInsights() {
       },
     });
 
-    console.log(`✅ Successfully generated insights for ${user.industry}`);
-    console.log(`✅ Successfully created insights for ${industryInsight}`);
     return industryInsight;
   }
 
@@ -175,9 +173,7 @@ export async function refreshIndustryInsights() {
 
   if (!user) throw new Error("User not found");
 
-  try {
-    console.log(`🔄 Manually refreshing insights for industry: ${user.industry}`);
-    
+  try {    
     // Force generate new insights with current time
     const insights = await generateAIInsights(user.industry);
     
@@ -196,10 +192,9 @@ export async function refreshIndustryInsights() {
       },
     });
 
-    console.log(`✅ Successfully updated insights for ${user.industry}`);
     return updatedInsight;
   } catch (error) {
-    console.error("❌ Error refreshing insights:", error);
+    console.error("Error refreshing insights:", error);
     throw new Error("Failed to refresh insights");
   }
 }
@@ -215,13 +210,9 @@ export async function fixIndustryData() {
 
   if (!user) throw new Error("User not found");
 
-  try {
-    console.log(`🔧 Fixing industry data for user: ${user.industry}`);
-    
+  try {    
     // Check if industry field is incomplete
-    if (user.industry && user.industry.endsWith('-')) {
-      console.log(`⚠️ Found incomplete industry: ${user.industry}`);
-      
+    if (user.industry && user.industry.endsWith('-')) {      
       // For now, let's set it to a complete tech industry
       const completeIndustry = user.industry + 'software-development';
       
@@ -231,14 +222,10 @@ export async function fixIndustryData() {
         data: { industry: completeIndustry },
       });
       
-      console.log(`✅ Updated industry to: ${completeIndustry}`);
-      
       // Delete old incomplete industry insight
       await db.industryInsight.deleteMany({
         where: { industry: user.industry },
       });
-      
-      console.log(`🗑️ Deleted old incomplete industry insight`);
       
       // Generate new insights with complete industry
       const insights = await generateAIInsights(completeIndustry);
@@ -251,8 +238,6 @@ export async function fixIndustryData() {
           nextUpdate: new Date(Date.now() + 2 * 60 * 1000),
         },
       });
-
-      console.log(`✅ Created new insights for ${completeIndustry}`);
       return newInsight;
     }
     
@@ -260,7 +245,7 @@ export async function fixIndustryData() {
     return await refreshIndustryInsights();
     
   } catch (error) {
-    console.error("❌ Error fixing industry data:", error);
+    console.error("Error fixing industry data:", error);
     throw new Error("Failed to fix industry data");
   }
 }
