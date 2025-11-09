@@ -1,0 +1,266 @@
+"use server";
+
+import { db } from "@/lib/prisma";
+import { auth } from "@clerk/nextjs/server";
+import { GoogleGenerativeAI } from "@google/generative-ai";
+
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
+
+export const generateAIInsights = async (industry) => {
+  const prompt = `
+          You are a senior labor market intelligence analyst with over 15 years of experience in economic forecasting, workforce analytics, salary benchmarking, and hiring trend analysis. You work as part of an international think tank producing labor reports for governments and Fortune 500 firms. You combine deep quantitative research, macro‑economic signals, micro‑level job data, and skill demand insights to deliver actionable intelligence.
+
+Your task is to produce a **deep, research‑backed, highly structured analysis** of the **${industry}** industry in India. This output will be stored in a production database and parsed programmatically, so it must adhere exactly to the JSON schema described below. No extra commentary or markdown is allowed. Treat this as if you are preparing an internal labor market briefing to be read by government economists, HR leaders, and workforce development experts.
+
+---
+
+## 🎯 Mission
+Provide a comprehensive 2024–2025 snapshot of the ${industry} industry in India, combining:
+- Salary intelligence across multiple roles and seniorities
+- Current and projected growth trends
+- Hiring demand intensity
+- Most in‑demand technical and domain skills
+- Market sentiment and investment outlook
+- Emerging trends shaping the sector
+- Skills professionals should develop to remain competitive over the next 3–5 years
+
+---
+
+## 📦 Strict JSON Schema (Must Follow Exactly)
+
+Return only a valid JSON object in this format:
+
+{
+  "salaryRanges": [
+    {
+      "role": "string",              // distinct job title in the ${industry} sector (entry, mid, senior, or niche)
+      "min": number,                 // minimum annual salary in INR (no commas, symbols, or text)
+      "max": number,                 // maximum annual salary in INR
+      "median": number,              // median annual salary in INR
+      "location": "string"           // e.g. "India", "Remote", or a major Indian city such as "Bangalore"
+    }
+  ],
+  "growthRate": number,             // realistic projected growth % (e.g. 6.5)
+  "demandLevel": "High" | "Medium" | "Low",
+  "topSkills": ["string", "string", "string", "string", "string+"],
+  "marketOutlook": "Positive" | "Neutral" | "Negative",
+  "keyTrends": ["string", "string", "string", "string", "string+"],
+  "recommendedSkills": ["string", "string", "string", "string", "string+"]
+}
+
+---
+
+## 🧠 Field‑Level Guidance
+
+### salaryRanges
+- Include at least **10 distinct roles** (entry, mid, senior, niche, or emerging) reflecting real hiring patterns in ${industry}.
+- For tech industry, MUST include diverse roles like: Frontend Developer, Backend Developer, Full Stack Developer, DevOps Engineer, QA Engineer, UI/UX Designer, Product Manager, Data Engineer, Mobile App Developer, Cloud Architect, Cybersecurity Specialist, AI/ML Engineer, Site Reliability Engineer, Technical Lead, etc.
+- Salaries must be **realistic Indian market figures for 2024–2025** in INR as plain numbers.
+- Cover a spectrum of roles (technical, managerial, specialist).
+
+### growthRate
+- Reflect a credible YoY growth rate derived from signals like hiring velocity, capital investment, and government policy impact.
+
+### demandLevel
+- Use “High” for sectors with aggressive hiring/open roles.
+- “Medium” for stable but selective hiring.
+- “Low” for shrinking/stagnant hiring.
+
+### topSkills
+- At least 10 **current, ATS‑friendly skills** critical for the {{industry}} domain.
+- Mix hard/technical and domain‑specific competencies (e.g. “Cloud Security” rather than “Computer Skills”).
+
+### marketOutlook
+- Reflect the sentiment for the next 12–18 months (“Positive”, “Neutral”, “Negative”).
+
+### keyTrends
+- At least 10 **non‑generic, industry‑specific trends**, such as technology adoption, regulatory changes, capital flows, new business models, remote work, sustainability, AI integration, etc.
+
+### recommendedSkills
+- At least 10 **emerging or future‑ready skills** professionals should acquire to remain competitive.
+- Can overlap with topSkills but should skew toward next‑generation capabilities.
+
+---
+
+## 🔒 Output Constraints
+
+- **Return only the JSON object** — no commentary, no markdown, no code fences.
+- All numeric fields must be valid JSON numbers (no quotes, no “₹”, no “k”, no commas, no text).
+- All arrays must contain at least 10 entries.
+- Do not repeat the same role/skill/trend unnecessarily.
+- Ensure realistic Indian market data (use your training, but no external citations or disclaimers).
+- Response must be parseable with JSON.parse() with no modifications.
+
+---
+
+## ✅ Example (Shortened)
+
+{
+  "salaryRanges": [
+    {
+      "role": "Data Analyst",
+      "min": 400000,
+      "max": 950000,
+      "median": 650000,
+      "location": "Bangalore"
+    },
+    …
+  ],
+  "growthRate": 6.5,
+  "demandLevel": "High",
+  "topSkills": ["Cloud Security", "Data Engineering", "Generative AI", "DevOps", "Data Visualization"],
+  "marketOutlook": "Positive",
+  "keyTrends": ["AI Adoption", "Remote Work", "Government Incentives", "Green Tech Investments", "Skill Shortages"],
+  "recommendedSkills": ["Prompt Engineering", "Cybersecurity", "Product Analytics", "Leadership in Tech", "Change Management"]
+}
+
+---
+
+Your output will be parsed by an automated system. **Return only the complete JSON object described above. Nothing else. Begin now.**
+
+  `;
+  
+
+  const result = await model.generateContent(prompt);
+  const response = result.response;
+  const text = response.text();
+  const cleanedText = text.replace(/```(?:json)?\n?/g, "").trim();
+
+  return JSON.parse(cleanedText);
+};
+
+export async function getIndustryInsights() {
+  const { userId } = await auth();
+  if (!userId) throw new Error("Unauthorized");
+
+  const user = await db.user.findUnique({
+    where: { clerkUserId: userId },
+    include: {
+      industryInsight: true,
+    },
+  });
+
+  if (!user) throw new Error("User not found");
+
+  // If no insights exist, generate them
+  if (!user.industryInsight) {
+    const insights = await generateAIInsights(user.industry);
+
+    const industryInsight = await db.industryInsight.create({
+      data: {
+        industry: user.industry,
+        ...insights,
+        lastUpdated: new Date(),
+        nextUpdate: new Date(Date.now() + 2 * 60 * 1000), // 2 minutes from now
+      },
+    });
+
+    console.log(`✅ Successfully generated insights for ${user.industry}`);
+    console.log(`✅ Successfully created insights for ${industryInsight}`);
+    return industryInsight;
+  }
+
+  return user.industryInsight;
+}
+
+// Manual trigger to update insights immediately
+export async function refreshIndustryInsights() {
+  const { userId } = await auth();
+  if (!userId) throw new Error("Unauthorized");
+
+  const user = await db.user.findUnique({
+    where: { clerkUserId: userId },
+  });
+
+  if (!user) throw new Error("User not found");
+
+  try {
+    console.log(`🔄 Manually refreshing insights for industry: ${user.industry}`);
+    
+    // Force generate new insights with current time
+    const insights = await generateAIInsights(user.industry);
+    
+    const updatedInsight = await db.industryInsight.upsert({
+      where: { industry: user.industry },
+      update: {
+        ...insights,
+        lastUpdated: new Date(),
+        nextUpdate: new Date(Date.now() + 2 * 60 * 1000),
+      },
+      create: {
+        industry: user.industry,
+        ...insights,
+        lastUpdated: new Date(),
+        nextUpdate: new Date(Date.now() + 2 * 60 * 1000),
+      },
+    });
+
+    console.log(`✅ Successfully updated insights for ${user.industry}`);
+    return updatedInsight;
+  } catch (error) {
+    console.error("❌ Error refreshing insights:", error);
+    throw new Error("Failed to refresh insights");
+  }
+}
+
+// Fix incomplete industry data and regenerate insights
+export async function fixIndustryData() {
+  const { userId } = await auth();
+  if (!userId) throw new Error("Unauthorized");
+
+  const user = await db.user.findUnique({
+    where: { clerkUserId: userId },
+  });
+
+  if (!user) throw new Error("User not found");
+
+  try {
+    console.log(`🔧 Fixing industry data for user: ${user.industry}`);
+    
+    // Check if industry field is incomplete
+    if (user.industry && user.industry.endsWith('-')) {
+      console.log(`⚠️ Found incomplete industry: ${user.industry}`);
+      
+      // For now, let's set it to a complete tech industry
+      const completeIndustry = user.industry + 'software-development';
+      
+      // Update user's industry
+      await db.user.update({
+        where: { clerkUserId: userId },
+        data: { industry: completeIndustry },
+      });
+      
+      console.log(`✅ Updated industry to: ${completeIndustry}`);
+      
+      // Delete old incomplete industry insight
+      await db.industryInsight.deleteMany({
+        where: { industry: user.industry },
+      });
+      
+      console.log(`🗑️ Deleted old incomplete industry insight`);
+      
+      // Generate new insights with complete industry
+      const insights = await generateAIInsights(completeIndustry);
+      
+      const newInsight = await db.industryInsight.create({
+        data: {
+          industry: completeIndustry,
+          ...insights,
+          lastUpdated: new Date(),
+          nextUpdate: new Date(Date.now() + 2 * 60 * 1000),
+        },
+      });
+
+      console.log(`✅ Created new insights for ${completeIndustry}`);
+      return newInsight;
+    }
+    
+    // If industry is complete, just refresh insights
+    return await refreshIndustryInsights();
+    
+  } catch (error) {
+    console.error("❌ Error fixing industry data:", error);
+    throw new Error("Failed to fix industry data");
+  }
+}

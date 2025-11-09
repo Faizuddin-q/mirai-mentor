@@ -1,0 +1,140 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  font-family: var(--font-body, "Manrope", "Helvetica Neue", Arial, sans-serif);
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(
+    --font-heading,
+    "Space Grotesk",
+    "Manrope",
+    "Helvetica Neue",
+    Arial,
+    sans-serif
+  );
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+@layer base {
+  :root {
+    --background: 222 47% 6%;
+    --foreground: 28 29% 92%;
+    --card: 224 44% 9%;
+    --card-foreground: 28 29% 92%;
+    --popover: 222 47% 6%;
+    --popover-foreground: 28 29% 92%;
+    --primary: 24 94% 63%;
+    --primary-foreground: 220 33% 12%;
+    --secondary: 222 37% 14%;
+    --secondary-foreground: 28 29% 92%;
+    --muted: 222 28% 18%;
+    --muted-foreground: 220 17% 70%;
+    --accent: 24 100% 68%;
+    --accent-foreground: 222 47% 6%;
+    --destructive: 0 80% 55%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 222 32% 20%;
+    --input: 222 32% 20%;
+    --ring: 24 94% 63%;
+    --chart-1: 23 92% 60%;
+    --chart-2: 204 70% 52%;
+    --chart-3: 142 60% 45%;
+    --chart-4: 262 55% 52%;
+    --chart-5: 48 92% 58%;
+    --radius: 0.5rem;
+  }
+  .dark {
+    --background: 224 53% 4%;
+    --foreground: 28 32% 94%;
+    --card: 224 53% 6%;
+    --card-foreground: 28 32% 94%;
+    --popover: 224 53% 4%;
+    --popover-foreground: 28 32% 94%;
+    --primary: 25 95% 61%;
+    --primary-foreground: 220 40% 10%;
+    --secondary: 222 35% 12%;
+    --secondary-foreground: 28 32% 94%;
+    --muted: 224 32% 16%;
+    --muted-foreground: 220 15% 68%;
+    --accent: 32 96% 66%;
+    --accent-foreground: 222 47% 6%;
+    --destructive: 0 80% 48%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 222 28% 18%;
+    --input: 222 28% 18%;
+    --ring: 25 95% 61%;
+    --chart-1: 25 95% 58%;
+    --chart-2: 204 70% 50%;
+    --chart-3: 150 58% 42%;
+    --chart-4: 265 55% 50%;
+    --chart-5: 45 92% 56%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+@layer utilities {
+  .gradient {
+    @apply bg-gradient-to-b from-gray-500/30 via-gray-700/20 to-gray-500/30;
+  }
+  .gradient-title {
+    @apply bg-gradient-to-r from-orange-600 via-amber-500 to-orange-300 font-extrabold tracking-tighter text-transparent bg-clip-text pb-2 pr-2;
+  }
+}
+
+
+.hero-image {
+  /* transform: rotateX(20deg) scale(0.9) translateY(-50); */
+  transform: rotateX(15deg) scale(1);
+  transition: transform 0.5s ease-out;
+  will-change: transform;
+}
+
+.hero-image.scrolled {
+  transform: rotateX(0deg) scale(1) translateY(40px);
+}
+
+.grid-background {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+      to right,
+      rgba(255, 255, 255, 0.06) 1px,
+      transparent 1px
+    ),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.06) 1px, transparent 1px);
+  background-size: 50px 50px;
+  pointer-events: none;
+  z-index: -1;
+}
+
+.grid-background::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle, rgba(8, 11, 19, 0), rgba(2, 6, 12, 0.92));
+}
