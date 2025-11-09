@@ -9,6 +9,7 @@ import {
   CartesianGrid,
   Tooltip,
   ResponsiveContainer,
+  Rectangle,
 } from "recharts";
 import {
   BriefcaseIcon,
@@ -255,6 +256,7 @@ const DashboardView = ({ insights }) => {
                   label={{ value: 'Salary (LPA)', angle: -90, position: 'insideLeft', style: { textAnchor: 'middle', fill: 'white' } }}
                 />
                 <Tooltip
+                cursor={{ fill: "rgba(255,255,255,0.1)" }}
                   content={({ active, payload, label }) => {
                     if (active && payload && payload.length) {
                       return (
@@ -271,9 +273,24 @@ const DashboardView = ({ insights }) => {
                     return null;
                   }}
                 />
-                <Bar dataKey="min" fill="#94a3b8" name="Min Salary" />
-                <Bar dataKey="median" fill="#64748b" name="Median Salary" />
-                <Bar dataKey="max" fill="#475569" name="Max Salary" />
+                <Bar
+                  dataKey="min"
+                  fill="#fed7aa"
+                  name="Min Salary"
+                  activeBar={<Rectangle fill="#fb923c" />}
+                />
+                <Bar
+                  dataKey="median"
+                  fill="#fdba74"
+                  name="Median Salary"
+                  activeBar={<Rectangle fill="#f97316" />}
+                />
+                <Bar
+                  dataKey="max"
+                  fill="#fb923c"
+                  name="Max Salary"
+                  activeBar={<Rectangle fill="#ea580c" />}
+                />
               </BarChart>
             </ResponsiveContainer>
           </div>

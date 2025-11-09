@@ -39,7 +39,7 @@ export default async function DashboardPage() {
     }
 
     return (
-      <div className="container mx-auto">
+      <div>
         <DashboardView insights={insights} />
       </div>
     );

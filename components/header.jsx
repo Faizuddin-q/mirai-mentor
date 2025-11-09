@@ -17,7 +17,7 @@ import { usePathname } from "next/navigation";
 const navItems = [
   {
     label: "Explore",
-    href: "/dashboard",
+    href: "/explore",
     icon: LayoutDashboard,
   },
   {
