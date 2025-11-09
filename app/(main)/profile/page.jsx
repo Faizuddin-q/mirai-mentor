@@ -45,7 +45,7 @@ export default async function ProfilePage() {
     };
 
     return (
-      <main>
+      <main className="container mx-auto">
         <ProfileForm industries={industries} initialData={userData} />
       </main>
     );
