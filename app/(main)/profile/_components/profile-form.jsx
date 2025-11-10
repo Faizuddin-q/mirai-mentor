@@ -58,6 +58,11 @@ const ProfileForm = ({ industries, initialData }) => {
     },
   });
 
+  useEffect(() => {
+    register("industry");
+    register("subIndustry");
+  }, [register]);
+
   // Set initial values when component mounts
   useEffect(() => {
     if (initialData) {
@@ -98,7 +103,7 @@ const ProfileForm = ({ industries, initialData }) => {
   useEffect(() => {
     if (updateResult?.success && !updateLoading) {
       toast.success("Profile updated successfully! Redirecting to dashboard...");
-      router.push("/dashboard");
+      router.push("/resume");
       router.refresh();
     }
   }, [updateResult, updateLoading, router]);

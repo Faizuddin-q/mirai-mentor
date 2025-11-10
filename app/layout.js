@@ -48,7 +48,7 @@ export default function RootLayout({ children }) {
             disableTransitionOnChange
           >
             <Header />
-            <main className="min-h-screen">{children}</main>
+            <main className="minh-screen mt-4 mb-20">{children}</main>
             <Toaster richColors />
 
             <footer className="bg-muted/50 py-12">

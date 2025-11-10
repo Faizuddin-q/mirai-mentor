@@ -1,7 +1,7 @@
 "use server";
 
 import { db } from "@/lib/prisma";
-import { auth } from "@clerk/nextjs/server";
+import { auth, currentUser } from "@clerk/nextjs/server";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
@@ -11,11 +11,25 @@ export async function generateCoverLetter(data) {
   const { userId } = await auth();
   if (!userId) throw new Error("Unauthorized");
 
+  const clerkUser = await currentUser();
+  if (!clerkUser) throw new Error("Unauthorized");
+
   const user = await db.user.findUnique({
     where: { clerkUserId: userId },
   });
 
   if (!user) throw new Error("User not found");
+
+  const candidateName =
+    user.name ||
+    [clerkUser.firstName, clerkUser.lastName].filter(Boolean).join(" ").trim() ||
+    "Your Name";
+  const candidateEmail =
+    user.email ||
+    clerkUser.emailAddresses?.find((email) => email.id === clerkUser.primaryEmailAddressId)
+      ?.emailAddress ||
+    clerkUser.emailAddresses?.[0]?.emailAddress ||
+    "your@email.com";
 
   const prompt = `
   You are an expert cover letter writer with a deep understanding of career storytelling, persuasive writing, and job-market alignment.
@@ -39,6 +53,8 @@ export async function generateCoverLetter(data) {
   - **Years of Experience:** ${user.experience}
   - **Key Skills:** ${user.skills?.join(", ") || "N/A"}
   - **Professional Summary:** ${user.bio}
+  - **Name:** ${candidateName}
+  - **Email:** ${candidateEmail}
   
   ---
   
@@ -51,6 +67,7 @@ export async function generateCoverLetter(data) {
   - **Tone:** Professional, confident, and enthusiastic
   - **Length:** No more than **400 words**
   - **Structure:** Use proper business letter format, in **Markdown**
+  - **Header:** Begin with the candidate's name and email on separate lines before the salutation
   - **Voice:** Write in the first person, from the candidate’s perspective
   - **Avoid:** Generic phrases, repetition, or filler content
   
