@@ -27,9 +27,21 @@ export const onboardingSchema = z.object({
   ),
 });
 
+const phoneRegex = /^\+?[0-9\s()-]{7,20}$/;
+
 export const contactSchema = z.object({
-  email: z.string().email("Invalid email address"),
-  mobile: z.string().optional(),
+  email: z
+    .string({
+      required_error: "Email is required",
+    })
+    .min(1, "Email is required")
+    .email("Invalid email address"),
+  mobile: z
+    .string()
+    .optional()
+    .refine((value) => !value || phoneRegex.test(value), {
+      message: "Enter a valid phone number",
+    }),
   linkedin: z.string().optional(),
   twitter: z.string().optional(),
 });

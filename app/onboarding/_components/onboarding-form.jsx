@@ -50,6 +50,11 @@ const OnboardingForm = ({ industries }) => {
     resolver: zodResolver(onboardingSchema),
   });
 
+  useEffect(() => {
+    register("industry");
+    register("subIndustry");
+  }, [register]);
+
   const onSubmit = async (values) => {
     try {
       const formattedIndustry = `${values.industry}-${values.subIndustry
@@ -67,11 +72,11 @@ const OnboardingForm = ({ industries }) => {
 
   useEffect(() => {
     if (updateResult?.success && !updateLoading) {
-      toast.success("Profile completed successfully!");
-      router.push("/dashboard");
+      toast.success("Profile completed successfully! Redirecting to resume...");
+      router.push("/resume");
       router.refresh();
     }
-  }, [updateResult, updateLoading]);
+  }, [router, updateLoading, updateResult]);
 
   const watchIndustry = watch("industry");
 
@@ -92,6 +97,7 @@ const OnboardingForm = ({ industries }) => {
             <div className="space-y-2">
               <Label htmlFor="industry">Industry</Label>
               <Select
+                value={watchIndustry}
                 onValueChange={(value) => {
                   setValue("industry", value);
                   setSelectedIndustry(
@@ -125,6 +131,7 @@ const OnboardingForm = ({ industries }) => {
               <div className="space-y-2">
                 <Label htmlFor="subIndustry">Specialization</Label>
                 <Select
+                  value={watch("subIndustry")}
                   onValueChange={(value) => setValue("subIndustry", value)}
                 >
                   <SelectTrigger id="subIndustry">
@@ -212,3 +219,4 @@ const OnboardingForm = ({ industries }) => {
 };
 
 export default OnboardingForm;
+

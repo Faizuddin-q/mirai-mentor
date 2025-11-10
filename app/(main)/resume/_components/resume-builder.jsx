@@ -10,6 +10,7 @@ import {
   Loader2,
   Monitor,
   Save,
+  Sparkles,
 } from "lucide-react";
 import { toast } from "sonner";
 import MDEditor from "@uiw/react-md-editor";
@@ -17,7 +18,7 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
-import { saveResume } from "@/actions/resume";
+import { improveWithAI, saveResume } from "@/actions/resume";
 import { EntryForm } from "./entry-form";
 import useFetch from "@/hooks/use-fetch";
 import { useUser } from "@clerk/nextjs";
@@ -30,12 +31,23 @@ export default function ResumeBuilder({ initialContent }) {
   const [previewContent, setPreviewContent] = useState(initialContent);
   const { user } = useUser();
   const [resumeMode, setResumeMode] = useState("preview");
+  const [contactErrors, setContactErrors] = useState({
+    email: "",
+    mobile: "",
+  });
+  const [contactTouched, setContactTouched] = useState({
+    email: false,
+    mobile: false,
+  });
 
   const {
     control,
     register,
     handleSubmit,
     watch,
+    setValue,
+    setError,
+    clearErrors,
     formState: { errors },
   } = useForm({
     resolver: zodResolver(resumeSchema),
@@ -55,6 +67,16 @@ export default function ResumeBuilder({ initialContent }) {
     data: saveResult,
     error: saveError,
   } = useFetch(saveResume);
+
+  const {
+    loading: isImprovingSummary,
+    fn: improveSummaryFn,
+    data: improvedSummary,
+    error: improveSummaryError,
+  } = useFetch(improveWithAI);
+
+  const emailRegister = register("contactInfo.email");
+  const mobileRegister = register("contactInfo.mobile");
 
   // Watch form fields for preview updates
   const formValues = watch();
@@ -80,6 +102,70 @@ export default function ResumeBuilder({ initialContent }) {
       toast.error(saveError.message || "Failed to save resume");
     }
   }, [saveResult, saveError, isSaving]);
+
+  useEffect(() => {
+    if (improvedSummary && !isImprovingSummary) {
+      setValue("summary", improvedSummary);
+      toast.success("Summary improved successfully!");
+    }
+    if (improveSummaryError) {
+      toast.error(improveSummaryError.message || "Failed to improve summary");
+    }
+  }, [improvedSummary, improveSummaryError, isImprovingSummary, setValue]);
+
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  const phoneRegex = /^\+?[0-9\s()-]{7,20}$/;
+
+  const runContactValidation = (field, value, markTouched = false) => {
+    if (markTouched) {
+      setContactTouched((prev) => ({ ...prev, [field]: true }));
+    }
+
+    let message = "";
+    if (field === "email") {
+      if (!value) {
+        message = "Email is required";
+      } else if (!emailRegex.test(value)) {
+        message = "Invalid email address";
+      }
+    } else if (field === "mobile") {
+      if (value && !phoneRegex.test(value)) {
+        message = "Enter a valid phone number";
+      }
+    }
+
+    setContactErrors((prev) => ({ ...prev, [field]: message }));
+
+    if (message) {
+      setError(`contactInfo.${field}`, { type: "manual", message });
+    } else {
+      clearErrors(`contactInfo.${field}`);
+    }
+  };
+
+  const handleContactChange = (field) => (event) => {
+    const value = event.target.value;
+    runContactValidation(field, value, true);
+  };
+
+  const handleContactBlur = (field) => (event) => {
+    runContactValidation(field, event.target.value, true);
+  };
+  const handleImproveSection = async (section) => {
+    if (section === "summary") {
+      const summaryText = watch("summary");
+      if (!summaryText) {
+        toast.error("Please enter a summary first");
+        return;
+      }
+
+      await improveSummaryFn({
+        current: summaryText,
+        type: "summary",
+      });
+    }
+  };
+
 
   const getContactMarkdown = () => {
     const { contactInfo } = formValues;
@@ -199,12 +285,22 @@ export default function ResumeBuilder({ initialContent }) {
                 <div className="space-y-2">
                   <label className="text-sm font-medium">Email</label>
                   <Input
-                    {...register("contactInfo.email")}
+                    {...emailRegister}
                     type="email"
                     placeholder="your@email.com"
-                    error={errors.contactInfo?.email}
+                    onChange={(event) => {
+                      emailRegister.onChange(event);
+                      handleContactChange("email")(event);
+                    }}
+                    onBlur={(event) => {
+                      emailRegister.onBlur(event);
+                      handleContactBlur("email")(event);
+                    }}
                   />
-                  {errors.contactInfo?.email && (
+                  {contactTouched.email && contactErrors.email && (
+                    <p className="text-sm text-red-500">{contactErrors.email}</p>
+                  )}
+                  {!contactErrors.email && errors.contactInfo?.email && (
                     <p className="text-sm text-red-500">
                       {errors.contactInfo.email.message}
                     </p>
@@ -213,11 +309,22 @@ export default function ResumeBuilder({ initialContent }) {
                 <div className="space-y-2">
                   <label className="text-sm font-medium">Mobile Number</label>
                   <Input
-                    {...register("contactInfo.mobile")}
+                    {...mobileRegister}
                     type="tel"
                     placeholder="+1 234 567 8900"
+                    onChange={(event) => {
+                      mobileRegister.onChange(event);
+                      handleContactChange("mobile")(event);
+                    }}
+                    onBlur={(event) => {
+                      mobileRegister.onBlur(event);
+                      handleContactBlur("mobile")(event);
+                    }}
                   />
-                  {errors.contactInfo?.mobile && (
+                  {contactTouched.mobile && contactErrors.mobile && (
+                    <p className="text-sm text-red-500">{contactErrors.mobile}</p>
+                  )}
+                  {!contactErrors.mobile && errors.contactInfo?.mobile && (
                     <p className="text-sm text-red-500">
                       {errors.contactInfo.mobile.message}
                     </p>
@@ -238,12 +345,12 @@ export default function ResumeBuilder({ initialContent }) {
                 </div>
                 <div className="space-y-2">
                   <label className="text-sm font-medium">
-                    Twitter/X Profile
+                    Coding Profile
                   </label>
                   <Input
                     {...register("contactInfo.twitter")}
                     type="url"
-                    placeholder="https://twitter.com/your-handle"
+                    placeholder="https://leetcode.com/your-handle"
                   />
                   {errors.contactInfo?.twitter && (
                     <p className="text-sm text-red-500">
@@ -256,7 +363,28 @@ export default function ResumeBuilder({ initialContent }) {
 
             {/* Summary */}
             <div className="space-y-4">
-              <h3 className="text-lg font-medium">Professional Summary</h3>
+              <div className="flex items-center justify-between">
+                <h3 className="text-lg font-medium">Professional Summary</h3>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => handleImproveSection("summary")}
+                  disabled={isImprovingSummary}
+                >
+                  {isImprovingSummary ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Improving...
+                    </>
+                  ) : (
+                    <>
+                      <Sparkles className="mr-2 h-4 w-4" />
+                      Improve with AI
+                    </>
+                  )}
+                </Button>
+              </div>
               <Controller
                 name="summary"
                 control={control}
