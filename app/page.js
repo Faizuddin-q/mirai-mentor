@@ -33,69 +33,69 @@ import { industries } from "@/data/industries";
 
 const momentumRoadmap = [
   {
-    title: "Clarify Your Direction",
+    title: "Define Your Goals",
     description:
-      "Define the target role, seniority, and timeline that matters most to you.",
+      "Identify your target role, career level, and timeline for your career journey.",
     icon: Compass,
   },
   {
-    title: "Build the Plan",
+    title: "Create Your Plan",
     description:
-      "Generate tailored playbooks spanning skill drills, networking, and positioning.",
+      "Build a personalized roadmap with skill development, networking, and career strategies.",
     icon: Layers,
   },
   {
-    title: "Practice with Feedback",
+    title: "Practice & Learn",
     description:
-      "Work through scenario rehearsals, interview loops, and stakeholder scripts.",
+      "Practice interviews, scenarios, and communication skills with helpful feedback.",
     icon: MonitorPlay,
   },
   {
-    title: "Measure & Adjust",
+    title: "Track Progress",
     description:
-      "Track weekly momentum scores and iterate with data-backed guidance.",
+      "Monitor your progress and adjust your approach based on your achievements.",
     icon: BarChart3,
   },
 ];
 
 const outcomeHighlights = [
   {
-    title: "Promotion-Ready Toolkit",
+    title: "Career Preparation",
     description:
-      "Walk into review cycles with quantified wins, manager briefs, and salary comps.",
+      "Prepare for performance reviews and career advancement with helpful resources and guidance.",
     icon: Trophy,
   },
   {
-    title: "Job Search Accelerator",
+    title: "Job Search Support",
     description:
-      "Unlock outreach campaigns, recruiter follow-ups, and negotiation scripts.",
+      "Get assistance with applications, networking, and interview preparation.",
     icon: ArrowRight,
   },
   {
-    title: "Leadership Confidence",
+    title: "Skill Development",
     description:
-      "Practice stakeholder communication and influence frameworks with AI coaching.",
+      "Practice communication and leadership skills with AI-powered coaching tools.",
     icon: Users2,
   },
 ];
 
 const resourceLibrary = [
   {
-    title: "Weekly Momentum Lab",
+    title: "Career Guides",
     description:
-      "Live micro-coaching clinics on storytelling, portfolio positioning, and interview agility.",
+      "Helpful guides on storytelling, portfolio building, and interview preparation.",
     icon: CalendarCheck,
   },
   {
-    title: "Career Compass Newsletter",
+    title: "Industry Insights",
     description:
-      "Digestible market intel, role spotlights, and emerging skill signals delivered every Monday.",
+      "Learn about different roles, skills in demand, and career opportunities.",
     icon: Lightbulb,
   },
   {
-    title: "Negotiation Masterclass",
+    title: "Skill Workshops",
     description:
-      "On-demand workshops with play-by-play breakdowns of successful compensation conversations.",
+      "Access resources and tips for negotiation, communication, and professional development.",
     icon: GraduationCap,
   },
 ];
@@ -124,14 +124,14 @@ export default function LandingPage() {
       {/* Features Section */}
       <section className="w-full py-12 md:py-24 lg:py-32 bg-background">
         <div className="container mx-auto px-4 md:px-6">
-          <h2 className="text-3xl font-bold tracking-tighter text-center mb-12">
-            Powerful Features for Your Career Growth
+          <h2 className="text-3xl font-bold tracking-tighter text-center mb-12 text-balance">
+            Features for Career Growth
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto">
             {features.map((feature, index) => (
               <Card
                 key={index}
-                className="border-2 hover:border-primary transition-colors duration-300"
+                className="border-2 hover:border-primary transition-all duration-300 card-hover border-glow"
               >
                 <CardContent className="pt-6 text-center flex flex-col items-center">
                   <div className="flex flex-col items-center justify-center">
@@ -154,21 +154,21 @@ export default function LandingPage() {
           <div className="max-w-3xl mx-auto text-center mb-14 space-y-4">
             <span className="inline-flex items-center gap-2 rounded-full border border-primary/40 bg-primary/10 px-4 py-1 text-sm font-medium text-primary">
               <Sparkles className="h-4 w-4" />
-              Momentum Framework
+              Our Approach
             </span>
-            <h2 className="text-3xl font-bold md:text-4xl">
-              Ship Career Wins in Four Loops
+            <h2 className="text-3xl font-bold md:text-4xl text-balance">
+              Your Career Journey in Four Steps
             </h2>
-            <p className="text-muted-foreground md:text-lg">
-              Navigate from clarity to execution with structured milestones and
-              weekly check-ins purpose-built for busy professionals.
+            <p className="text-muted-foreground md:text-lg text-balance">
+              From planning to execution, we guide you through structured steps
+              to help you achieve your career goals.
             </p>
           </div>
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4 max-w-6xl mx-auto">
             {momentumRoadmap.map((item, index) => (
               <Card
                 key={item.title}
-                className="relative h-full border-border/60 bg-background/90 backdrop-blur transition-shadow hover:shadow-lg"
+                className="relative h-full border-border/60 bg-background/90 backdrop-blur transition-all duration-300 card-hover"
               >
                 <CardContent className="flex h-full flex-col gap-4 pt-6">
                   <div className="flex items-center justify-between">
@@ -192,29 +192,6 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Stats Section */}
-      <section className="w-full py-12 md:py-24 bg-muted/50">
-        <div className="container mx-auto px-4 md:px-6">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 max-w-4xl mx-auto text-center">
-            <div className="flex flex-col items-center justify-center space-y-2">
-              <h3 className="text-4xl font-bold">50+</h3>
-              <p className="text-muted-foreground">Industries Covered</p>
-            </div>
-            <div className="flex flex-col items-center justify-center space-y-2">
-              <h3 className="text-4xl font-bold">1000+</h3>
-              <p className="text-muted-foreground">Interview Questions</p>
-            </div>
-            <div className="flex flex-col items-center justify-center space-y-2">
-              <h3 className="text-4xl font-bold">95%</h3>
-              <p className="text-muted-foreground">Success Rate</p>
-            </div>
-            <div className="flex flex-col items-center justify-center space-y-2">
-              <h3 className="text-4xl font-bold">24/7</h3>
-              <p className="text-muted-foreground">AI Support</p>
-            </div>
-          </div>
-        </div>
-      </section>
 
       {/* Career Playbooks */}
       <section
@@ -222,20 +199,19 @@ export default function LandingPage() {
       >
         <div className="container mx-auto px-4 md:px-6">
           <div className="text-center max-w-3xl mx-auto mb-12 space-y-4">
-            <h2 className="text-3xl font-bold md:text-4xl">
-              Playbooks for Every Path
+            <h2 className="text-3xl font-bold md:text-4xl text-balance">
+              Career Paths & Resources
             </h2>
-            <p className="text-muted-foreground md:text-lg">
-              Tap into curated action plans across high-growth roles. Each
-              playbook includes skill benchmarks, networking moves, and hiring
-              manager insights.
+            <p className="text-muted-foreground md:text-lg text-balance">
+              Explore different career paths and get guidance on skills,
+              networking, and industry insights tailored to your goals.
             </p>
           </div>
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 max-w-6xl mx-auto">
             {careerSpotlights.map((industry) => (
               <Card
                 key={industry.title}
-                className="h-full border-border/70 bg-card/90 transition-transform hover:-translate-y-1 hover:shadow-lg"
+                className="h-full border-border/70 bg-card/90 transition-all duration-300 card-hover"
               >
                 <CardContent className="flex h-full flex-col gap-4 pt-6">
                   <div className="flex items-center gap-3">
@@ -275,9 +251,9 @@ export default function LandingPage() {
       >
         <div className="container mx-auto px-4 md:px-6">
           <div className="text-center max-w-3xl mx-auto mb-12">
-            <h2 className="text-3xl font-bold mb-4">How It Works</h2>
-            <p className="text-muted-foreground">
-              Four simple steps to accelerate your career growth
+            <h2 className="text-3xl font-bold mb-4 text-balance">How It Works</h2>
+            <p className="text-muted-foreground text-balance">
+              Simple steps to help you grow in your career
             </p>
           </div>
 
@@ -285,7 +261,7 @@ export default function LandingPage() {
             {howItWorks.map((item, index) => (
               <div
                 key={index}
-                className="flex flex-col items-center text-center space-y-4 rounded-md border border-border bg-card px-4 py-3 shadow-sm"
+                className="flex flex-col items-center text-center space-y-4 rounded-md border border-border bg-card px-4 py-3 shadow-sm transition-all duration-300 card-hover"
               >
                 <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center">
                   {item.icon}
@@ -302,19 +278,19 @@ export default function LandingPage() {
       <section className="w-full py-12 md:py-24 bg-muted/30">
         <div className="container mx-auto px-4 md:px-6">
           <div className="max-w-4xl mx-auto mb-12 text-center space-y-4">
-            <h2 className="text-3xl font-bold md:text-4xl">
-              Unlock Impactful Outcomes
+            <h2 className="text-3xl font-bold md:text-4xl text-balance">
+              What You Can Achieve
             </h2>
-            <p className="text-muted-foreground md:text-lg">
-              Mirai Mentor pairs structured coaching with actionable playbooks
-              so you can level up with confidence.
+            <p className="text-muted-foreground md:text-lg text-balance">
+              Get structured guidance and actionable resources to help you
+              advance in your career journey.
             </p>
           </div>
           <div className="grid gap-6 md:grid-cols-3 max-w-6xl mx-auto">
             {outcomeHighlights.map((item) => (
               <Card
                 key={item.title}
-                className="h-full border-border/70 bg-background/95 backdrop-blur"
+                className="h-full border-border/70 bg-background/95 backdrop-blur transition-all duration-300 card-hover"
               >
                 <CardContent className="flex h-full flex-col gap-4 pt-6">
                   <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 text-primary">
@@ -335,12 +311,12 @@ export default function LandingPage() {
 
       <section className="w-full py-12 md:py-24 bg-muted/50">
         <div className="container mx-auto px-4 md:px-6">
-          <h2 className="text-3xl font-bold text-center mb-12">
-            What Our Users Say
+          <h2 className="text-3xl font-bold text-center mb-12 text-balance">
+            User Feedback
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
             {testimonial.map((testimonial, index) => (
-              <Card key={index} className="bg-background">
+              <Card key={index} className="bg-background transition-all duration-300 card-hover">
                 <CardContent className="pt-6">
                   <div className="flex flex-col space-y-4">
                     <div className="flex items-center space-x-4 mb-4">
@@ -413,19 +389,19 @@ export default function LandingPage() {
       <section className="w-full py-12 md:py-24 bg-background">
         <div className="container mx-auto px-4 md:px-6">
           <div className="text-center max-w-3xl mx-auto mb-12 space-y-4">
-            <h2 className="text-3xl font-bold md:text-4xl">
-              Stay Sharp Between Sessions
+            <h2 className="text-3xl font-bold md:text-4xl text-balance">
+              Learning Resources
             </h2>
-            <p className="text-muted-foreground md:text-lg">
-              Dive into live clinics, on-demand workshops, and weekly briefings
-              designed to keep your momentum high.
+            <p className="text-muted-foreground md:text-lg text-balance">
+              Access helpful resources, guides, and tips to support your career
+              development journey.
             </p>
           </div>
           <div className="grid gap-6 md:grid-cols-3 max-w-6xl mx-auto">
             {resourceLibrary.map((resource) => (
               <Card
                 key={resource.title}
-                className="h-full border-border/70 bg-card/95 transition-shadow hover:shadow-xl"
+                className="h-full border-border/70 bg-card/95 transition-all duration-300 card-hover"
               >
                 <CardContent className="flex h-full flex-col gap-4 pt-6">
                   <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 text-primary">
@@ -449,18 +425,18 @@ export default function LandingPage() {
         <div className="mx-auto py-24 gradient rounded-lg">
           <div className="flex flex-col items-center justify-center space-y-4 text-center max-w-3xl mx-auto">
             <h2 className="text-3xl font-bold tracking-tighter gradient-title sm:text-4xl md:text-5xl">
-              Ready to Accelerate Your Career?
+              Ready to Start Your Career Journey?
             </h2>
             <p className="mx-auto max-w-[600px] text-muted-foreground md:text-xl">
-              Join thousands of professionals who are advancing their careers
-              with AI-powered guidance.
+              Get started with AI-powered guidance to help you achieve your
+              career goals.
             </p>
             <Link href="/dashboard" passHref>
               <Button
                 size="lg"
                 className="h-11 mt-5 animate-bounce"
               >
-                Start Your Journey Today <ArrowRight className="ml-2 h-4 w-4" />
+                Get Started <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
             </Link>
           </div>

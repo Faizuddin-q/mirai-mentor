@@ -1,27 +1,28 @@
-import { BrainCircuit, Briefcase, LineChart, ScrollText } from "lucide-react";
+import { FileText, Brain, Mail, TrendingUp } from "lucide-react";
 
 export const features = [
   {
-    icon: <BrainCircuit className="w-10 h-10 mb-4 text-primary" />,
-    title: "Adaptive Skill Roadmaps",
+    icon: <FileText className="w-10 h-10 mb-4 text-primary" />,
+    title: "Resume Builder",
     description:
-      "Receive evolving weekly sprints that coach you through upskilling, networking, and leadership habits.",
+      "Create professional resumes with AI-powered suggestions and customizable templates tailored to your industry.",
   },
   {
-    icon: <Briefcase className="w-10 h-10 mb-4 text-primary" />,
-    title: "Scenario-Based Coaching",
+    icon: <Brain className="w-10 h-10 mb-4 text-primary" />,
+    title: "AI Interview Quiz",
     description:
-      "Rehearse tough conversations and job interviews with AI mentors that mirror your target companies.",
+      "Practice for interviews with AI-generated questions and get instant feedback to improve your responses.",
   },
   {
-    icon: <LineChart className="w-10 h-10 mb-4 text-primary" />,
-    title: "Live Market Dashboards",
+    icon: <Mail className="w-10 h-10 mb-4 text-primary" />,
+    title: "Cover Letter Generator",
     description:
-      "Track market demand, compensation trends, and emerging roles so you never miss an opportunity.",
+      "Generate personalized cover letters that highlight your skills and match job requirements using AI assistance.",
   },
   {
-    icon: <ScrollText className="w-10 h-10 mb-4 text-primary" />,
-    title: "Pro-Grade Document Studio",
-    description: "Spin up resumes, portfolios, and outreach emails using curated templates and AI rewrites.",
+    icon: <TrendingUp className="w-10 h-10 mb-4 text-primary" />,
+    title: "Market Trends",
+    description:
+      "Stay updated with current job market trends, salary insights, and in-demand skills in your field.",
   },
 ];
