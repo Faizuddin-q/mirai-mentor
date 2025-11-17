@@ -4,6 +4,7 @@ import { ClerkProvider } from "@clerk/nextjs";
 import { Toaster } from "sonner";
 import Header from "@/components/header";
 import { ThemeProvider } from "@/components/theme-provider";
+import { UserProvider } from "@/contexts/user-context";
 import { dark } from "@clerk/themes";
 
 const spaceGrotesk = Space_Grotesk({
@@ -47,9 +48,11 @@ export default function RootLayout({ children }) {
             enableSystem
             disableTransitionOnChange
           >
-            <Header />
-            <main className="minh-screen mt-4 mb-20">{children}</main>
-            <Toaster richColors />
+            <UserProvider>
+              <Header />
+              <main className="minh-screen mt-4 mb-20">{children}</main>
+              <Toaster richColors />
+            </UserProvider>
 
             <footer className="bg-muted/50 py-12">
               <div className="container mx-auto px-4 text-center text-gray-200">

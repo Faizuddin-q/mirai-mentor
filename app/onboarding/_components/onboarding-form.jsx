@@ -29,10 +29,12 @@ import {
 import useFetch from "@/hooks/use-fetch";
 import { onboardingSchema } from "@/app/lib/schema";
 import { updateUser } from "@/actions/user";
+import { useUser } from "@/contexts/user-context";
 
 const OnboardingForm = ({ industries }) => {
   const router = useRouter();
   const [selectedIndustry, setSelectedIndustry] = useState(null);
+  const { updateUserData } = useUser();
 
   const {
     loading: updateLoading,
@@ -72,11 +74,13 @@ const OnboardingForm = ({ industries }) => {
 
   useEffect(() => {
     if (updateResult?.success && !updateLoading) {
+      // Update the global user context with new data
+      updateUserData();
       toast.success("Profile completed successfully! Redirecting to resume...");
       router.push("/resume");
       router.refresh();
     }
-  }, [router, updateLoading, updateResult]);
+  }, [router, updateLoading, updateResult, updateUserData]);
 
   const watchIndustry = watch("industry");
 

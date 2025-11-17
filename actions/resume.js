@@ -70,10 +70,47 @@ export async function improveWithAI({ current, type }) {
 
   if (!user) throw new Error("User not found");
 
+  // Parse industry to get main industry and sub-industry
+  let industry = user.industry || "";
+  let subIndustry = "";
+  if (user.industry) {
+    const parts = user.industry.split("-");
+    industry = parts[0] || "";
+    subIndustry = parts.slice(1).join(" ").replace(/-/g, " ") || "";
+  }
+
+  // Build personalized context
+  const experienceLevel = user.experience 
+    ? user.experience === 0 
+      ? "entry-level" 
+      : user.experience < 3 
+        ? "junior" 
+        : user.experience < 7 
+          ? "mid-level" 
+          : user.experience < 12 
+            ? "senior" 
+            : "executive/leadership"
+    : "professional";
+
+  const skillsList = user.skills && user.skills.length > 0 
+    ? user.skills.join(", ") 
+    : "general professional skills";
+
+  const bioContext = user.bio 
+    ? `\n  - **Professional Background:** ${user.bio.substring(0, 200)}${user.bio.length > 200 ? "..." : ""}`
+    : "";
+
   const prompt = `
-  You are a senior professional resume writer specializing in high-impact career branding.
+  You are a senior professional resume writer specializing in high-impact career branding and ATS optimization.
   
-  Your task is to improve the following **${type}** description for a professional in the **${user.industry}** industry.
+  Your task is to improve the following **${type}** description for a **${experienceLevel}** professional in the **${industry}${subIndustry ? ` - ${subIndustry}` : ""}** industry.
+  
+  ---
+  
+  ## 👤 Candidate Profile:
+  - **Experience Level:** ${experienceLevel} (${user.experience || 0} years of experience)
+  - **Industry:** ${industry}${subIndustry ? ` - ${subIndustry}` : ""}
+  - **Key Skills:** ${skillsList}${bioContext}
   
   ---
   
@@ -83,12 +120,13 @@ export async function improveWithAI({ current, type }) {
   ---
   
   ## 🎯 Rewrite Goals:
-  - Transform the text into a **concise, results-driven** resume bullet or paragraph
-  - Use **strong action verbs** to start the sentence(s)
+  - Transform the text into a **concise, results-driven** resume bullet or paragraph appropriate for a ${experienceLevel} professional
+  - Use **strong action verbs** that match the candidate's experience level and industry
   - **Quantify results** with numbers, percentages, or specific outcomes where applicable
-  - Integrate relevant **technical and domain-specific skills**
+  - Integrate relevant **technical and domain-specific skills** from: ${skillsList}
   - Focus on **achievements**, not just responsibilities
-  - Align with **modern ATS-friendly** formatting using industry-specific **keywords**
+  - Align with **modern ATS-friendly** formatting using industry-specific **keywords** relevant to ${industry}${subIndustry ? ` and ${subIndustry}` : ""}
+  - Match the tone and complexity to a ${experienceLevel} professional's typical accomplishments
   
   ---
   
@@ -96,6 +134,7 @@ export async function improveWithAI({ current, type }) {
   - Format the improved version as **one impactful paragraph**
   - **Do not** include headings, markdown, or any explanation — just the rewritten content
   - Keep the tone professional, confident, and concise
+  - Ensure the language reflects ${experienceLevel} level expertise and achievements
   
   Return only the improved content. Begin.
   `;

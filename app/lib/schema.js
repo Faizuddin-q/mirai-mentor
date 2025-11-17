@@ -9,8 +9,13 @@ export const onboardingSchema = z.object({
   }),
   bio: z.string().max(500).optional(),
   experience: z
-    .string()
-    .transform((val) => parseInt(val, 10))
+    .union([z.string(), z.number()])
+    .transform((val) => {
+      if (typeof val === "string") {
+        return parseInt(val, 10);
+      }
+      return val;
+    })
     .pipe(
       z
         .number()
