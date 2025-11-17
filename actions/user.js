@@ -133,7 +133,21 @@ export async function getCurrentUser() {
     if (user.industry) {
       const parts = user.industry.split("-");
       industry = parts[0] || "";
-      subIndustry = parts.slice(1).join(" ").replace(/-/g, " ") || "";
+      const parsedSubIndustry = parts.slice(1).join(" ").replace(/-/g, " ") || "";
+      
+      // Import industries data to find exact match
+      const { industries } = await import("@/data/industries");
+      const industryData = industries.find((ind) => ind.id === industry);
+      
+      if (industryData && parsedSubIndustry) {
+        // Find matching subIndustry with case-insensitive comparison
+        const matchedSubIndustry = industryData.subIndustries.find(
+          (sub) => sub.toLowerCase().replace(/\s+/g, " ") === parsedSubIndustry.toLowerCase().replace(/\s+/g, " ")
+        );
+        subIndustry = matchedSubIndustry || parsedSubIndustry;
+      } else {
+        subIndustry = parsedSubIndustry;
+      }
     }
 
     return {

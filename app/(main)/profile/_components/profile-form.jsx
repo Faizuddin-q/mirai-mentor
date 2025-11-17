@@ -29,10 +29,12 @@ import {
 import useFetch from "@/hooks/use-fetch";
 import { onboardingSchema } from "@/app/lib/schema";
 import { updateUser } from "@/actions/user";
+import { useUser } from "@/contexts/user-context";
 
 const ProfileForm = ({ industries, initialData }) => {
   const router = useRouter();
   const [selectedIndustry, setSelectedIndustry] = useState(null);
+  const { updateUserData } = useUser();
 
   const {
     loading: updateLoading,
@@ -52,7 +54,7 @@ const ProfileForm = ({ industries, initialData }) => {
     defaultValues: {
       industry: initialData?.industry || "",
       subIndustry: initialData?.subIndustry || "",
-      experience: initialData?.experience || "",
+      experience: initialData?.experience ? String(initialData.experience) : "",
       skills: initialData?.skills || "",
       bio: initialData?.bio || "",
     },
@@ -63,13 +65,16 @@ const ProfileForm = ({ industries, initialData }) => {
     register("subIndustry");
   }, [register]);
 
+  // Track initial industry to prevent resetting subIndustry on mount
+  const [initialIndustry, setInitialIndustry] = useState(null);
+
   // Set initial values when component mounts
   useEffect(() => {
     if (initialData) {
       reset({
         industry: initialData.industry || "",
         subIndustry: initialData.subIndustry || "",
-        experience: initialData.experience || "",
+        experience: initialData.experience ? String(initialData.experience) : "",
         skills: initialData.skills || "",
         bio: initialData.bio || "",
       });
@@ -78,6 +83,7 @@ const ProfileForm = ({ industries, initialData }) => {
       if (initialData.industry) {
         const industryData = industries.find((ind) => ind.id === initialData.industry);
         setSelectedIndustry(industryData);
+        setInitialIndustry(initialData.industry); // Store initial industry
       }
     }
   }, [initialData, industries, reset]);
@@ -102,22 +108,26 @@ const ProfileForm = ({ industries, initialData }) => {
 
   useEffect(() => {
     if (updateResult?.success && !updateLoading) {
-      toast.success("Profile updated successfully! Redirecting to dashboard...");
-      router.push("/resume");
+      // Update the global user context with new data
+      updateUserData();
+      toast.success("Profile updated successfully!");
       router.refresh();
     }
-  }, [updateResult, updateLoading, router]);
+  }, [updateResult, updateLoading, router, updateUserData]);
 
   const watchIndustry = watch("industry");
 
-  // Update selected industry when industry changes
+  // Update selected industry when industry changes (but not on initial load)
   useEffect(() => {
-    if (watchIndustry) {
+    if (watchIndustry && initialIndustry !== null) {
       const industryData = industries.find((ind) => ind.id === watchIndustry);
       setSelectedIndustry(industryData);
-      setValue("subIndustry", ""); // Reset sub-industry when industry changes
+      // Only reset sub-industry if the industry actually changed from initial
+      if (watchIndustry !== initialIndustry) {
+        setValue("subIndustry", "");
+      }
     }
-  }, [watchIndustry, industries, setValue]);
+  }, [watchIndustry, industries, setValue, initialIndustry]);
 
   return (
     <div className="flex items-center justify-center bg-background min-h-screen py-10">

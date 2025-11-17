@@ -20,6 +20,15 @@ export async function generateCoverLetter(data) {
 
   if (!user) throw new Error("User not found");
 
+  // Parse industry to get main industry and sub-industry
+  let industry = user.industry || "";
+  let subIndustry = "";
+  if (user.industry) {
+    const parts = user.industry.split("-");
+    industry = parts[0] || "";
+    subIndustry = parts.slice(1).join(" ").replace(/-/g, " ") || "";
+  }
+
   const candidateName =
     user.name ||
     [clerkUser.firstName, clerkUser.lastName].filter(Boolean).join(" ").trim() ||
@@ -31,6 +40,23 @@ export async function generateCoverLetter(data) {
     clerkUser.emailAddresses?.[0]?.emailAddress ||
     "your@email.com";
 
+  // Build experience level context
+  const experienceLevel = user.experience 
+    ? user.experience === 0 
+      ? "entry-level" 
+      : user.experience < 3 
+        ? "junior" 
+        : user.experience < 7 
+          ? "mid-level" 
+          : user.experience < 12 
+            ? "senior" 
+            : "executive/leadership"
+    : "professional";
+
+  const skillsList = user.skills && user.skills.length > 0 
+    ? user.skills.join(", ") 
+    : "general professional skills";
+
   const prompt = `
   You are an expert cover letter writer with a deep understanding of career storytelling, persuasive writing, and job-market alignment.
   
@@ -40,21 +66,22 @@ export async function generateCoverLetter(data) {
   
   ## 🎯 Objective
   Write a cover letter that:
-  - Positions the candidate as an ideal fit for the role
-  - Clearly aligns the candidate’s experience and skills with the job description
-  - Demonstrates knowledge of the company’s goals or values
-  - Includes relevant, quantified achievements
+  - Positions the candidate as an ideal fit for the role based on their ${experienceLevel} experience level
+  - Clearly aligns the candidate's experience, skills, and background with the job description
+  - Demonstrates knowledge of the company's goals or values
+  - Includes relevant, quantified achievements appropriate for a ${experienceLevel} professional
   - Builds enthusiasm and professionalism throughout
+  - Uses industry-specific language and terminology relevant to ${industry}${subIndustry ? ` and ${subIndustry}` : ""}
   
   ---
   
-  ## 👤 Candidate Details
-  - **Industry:** ${user.industry}
-  - **Years of Experience:** ${user.experience}
-  - **Key Skills:** ${user.skills?.join(", ") || "N/A"}
-  - **Professional Summary:** ${user.bio}
+  ## 👤 Candidate Profile
   - **Name:** ${candidateName}
   - **Email:** ${candidateEmail}
+  - **Experience Level:** ${experienceLevel} (${user.experience || 0} years of experience)
+  - **Industry:** ${industry}${subIndustry ? ` - ${subIndustry}` : ""}
+  - **Key Skills:** ${skillsList}
+  - **Professional Background:** ${user.bio || "Experienced professional with a strong track record in their field"}
   
   ---
   
@@ -64,19 +91,21 @@ export async function generateCoverLetter(data) {
   ---
   
   ## 🛠️ Writing Guidelines
-  - **Tone:** Professional, confident, and enthusiastic
+  - **Tone:** Professional, confident, and enthusiastic - appropriate for a ${experienceLevel} professional
   - **Length:** No more than **400 words**
   - **Structure:** Use proper business letter format, in **Markdown**
   - **Header:** Begin with the candidate's name and email on separate lines before the salutation
-  - **Voice:** Write in the first person, from the candidate’s perspective
+  - **Voice:** Write in the first person, from the candidate's perspective
+  - **Personalization:** Reference specific skills (${skillsList}) and experience in ${industry}${subIndustry ? `, particularly ${subIndustry}` : ""}
   - **Avoid:** Generic phrases, repetition, or filler content
   
   ---
   
   ## ✅ Output Requirements
-  - Start with an engaging introduction showing intent and relevance
-  - Highlight specific accomplishments that align with the role
-  - Emphasize value the candidate brings to the company
+  - Start with an engaging introduction showing intent and relevance to the role
+  - Highlight specific accomplishments and skills (${skillsList}) that align with the job requirements
+  - Reference the candidate's ${user.experience || 0} years of experience in ${industry}${subIndustry ? `, specifically ${subIndustry}` : ""}
+  - Emphasize the unique value the candidate brings to ${data.companyName}
   - Close with a strong call to action (e.g. request for interview)
   - Return only the completed letter in **Markdown** format
   - Do not include headings, commentary, or extra text
