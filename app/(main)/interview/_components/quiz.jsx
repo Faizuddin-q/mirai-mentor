@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import {
@@ -16,8 +17,10 @@ import { generateQuiz, saveQuizResult } from "@/actions/interview";
 import QuizResult from "./quiz-result";
 import useFetch from "@/hooks/use-fetch";
 import { BarLoader } from "react-spinners";
+import { Loader2 } from "lucide-react";
 
 export default function Quiz() {
+  const router = useRouter();
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [answers, setAnswers] = useState([]);
   const [showExplanation, setShowExplanation] = useState(false);
@@ -40,6 +43,18 @@ export default function Quiz() {
       setAnswers(new Array(quizData.length).fill(null));
     }
   }, [quizData]);
+
+  // Redirect to interview page after successful quiz completion
+  // useEffect(() => {
+  //   if (resultData && !savingResult) {
+  //     // Delay redirect slightly to show the success message
+  //     const redirectTimer = setTimeout(() => {
+  //       router.push("/interview");
+  //     }, 2000); // 2 seconds delay to let user see the result
+
+  //     return () => clearTimeout(redirectTimer);
+  //   }
+  // }, [resultData, savingResult, router]);
 
   const handleAnswer = (answer) => {
     const newAnswers = [...answers];
@@ -164,12 +179,16 @@ export default function Quiz() {
           disabled={!answers[currentQuestion] || savingResult}
           className="ml-auto"
         >
-          {savingResult && (
-            <BarLoader className="mt-4" width={"100%"} color="gray" />
+          {savingResult ? (
+            <>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              Finishing quiz...
+            </>
+          ) : (
+            currentQuestion < quizData.length - 1
+              ? "Next Question"
+              : "Finish Quiz"
           )}
-          {currentQuestion < quizData.length - 1
-            ? "Next Question"
-            : "Finish Quiz"}
         </Button>
       </CardFooter>
     </Card>

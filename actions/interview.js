@@ -128,6 +128,7 @@ export async function saveQuizResult(questions, answers, score) {
   const user = await db.user.findUnique({
     where: { clerkUserId: userId },
     select: {
+      id: true,
       industry: true,
       skills: true,
       experience: true,

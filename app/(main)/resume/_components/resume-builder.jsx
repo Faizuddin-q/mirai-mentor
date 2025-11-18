@@ -22,7 +22,7 @@ import { improveWithAI, saveResume } from "@/actions/resume";
 import { EntryForm } from "./entry-form";
 import useFetch from "@/hooks/use-fetch";
 import { useUser } from "@clerk/nextjs";
-import { entriesToMarkdown } from "@/app/lib/helper";
+import { entriesToMarkdown, parseMarkdownToFormData } from "@/app/lib/helper";
 import { resumeSchema } from "@/app/lib/schema";
 import html2pdf from "html2pdf.js/dist/html2pdf.min.js";
 
@@ -48,6 +48,7 @@ export default function ResumeBuilder({ initialContent, resumeId }) {
     setValue,
     setError,
     clearErrors,
+    reset,
     formState: { errors },
   } = useForm({
     resolver: zodResolver(resumeSchema),
@@ -81,17 +82,27 @@ export default function ResumeBuilder({ initialContent, resumeId }) {
   // Watch form fields for preview updates
   const formValues = watch();
 
+  // Parse initial content and populate form when component mounts or initialContent changes
   useEffect(() => {
-    if (initialContent) setActiveTab("preview");
-  }, [initialContent]);
+    if (initialContent && initialContent.trim()) {
+      const parsedData = parseMarkdownToFormData(initialContent);
+      if (parsedData) {
+        // Reset form with parsed data
+        reset(parsedData);
+        // Set preview content to initial content
+        setPreviewContent(initialContent);
+        setActiveTab("preview");
+      }
+    }
+  }, [initialContent, reset]);
 
-  // Update preview content when form values change
+  // Update preview content when form values change (in edit mode)
   useEffect(() => {
     if (activeTab === "edit") {
       const newContent = getCombinedContent();
-      setPreviewContent(newContent ? newContent : initialContent);
+      setPreviewContent(newContent || initialContent || "");
     }
-  }, [formValues, activeTab]);
+  }, [formValues, activeTab, initialContent]);
 
   // Handle save result
   useEffect(() => {
