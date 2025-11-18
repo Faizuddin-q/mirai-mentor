@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -98,7 +98,7 @@ const ProfileForm = ({ industries, initialData }) => {
         ...values,
         industry: formattedIndustry,
       });
-      toast.success("Profile updated successfully!");
+      // Don't show toast here - let useEffect handle it to avoid duplicates
 
     } catch (error) {
       toast.error("Profile update failed!");
@@ -106,8 +106,22 @@ const ProfileForm = ({ industries, initialData }) => {
     }
   };
 
+  // Use ref to track if we've already shown toast for current result
+  const hasShownToast = useRef(false);
+  const lastResultRef = useRef(null);
+
   useEffect(() => {
-    if (updateResult?.success && !updateLoading) {
+    // Reset flag when a new update starts (updateLoading becomes true or updateResult changes)
+    if (updateLoading || (lastResultRef.current !== updateResult && !updateResult?.success)) {
+      hasShownToast.current = false;
+      lastResultRef.current = updateResult;
+    }
+
+    // Only process if we have a success result, not loading, and haven't shown toast yet
+    if (updateResult?.success && !updateLoading && !hasShownToast.current) {
+      hasShownToast.current = true;
+      lastResultRef.current = updateResult;
+      
       // Update the global user context with new data
       updateUserData();
       toast.success("Profile updated successfully!");
