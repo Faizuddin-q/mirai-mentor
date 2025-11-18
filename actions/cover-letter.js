@@ -72,6 +72,7 @@ export async function generateCoverLetter(data) {
   - Includes relevant, quantified achievements appropriate for a ${experienceLevel} professional
   - Builds enthusiasm and professionalism throughout
   - Uses industry-specific language and terminology relevant to ${industry}${subIndustry ? ` and ${subIndustry}` : ""}
+  - Written in simple, plain English without unnecessary complexity
   
   ---
   
@@ -79,7 +80,7 @@ export async function generateCoverLetter(data) {
   - **Name:** ${candidateName}
   - **Email:** ${candidateEmail}
   - **Experience Level:** ${experienceLevel} (${user.experience || 0} years of experience)
-  - **Industry:** ${industry}${subIndustry ? ` - ${subIndustry}` : ""}
+  - **Industry:** ${industry}${subIndustry ? ` ${subIndustry}` : ""}
   - **Key Skills:** ${skillsList}
   - **Professional Background:** ${user.bio || "Experienced professional with a strong track record in their field"}
   
@@ -91,13 +92,19 @@ export async function generateCoverLetter(data) {
   ---
   
   ## 🛠️ Writing Guidelines
-  - **Tone:** Professional, confident, and enthusiastic - appropriate for a ${experienceLevel} professional
-  - **Length:** No more than **400 words**
-  - **Structure:** Use proper business letter format, in **Markdown**
+  - **Tone:** Professional, confident, and enthusiastic, appropriate for a ${experienceLevel} professional
+  - **Length:** No more than 200 words
+  - **Structure:** Use proper business letter format, in Markdown
   - **Header:** Begin with the candidate's name and email on separate lines before the salutation
   - **Voice:** Write in the first person, from the candidate's perspective
   - **Personalization:** Reference specific skills (${skillsList}) and experience in ${industry}${subIndustry ? `, particularly ${subIndustry}` : ""}
   - **Avoid:** Generic phrases, repetition, or filler content
+  - **Writing Style Rules:**
+    - Use simple, plain English. Avoid complex sentence structures.
+    - Do NOT use apostrophes except for possessives like "John's" or contractions like "it's", "don't", "can't"
+    - Do NOT use em dashes or dashes. Use commas or periods instead.
+    - Keep language natural and realistic. Avoid overly formal or flowery language.
+    - Write in a conversational yet professional tone that sounds authentic.
   
   ---
   
@@ -107,8 +114,9 @@ export async function generateCoverLetter(data) {
   - Reference the candidate's ${user.experience || 0} years of experience in ${industry}${subIndustry ? `, specifically ${subIndustry}` : ""}
   - Emphasize the unique value the candidate brings to ${data.companyName}
   - Close with a strong call to action (e.g. request for interview)
-  - Return only the completed letter in **Markdown** format
+  - Return only the completed letter in Markdown format
   - Do not include headings, commentary, or extra text
+  - Keep the writing simple, clear, and easy to read
   
   Begin when ready.
   `;

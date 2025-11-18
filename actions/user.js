@@ -22,7 +22,11 @@ export async function updateUser(data) {
     });
 
     if (!industryInsight) {
-      const insights = await generateAIInsights(data.industry);
+      const insights = await generateAIInsights(data.industry, {
+        experience: data.experience,
+        skills: data.skills,
+        bio: data.bio,
+      });
 
       try {
         industryInsight = await db.industryInsight.create({

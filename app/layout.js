@@ -50,11 +50,11 @@ export default function RootLayout({ children }) {
           >
             <UserProvider>
               <Header />
-              <main className="minh-screen mt-4 mb-20">{children}</main>
+              <main className="min-h-[calc(100vh-4rem)] mt-4 pb-8">{children}</main>
               <Toaster richColors />
             </UserProvider>
 
-            <footer className="bg-muted/50 py-12">
+            <footer className="bg-muted/50 py-12 mt-8">
               <div className="container mx-auto px-4 text-center text-gray-200">
                 <p>Copyright © {new Date().getFullYear()} All Rights Reserved.</p>
               </div>
