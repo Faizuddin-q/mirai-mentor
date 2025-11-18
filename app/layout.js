@@ -51,7 +51,7 @@ export default function RootLayout({ children }) {
             <UserProvider>
               <Header />
               <main className="min-h-[calc(100vh-4rem)] mt-4 pb-8">{children}</main>
-              <Toaster richColors />
+              <Toaster richColors duration={3000}/>
             </UserProvider>
 
             <footer className="bg-muted/50 py-12 mt-8">
