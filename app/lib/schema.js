@@ -32,7 +32,16 @@ export const onboardingSchema = z.object({
   ),
 });
 
-const phoneRegex = /^\+?[0-9\s()-]{7,20}$/;
+// Helper function to normalize and validate Indian phone numbers
+const normalizeIndianPhone = (phone) => {
+  if (!phone) return null;
+  // Remove spaces, dashes, parentheses, and country code
+  const cleaned = phone.replace(/[\s()-]/g, '').replace(/^\+91/, '').replace(/^91/, '');
+  return cleaned;
+};
+
+// Indian phone number regex: 10 digits starting with 6, 7, 8, or 9
+const indianPhoneRegex = /^[6-9]\d{9}$/;
 
 export const contactSchema = z.object({
   email: z
@@ -44,8 +53,12 @@ export const contactSchema = z.object({
   mobile: z
     .string()
     .optional()
-    .refine((value) => !value || phoneRegex.test(value), {
-      message: "Enter a valid phone number",
+    .refine((value) => {
+      if (!value) return true;
+      const normalized = normalizeIndianPhone(value);
+      return normalized && indianPhoneRegex.test(normalized);
+    }, {
+      message: "Enter a valid 10-digit mobile number",
     }),
   linkedin: z.string().optional(),
   twitter: z.string().optional(),

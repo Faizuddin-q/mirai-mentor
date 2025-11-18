@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/card";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
 import { generateQuiz, saveQuizResult } from "@/actions/interview";
 import QuizResult from "./quiz-result";
 import useFetch from "@/hooks/use-fetch";
@@ -24,6 +25,7 @@ export default function Quiz() {
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [answers, setAnswers] = useState([]);
   const [showExplanation, setShowExplanation] = useState(false);
+  const [questionCount, setQuestionCount] = useState(10);
 
   const {
     loading: generatingQuiz,
@@ -95,8 +97,16 @@ export default function Quiz() {
     setCurrentQuestion(0);
     setAnswers([]);
     setShowExplanation(false);
-    generateQuizFn();
+    generateQuizFn(questionCount);
     setResultData(null);
+  };
+
+  const handleStartQuiz = () => {
+    if (questionCount < 1 || questionCount > 50) {
+      toast.error("Please enter a number between 1 and 50");
+      return;
+    }
+    generateQuizFn(questionCount);
   };
 
   if (generatingQuiz) {
@@ -118,15 +128,40 @@ export default function Quiz() {
         <CardHeader>
           <CardTitle>Ready to test your knowledge?</CardTitle>
         </CardHeader>
-        <CardContent>
+        <CardContent className="space-y-4">
           <p className="text-muted-foreground">
-            This quiz contains 10 questions specific to your industry and
-            skills. Take your time and choose the best answer for each question.
+            Choose how many questions you'd like to answer. The quiz will be
+            tailored to your industry and skills.
           </p>
+          <div className="space-y-2">
+            <Label htmlFor="questionCount">Number of Questions</Label>
+            <Input
+              id="questionCount"
+              type="number"
+              min="1"
+              max="50"
+              value={questionCount}
+              onChange={(e) => {
+                const value = parseInt(e.target.value) || 10;
+                setQuestionCount(Math.max(1, Math.min(50, value)));
+              }}
+              placeholder="Enter number of questions (1-50)"
+            />
+            <p className="text-sm text-muted-foreground">
+              Enter a number between 1 and 50
+            </p>
+          </div>
         </CardContent>
         <CardFooter>
-          <Button onClick={generateQuizFn} className="w-full">
-            Start Quiz
+          <Button onClick={handleStartQuiz} className="w-full" disabled={generatingQuiz}>
+            {generatingQuiz ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Generating Quiz...
+              </>
+            ) : (
+              `Start Quiz with ${questionCount} Question${questionCount !== 1 ? 's' : ''}`
+            )}
           </Button>
         </CardFooter>
       </Card>

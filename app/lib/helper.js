@@ -69,26 +69,31 @@ export function parseMarkdownToFormData(markdown) {
       if (trimmed.includes("@") && !trimmed.startsWith("[") && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmed)) {
         data.contactInfo.email = trimmed;
       } 
-      // Check for phone number
-      else if (/^\+?[0-9\s()-]{7,20}$/.test(trimmed)) {
-        data.contactInfo.mobile = trimmed;
-      } 
-      // Check for LinkedIn
-      else if (trimmed.includes("linkedin.com") || trimmed.includes("[LinkedIn]")) {
-        const linkedinMatch = trimmed.match(/\[LinkedIn\]\(([^)]+)\)/);
-        if (linkedinMatch) {
-          data.contactInfo.linkedin = linkedinMatch[1];
-        } else if (trimmed.includes("http")) {
-          data.contactInfo.linkedin = trimmed;
+      // Check for phone number (Indian 10-digit mobile number)
+      else {
+        // Normalize phone number: remove spaces, dashes, parentheses, country code
+        const normalized = trimmed.replace(/[\s()-]/g, '').replace(/^\+91/, '').replace(/^91/, '');
+        // Validate: 10 digits starting with 6, 7, 8, or 9
+        if (/^[6-9]\d{9}$/.test(normalized)) {
+          data.contactInfo.mobile = normalized;
         }
-      } 
-      // Check for Twitter/LeetCode/GitHub (coding profiles)
-      else if (trimmed.includes("twitter.com") || trimmed.includes("leetcode.com") || trimmed.includes("github.com") || trimmed.includes("[Twitter]")) {
-        const twitterMatch = trimmed.match(/\[Twitter\]\(([^)]+)\)/);
-        if (twitterMatch) {
-          data.contactInfo.twitter = twitterMatch[1];
-        } else if (trimmed.includes("http")) {
-          data.contactInfo.twitter = trimmed;
+        // If not a valid phone, check for LinkedIn
+        else if (trimmed.includes("linkedin.com") || trimmed.includes("[LinkedIn]")) {
+          const linkedinMatch = trimmed.match(/\[LinkedIn\]\(([^)]+)\)/);
+          if (linkedinMatch) {
+            data.contactInfo.linkedin = linkedinMatch[1];
+          } else if (trimmed.includes("http")) {
+            data.contactInfo.linkedin = trimmed;
+          }
+        }
+        // Check for Twitter/LeetCode/GitHub (coding profiles)
+        else if (trimmed.includes("twitter.com") || trimmed.includes("leetcode.com") || trimmed.includes("github.com") || trimmed.includes("[Twitter]")) {
+          const twitterMatch = trimmed.match(/\[Twitter\]\(([^)]+)\)/);
+          if (twitterMatch) {
+            data.contactInfo.twitter = twitterMatch[1];
+          } else if (trimmed.includes("http")) {
+            data.contactInfo.twitter = trimmed;
+          }
         }
       }
     });

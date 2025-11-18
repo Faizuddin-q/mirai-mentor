@@ -7,9 +7,11 @@ import { GoogleGenerativeAI } from "@google/generative-ai";
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
 
-export async function generateQuiz() {
+export async function generateQuiz(questionCount = 10) {
   const { userId } = await auth();
   if (!userId) throw new Error("Unauthorized");
+
+  const count = Math.max(1, Math.min(50, parseInt(questionCount) || 10));
 
   const user = await db.user.findUnique({
     where: { clerkUserId: userId },
@@ -56,7 +58,7 @@ export async function generateQuiz() {
   const prompt = `
   You are a senior technical interviewer and assessment designer with expertise in creating level-appropriate interview questions.
   
-  Your task is to generate **10 high-quality multiple-choice technical interview questions** for a **${experienceLevel}** professional in the **${industry}${subIndustry ? ` - ${subIndustry}` : ""}** industry${
+  Your task is to generate **${count} high-quality multiple-choice technical interview questions** for a **${experienceLevel}** professional in the **${industry}${subIndustry ? ` - ${subIndustry}` : ""}** industry${
     user.skills?.length ? ` with expertise in ${user.skills.join(", ")}` : ""
   }.
   
@@ -91,7 +93,7 @@ export async function generateQuiz() {
         "correctAnswer": "string",                       // Must match one of the options
         "explanation": "string"                          // Reason why the answer is correct
       }
-      // 9 more like this
+      // ${count - 1} more like this (total of ${count} questions)
     ]
   }
   
