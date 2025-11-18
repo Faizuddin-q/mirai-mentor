@@ -7,23 +7,61 @@ import { GoogleGenerativeAI } from "@google/generative-ai";
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
 
-export const generateAIInsights = async (industry) => {
+export const generateAIInsights = async (industry, userData = null) => {
+  // Parse industry to get main industry and sub-industry
+  let industryName = industry || "";
+  let subIndustry = "";
+  if (industry) {
+    const parts = industry.split("-");
+    industryName = parts[0] || "";
+    subIndustry = parts.slice(1).join(" ").replace(/-/g, " ") || "";
+  }
+
+  // Build user context if available
+  let userContext = "";
+  if (userData) {
+    const experienceLevel = userData.experience 
+      ? userData.experience === 0 
+        ? "entry-level" 
+        : userData.experience < 3 
+          ? "junior" 
+          : userData.experience < 7 
+            ? "mid-level" 
+            : userData.experience < 12 
+              ? "senior" 
+              : "executive/leadership"
+      : "professional";
+
+    const skillsList = userData.skills && userData.skills.length > 0 
+      ? userData.skills.join(", ") 
+      : "general professional skills";
+
+    userContext = `
+
+## 👤 Target Professional Profile:
+- **Experience Level:** ${experienceLevel} (${userData.experience || 0} years of experience)
+- **Current Skills:** ${skillsList}
+- **Professional Background:** ${userData.bio || "Experienced professional in the industry"}
+
+**Note:** While generating insights, consider this professional's experience level and current skills to provide relevant salary ranges, skill recommendations, and career growth opportunities that align with their profile.`;
+  }
+
   const prompt = `
           You are a senior labor market intelligence analyst with over 15 years of experience in economic forecasting, workforce analytics, salary benchmarking, and hiring trend analysis. You work as part of an international think tank producing labor reports for governments and Fortune 500 firms. You combine deep quantitative research, macro‑economic signals, micro‑level job data, and skill demand insights to deliver actionable intelligence.
 
-Your task is to produce a **deep, research‑backed, highly structured analysis** of the **${industry}** industry in India. This output will be stored in a production database and parsed programmatically, so it must adhere exactly to the JSON schema described below. No extra commentary or markdown is allowed. Treat this as if you are preparing an internal labor market briefing to be read by government economists, HR leaders, and workforce development experts.
+Your task is to produce a **deep, research‑backed, highly structured analysis** of the **${industryName}${subIndustry ? ` - ${subIndustry}` : ""}** industry in India.${userContext ? userContext : ""} This output will be stored in a production database and parsed programmatically, so it must adhere exactly to the JSON schema described below. No extra commentary or markdown is allowed. Treat this as if you are preparing an internal labor market briefing to be read by government economists, HR leaders, and workforce development experts.
 
 ---
 
 ## 🎯 Mission
-Provide a comprehensive 2024–2025 snapshot of the ${industry} industry in India, combining:
-- Salary intelligence across multiple roles and seniorities
+Provide a comprehensive 2024–2025 snapshot of the ${industryName}${subIndustry ? ` - ${subIndustry}` : ""} industry in India${userData ? `, with insights tailored for ${userData.experience || 0} years of experience professionals` : ""}, combining:
+- Salary intelligence across multiple roles and seniorities${userData ? ` (with emphasis on roles appropriate for ${userData.experience || 0} years experience)` : ""}
 - Current and projected growth trends
 - Hiring demand intensity
-- Most in‑demand technical and domain skills
+- Most in‑demand technical and domain skills${userData && userData.skills?.length ? ` (considering current skills: ${userData.skills.join(", ")})` : ""}
 - Market sentiment and investment outlook
 - Emerging trends shaping the sector
-- Skills professionals should develop to remain competitive over the next 3–5 years
+- Skills professionals should develop to remain competitive over the next 3–5 years${userData ? ` (personalized recommendations based on their current skill set and experience level)` : ""}
 
 ---
 
@@ -34,7 +72,7 @@ Return only a valid JSON object in this format:
 {
   "salaryRanges": [
     {
-      "role": "string",              // distinct job title in the ${industry} sector (entry, mid, senior, or niche)
+      "role": "string",              // distinct job title in the ${industryName}${subIndustry ? ` - ${subIndustry}` : ""} sector (entry, mid, senior, or niche)
       "min": number,                 // minimum annual salary in INR (no commas, symbols, or text)
       "max": number,                 // maximum annual salary in INR
       "median": number,              // median annual salary in INR
@@ -54,10 +92,11 @@ Return only a valid JSON object in this format:
 ## 🧠 Field‑Level Guidance
 
 ### salaryRanges
-- Include at least **10 distinct roles** (entry, mid, senior, niche, or emerging) reflecting real hiring patterns in ${industry}.
+- Include at least **10 distinct roles** (entry, mid, senior, niche, or emerging) reflecting real hiring patterns in ${industryName}${subIndustry ? `, specifically ${subIndustry}` : ""}.
+${userData ? `- **Priority:** Include roles relevant to a ${userData.experience === 0 ? "entry-level" : userData.experience < 3 ? "junior" : userData.experience < 7 ? "mid-level" : userData.experience < 12 ? "senior" : "executive/leadership"} professional with ${userData.experience || 0} years of experience.` : ""}
 - For tech industry, MUST include diverse roles like: Frontend Developer, Backend Developer, Full Stack Developer, DevOps Engineer, QA Engineer, UI/UX Designer, Product Manager, Data Engineer, Mobile App Developer, Cloud Architect, Cybersecurity Specialist, AI/ML Engineer, Site Reliability Engineer, Technical Lead, etc.
 - Salaries must be **realistic Indian market figures for 2024–2025** in INR as plain numbers.
-- Cover a spectrum of roles (technical, managerial, specialist).
+- Cover a spectrum of roles (technical, managerial, specialist)${userData ? `, with emphasis on roles matching the professional's experience level` : ""}.
 
 ### growthRate
 - Reflect a credible YoY growth rate derived from signals like hiring velocity, capital investment, and government policy impact.
@@ -68,8 +107,9 @@ Return only a valid JSON object in this format:
 - “Low” for shrinking/stagnant hiring.
 
 ### topSkills
-- At least 10 **current, ATS‑friendly skills** critical for the {{industry}} domain.
-- Mix hard/technical and domain‑specific competencies (e.g. “Cloud Security” rather than “Computer Skills”).
+- At least 10 **current, ATS‑friendly skills** critical for the ${industryName}${subIndustry ? ` - ${subIndustry}` : ""} domain.
+${userData && userData.skills?.length ? `- **Context:** The professional already has skills in: ${userData.skills.join(", ")}. Include complementary skills that build upon their existing expertise.` : ""}
+- Mix hard/technical and domain‑specific competencies (e.g. "Cloud Security" rather than "Computer Skills").
 
 ### marketOutlook
 - Reflect the sentiment for the next 12–18 months (“Positive”, “Neutral”, “Negative”).
@@ -79,7 +119,9 @@ Return only a valid JSON object in this format:
 
 ### recommendedSkills
 - At least 10 **emerging or future‑ready skills** professionals should acquire to remain competitive.
+${userData ? `- **Personalization:** Recommend skills that are appropriate for a ${userData.experience === 0 ? "entry-level" : userData.experience < 3 ? "junior" : userData.experience < 7 ? "mid-level" : userData.experience < 12 ? "senior" : "executive/leadership"} professional (${userData.experience || 0} years experience)${userData.skills?.length ? `, building upon their current skills: ${userData.skills.join(", ")}` : ""}.` : ""}
 - Can overlap with topSkills but should skew toward next‑generation capabilities.
+- Focus on skills that align with career progression for their experience level.
 
 ---
 
@@ -145,7 +187,11 @@ export async function getIndustryInsights() {
 
   // If no insights exist, generate them
   if (!user.industryInsight) {
-    const insights = await generateAIInsights(user.industry);
+    const insights = await generateAIInsights(user.industry, {
+      experience: user.experience,
+      skills: user.skills,
+      bio: user.bio,
+    });
 
     const industryInsight = await db.industryInsight.create({
       data: {
@@ -175,7 +221,11 @@ export async function refreshIndustryInsights() {
 
   try {    
     // Force generate new insights with current time
-    const insights = await generateAIInsights(user.industry);
+    const insights = await generateAIInsights(user.industry, {
+      experience: user.experience,
+      skills: user.skills,
+      bio: user.bio,
+    });
     
     const updatedInsight = await db.industryInsight.upsert({
       where: { industry: user.industry },
@@ -228,7 +278,11 @@ export async function fixIndustryData() {
       });
       
       // Generate new insights with complete industry
-      const insights = await generateAIInsights(completeIndustry);
+      const insights = await generateAIInsights(completeIndustry, {
+        experience: user.experience,
+        skills: user.skills,
+        bio: user.bio,
+      });
       
       const newInsight = await db.industryInsight.create({
         data: {

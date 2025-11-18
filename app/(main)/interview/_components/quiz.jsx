@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import {
@@ -12,15 +13,19 @@ import {
 } from "@/components/ui/card";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
 import { generateQuiz, saveQuizResult } from "@/actions/interview";
 import QuizResult from "./quiz-result";
 import useFetch from "@/hooks/use-fetch";
 import { BarLoader } from "react-spinners";
+import { Loader2 } from "lucide-react";
 
 export default function Quiz() {
+  const router = useRouter();
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [answers, setAnswers] = useState([]);
   const [showExplanation, setShowExplanation] = useState(false);
+  const [questionCount, setQuestionCount] = useState(10);
 
   const {
     loading: generatingQuiz,
@@ -40,6 +45,18 @@ export default function Quiz() {
       setAnswers(new Array(quizData.length).fill(null));
     }
   }, [quizData]);
+
+  // Redirect to interview page after successful quiz completion
+  // useEffect(() => {
+  //   if (resultData && !savingResult) {
+  //     // Delay redirect slightly to show the success message
+  //     const redirectTimer = setTimeout(() => {
+  //       router.push("/interview");
+  //     }, 2000); // 2 seconds delay to let user see the result
+
+  //     return () => clearTimeout(redirectTimer);
+  //   }
+  // }, [resultData, savingResult, router]);
 
   const handleAnswer = (answer) => {
     const newAnswers = [...answers];
@@ -80,8 +97,16 @@ export default function Quiz() {
     setCurrentQuestion(0);
     setAnswers([]);
     setShowExplanation(false);
-    generateQuizFn();
+    generateQuizFn(questionCount);
     setResultData(null);
+  };
+
+  const handleStartQuiz = () => {
+    if (questionCount < 1 || questionCount > 50) {
+      toast.error("Please enter a number between 1 and 50");
+      return;
+    }
+    generateQuizFn(questionCount);
   };
 
   if (generatingQuiz) {
@@ -103,15 +128,40 @@ export default function Quiz() {
         <CardHeader>
           <CardTitle>Ready to test your knowledge?</CardTitle>
         </CardHeader>
-        <CardContent>
+        <CardContent className="space-y-4">
           <p className="text-muted-foreground">
-            This quiz contains 10 questions specific to your industry and
-            skills. Take your time and choose the best answer for each question.
+            Choose how many questions you'd like to answer. The quiz will be
+            tailored to your industry and skills.
           </p>
+          <div className="space-y-2">
+            <Label htmlFor="questionCount">Number of Questions</Label>
+            <Input
+              id="questionCount"
+              type="number"
+              min="1"
+              max="50"
+              value={questionCount}
+              onChange={(e) => {
+                const value = parseInt(e.target.value) || 10;
+                setQuestionCount(Math.max(1, Math.min(50, value)));
+              }}
+              placeholder="Enter number of questions (1-50)"
+            />
+            <p className="text-sm text-muted-foreground">
+              Enter a number between 1 and 50
+            </p>
+          </div>
         </CardContent>
         <CardFooter>
-          <Button onClick={generateQuizFn} className="w-full">
-            Start Quiz
+          <Button onClick={handleStartQuiz} className="w-full" disabled={generatingQuiz}>
+            {generatingQuiz ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Generating Quiz...
+              </>
+            ) : (
+              `Start Quiz with ${questionCount} Question${questionCount !== 1 ? 's' : ''}`
+            )}
           </Button>
         </CardFooter>
       </Card>
@@ -164,12 +214,16 @@ export default function Quiz() {
           disabled={!answers[currentQuestion] || savingResult}
           className="ml-auto"
         >
-          {savingResult && (
-            <BarLoader className="mt-4" width={"100%"} color="gray" />
+          {savingResult ? (
+            <>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              Finishing quiz...
+            </>
+          ) : (
+            currentQuestion < quizData.length - 1
+              ? "Next Question"
+              : "Finish Quiz"
           )}
-          {currentQuestion < quizData.length - 1
-            ? "Next Question"
-            : "Finish Quiz"}
         </Button>
       </CardFooter>
     </Card>

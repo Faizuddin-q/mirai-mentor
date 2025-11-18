@@ -76,8 +76,8 @@ const OnboardingForm = ({ industries }) => {
     if (updateResult?.success && !updateLoading) {
       // Update the global user context with new data
       updateUserData();
-      toast.success("Profile completed successfully! Redirecting to resume...");
-      router.push("/resume");
+      toast.success("Profile completed successfully! Redirecting to interview quiz...");
+      router.push("/interview");
       router.refresh();
     }
   }, [router, updateLoading, updateResult, updateUserData]);

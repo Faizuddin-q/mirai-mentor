@@ -40,7 +40,7 @@ export default function QuizResult({
           {result.questions.map((q, index) => (
             <div key={index} className="border rounded-lg p-4 space-y-2">
               <div className="flex items-start justify-between gap-2">
-                <p className="font-medium">{q.question}</p>
+                <p className="font-medium">{index + 1}. {q.question}</p>
                 {q.isCorrect ? (
                   <CheckCircle2 className="h-5 w-5 text-green-500 flex-shrink-0" />
                 ) : (

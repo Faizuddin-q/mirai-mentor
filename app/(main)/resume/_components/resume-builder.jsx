@@ -22,11 +22,11 @@ import { improveWithAI, saveResume } from "@/actions/resume";
 import { EntryForm } from "./entry-form";
 import useFetch from "@/hooks/use-fetch";
 import { useUser } from "@clerk/nextjs";
-import { entriesToMarkdown } from "@/app/lib/helper";
+import { entriesToMarkdown, parseMarkdownToFormData } from "@/app/lib/helper";
 import { resumeSchema } from "@/app/lib/schema";
 import html2pdf from "html2pdf.js/dist/html2pdf.min.js";
 
-export default function ResumeBuilder({ initialContent }) {
+export default function ResumeBuilder({ initialContent, resumeId }) {
   const [activeTab, setActiveTab] = useState("edit");
   const [previewContent, setPreviewContent] = useState(initialContent);
   const { user } = useUser();
@@ -48,6 +48,7 @@ export default function ResumeBuilder({ initialContent }) {
     setValue,
     setError,
     clearErrors,
+    reset,
     formState: { errors },
   } = useForm({
     resolver: zodResolver(resumeSchema),
@@ -81,17 +82,48 @@ export default function ResumeBuilder({ initialContent }) {
   // Watch form fields for preview updates
   const formValues = watch();
 
+  // Parse initial content and populate form when component mounts or initialContent changes
   useEffect(() => {
-    if (initialContent) setActiveTab("preview");
-  }, [initialContent]);
+    if (initialContent && initialContent.trim()) {
+      const parsedData = parseMarkdownToFormData(initialContent);
+      if (parsedData) {
+        // Reset form with parsed data
+        reset(parsedData);
+        // Set preview content to initial content
+        setPreviewContent(initialContent);
+        setActiveTab("preview");
+      }
+    }
+  }, [initialContent, reset]);
 
-  // Update preview content when form values change
+  // Update preview content when form values change (in edit mode)
   useEffect(() => {
     if (activeTab === "edit") {
-      const newContent = getCombinedContent();
-      setPreviewContent(newContent ? newContent : initialContent);
+      const { summary, skills, experience, education, projects } = formValues;
+      const { contactInfo } = formValues;
+      const contactParts = [];
+      if (contactInfo?.email) contactParts.push(`${contactInfo.email}`);
+      if (contactInfo?.mobile) contactParts.push(`${contactInfo.mobile}`);
+      if (contactInfo?.linkedin) contactParts.push(`[LinkedIn](${contactInfo.linkedin})`);
+      if (contactInfo?.twitter) contactParts.push(`[Twitter](${contactInfo.twitter})`);
+      
+      const contactMarkdown = contactParts.length > 0
+        ? `## <div align="center">${user?.fullName || 'Your Name'}</div>\n\n<div align="center">\n\n${contactParts.join(" | ")}\n\n</div>`
+        : "";
+
+      const newContent = [
+        contactMarkdown,
+        summary && `## Professional Summary\n\n${summary}`,
+        skills && `## Skills\n\n${skills}`,
+        entriesToMarkdown(experience, "Work Experience"),
+        entriesToMarkdown(education, "Education"),
+        entriesToMarkdown(projects, "Projects"),
+      ]
+        .filter(Boolean)
+        .join("\n\n");
+      setPreviewContent(newContent || initialContent || "");
     }
-  }, [formValues, activeTab]);
+  }, [formValues, activeTab, initialContent, user, entriesToMarkdown]);
 
   // Handle save result
   useEffect(() => {
@@ -114,7 +146,17 @@ export default function ResumeBuilder({ initialContent }) {
   }, [improvedSummary, improveSummaryError, isImprovingSummary, setValue]);
 
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  const phoneRegex = /^\+?[0-9\s()-]{7,20}$/;
+  
+  // Helper function to normalize Indian phone numbers
+  const normalizeIndianPhone = (phone) => {
+    if (!phone) return null;
+    // Remove spaces, dashes, parentheses, and country code
+    const cleaned = phone.replace(/[\s()-]/g, '').replace(/^\+91/, '').replace(/^91/, '');
+    return cleaned;
+  };
+
+  // Indian phone number regex: 10 digits starting with 6, 7, 8, or 9
+  const indianPhoneRegex = /^[6-9]\d{9}$/;
 
   const runContactValidation = (field, value, markTouched = false) => {
     if (markTouched) {
@@ -129,8 +171,11 @@ export default function ResumeBuilder({ initialContent }) {
         message = "Invalid email address";
       }
     } else if (field === "mobile") {
-      if (value && !phoneRegex.test(value)) {
-        message = "Enter a valid phone number";
+      if (value) {
+        const normalized = normalizeIndianPhone(value);
+        if (!normalized || !indianPhoneRegex.test(normalized)) {
+          message = "Enter a valid 10-digit mobile number";
+        
       }
     }
 
@@ -170,15 +215,14 @@ export default function ResumeBuilder({ initialContent }) {
   const getContactMarkdown = () => {
     const { contactInfo } = formValues;
     const parts = [];
-    if (contactInfo.email) parts.push(`📧 ${contactInfo.email}`);
-    if (contactInfo.mobile) parts.push(`📱 ${contactInfo.mobile}`);
+    if (contactInfo.email) parts.push(`${contactInfo.email}`);
+    if (contactInfo.mobile) parts.push(`${contactInfo.mobile}`);
     if (contactInfo.linkedin)
-      parts.push(`💼 [LinkedIn](${contactInfo.linkedin})`);
-    if (contactInfo.twitter) parts.push(`🐦 [Twitter](${contactInfo.twitter})`);
+      parts.push(`[LinkedIn](${contactInfo.linkedin})`);
+    if (contactInfo.twitter) parts.push(`[Twitter](${contactInfo.twitter})`);
 
     return parts.length > 0
-      ? `## <div align="center">${user.fullName}</div>
-        \n\n<div align="center">\n\n${parts.join(" | ")}\n\n</div>`
+      ? `## <div align="center">${user.fullName}</div>\n\n<div align="center">\n\n${parts.join(" | ")}\n\n</div>`
       : "";
   };
 
@@ -202,10 +246,23 @@ export default function ResumeBuilder({ initialContent }) {
     setIsGenerating(true);
     try {
       const element = document.getElementById("resume-pdf");
+      
+      let filename = "resume.pdf";
+      if (user) {
+        const firstName = user.firstName || "";
+        const lastName = user.lastName || "";
+        const fullName = `${firstName} ${lastName}`.trim();
+        
+        if (fullName) {
+          const username = fullName.toLowerCase().replace(/\s+/g, "_");
+          filename = `${username}_resume.pdf`;
+        }
+      }
+      
       const opt = {
         margin: [15, 15],
-        filename: "resume.pdf",
-        image: { type: "jpeg", quality: 0.98 },
+        filename: filename,
+        image: { type: "jpeg", quality: 1 },
         html2canvas: { scale: 2 },
         jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
       };
@@ -219,12 +276,25 @@ export default function ResumeBuilder({ initialContent }) {
   };
 
   const onSubmit = async (data) => {
+    if (!resumeId) {
+      toast.error("Resume ID is missing. Please create a new resume.");
+      return;
+    }
+    
     try {
+      // Normalize phone number before saving if present
+      if (formValues.contactInfo?.mobile) {
+        const normalizedPhone = normalizeIndianPhone(formValues.contactInfo.mobile);
+        if (normalizedPhone && indianPhoneRegex.test(normalizedPhone)) {
+          setValue("contactInfo.mobile", normalizedPhone);
+        }
+      }
+      
       const formattedContent = previewContent
         .replace(/\n/g, "\n") // Normalize newlines
         .replace(/\n\s*\n/g, "\n\n") // Normalize multiple newlines to double newlines
         .trim();
-      await saveResumeFn(previewContent);
+      await saveResumeFn(resumeId, previewContent);
     } catch (error) {
       console.error("Save error:", error);
     }
@@ -311,8 +381,16 @@ export default function ResumeBuilder({ initialContent }) {
                   <Input
                     {...mobileRegister}
                     type="tel"
-                    placeholder="+1 234 567 8900"
+                    placeholder="9876543210"
+                    maxLength={10}
+                    pattern="[6-9][0-9]{9}"
                     onChange={(event) => {
+                      // Only allow digits and normalize input
+                      let value = event.target.value.replace(/\D/g, '');
+                      // Limit to 10 digits
+                      value = value.slice(0, 10);
+                      // Update the input value
+                      event.target.value = value;
                       mobileRegister.onChange(event);
                       handleContactChange("mobile")(event);
                     }}
@@ -542,4 +620,4 @@ export default function ResumeBuilder({ initialContent }) {
       </Tabs>
     </div>
   );
-}
+}}
