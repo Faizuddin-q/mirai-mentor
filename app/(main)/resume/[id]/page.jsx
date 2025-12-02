@@ -24,11 +24,11 @@ export default async function EditResumePage({ params }) {
         </Link>
 
         <h1 className="text-xl font-bold gradient-title mb-6">
-          {resume.title}
+          {resume?.title}
         </h1>
       </div>
 
-      <ResumeBuilder initialContent={resume.content} resumeId={resume.id} />
+      <ResumeBuilder initialContent={resume?.content} resumeId={resume?.id} />
     </div>
   );
 }
