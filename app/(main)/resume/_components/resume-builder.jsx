@@ -160,8 +160,6 @@ export default function ResumeBuilder({ initialContent, resumeId }) {
   // Indian phone number regex: 10 digits starting with 6, 7, 8, or 9
   const indianPhoneRegex = /^[6-9]\d{9}$/;
 
-  const [isGenerating, setIsGenerating] = useState(false);
-
   const runContactValidation = (field, value, markTouched = false) => {
     if (markTouched) {
       setContactTouched((prev) => ({ ...prev, [field]: true }));
@@ -179,70 +177,72 @@ export default function ResumeBuilder({ initialContent, resumeId }) {
         const normalized = normalizeIndianPhone(value);
         if (!normalized || !indianPhoneRegex.test(normalized)) {
           message = "Enter a valid 10-digit mobile number";
+
         }
       }
-    }
 
-    setContactErrors((prev) => ({ ...prev, [field]: message }));
+      setContactErrors((prev) => ({ ...prev, [field]: message }));
 
-    if (message) {
-      setError(`contactInfo.${field}`, { type: "manual", message });
-    } else {
-      clearErrors(`contactInfo.${field}`);
-    }
-  };
-
-  const handleContactChange = (field) => (event) => {
-    const value = event.target.value;
-    runContactValidation(field, value, true);
-  };
-
-  const handleContactBlur = (field) => (event) => {
-    runContactValidation(field, event.target.value, true);
-  };
-
-  const handleImproveSection = async (section) => {
-    if (section === "summary") {
-      const summaryText = watch("summary");
-      if (!summaryText) {
-        toast.error("Please enter a summary first");
-        return;
+      if (message) {
+        setError(`contactInfo.${field}`, { type: "manual", message });
+      } else {
+        clearErrors(`contactInfo.${field}`);
       }
+    };
 
-      await improveSummaryFn({
-        current: summaryText,
-        type: "summary",
-      });
-    }
-  };
+    const handleContactChange = (field) => (event) => {
+      const value = event.target.value;
+      runContactValidation(field, value, true);
+    };
 
-  const getContactMarkdown = () => {
-    const { contactInfo } = formValues;
-    const parts = [];
-    if (contactInfo?.email) parts.push(`${contactInfo.email}`);
-    if (contactInfo?.mobile) parts.push(`${contactInfo.mobile}`);
-    if (contactInfo?.linkedin)
-      parts.push(`[LinkedIn](${contactInfo.linkedin})`);
-    if (contactInfo?.twitter) parts.push(`[Twitter](${contactInfo.twitter})`);
+    const handleContactBlur = (field) => (event) => {
+      runContactValidation(field, event.target.value, true);
+    };
+    const handleImproveSection = async (section) => {
+      if (section === "summary") {
+        const summaryText = watch("summary");
+        if (!summaryText) {
+          toast.error("Please enter a summary first");
+          return;
+        }
 
-    return parts.length > 0
-      ? `## <div align="center">${user?.fullName || 'Your Name'}</div>\n\n<div align="center">\n\n${parts.join(" | ")}\n\n</div>`
-      : "";
-  };
+        await improveSummaryFn({
+          current: summaryText,
+          type: "summary",
+        });
+      }
+    };
 
-  const getCombinedContent = () => {
-    const { summary, skills, experience, education, projects } = formValues;
-    return [
-      getContactMarkdown(),
-      summary && `## Professional Summary\n\n${summary}`,
-      skills && `## Skills\n\n${skills}`,
-      entriesToMarkdown(experience, "Work Experience"),
-      entriesToMarkdown(education, "Education"),
-      entriesToMarkdown(projects, "Projects"),
-    ]
-      .filter(Boolean)
-      .join("\n\n");
-  };
+
+    const getContactMarkdown = () => {
+      const { contactInfo } = formValues;
+      const parts = [];
+      if (contactInfo.email) parts.push(`${contactInfo.email}`);
+      if (contactInfo.mobile) parts.push(`${contactInfo.mobile}`);
+      if (contactInfo.linkedin)
+        parts.push(`[LinkedIn](${contactInfo.linkedin})`);
+      if (contactInfo.twitter) parts.push(`[Twitter](${contactInfo.twitter})`);
+
+      return parts.length > 0
+        ? `## <div align="center">${user.fullName}</div>\n\n<div align="center">\n\n${parts.join(" | ")}\n\n</div>`
+        : "";
+    };
+
+    const getCombinedContent = () => {
+      const { summary, skills, experience, education, projects } = formValues;
+      return [
+        getContactMarkdown(),
+        summary && `## Professional Summary\n\n${summary}`,
+        skills && `## Skills\n\n${skills}`,
+        entriesToMarkdown(experience, "Work Experience"),
+        entriesToMarkdown(education, "Education"),
+        entriesToMarkdown(projects, "Projects"),
+      ]
+        .filter(Boolean)
+        .join("\n\n");
+    };
+
+    const [isGenerating, setIsGenerating] = useState(false);
 
     const generatePDF = async () => {
       setIsGenerating(true);
@@ -623,4 +623,5 @@ export default function ResumeBuilder({ initialContent, resumeId }) {
         </Tabs>
       </div>
     );
+  }
 }
