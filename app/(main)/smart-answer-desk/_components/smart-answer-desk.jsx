@@ -16,12 +16,12 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { generateAnswer } from "@/actions/questionare";
+import { generateAnswer } from "@/actions/smart-answer-desk";
 import useFetch from "@/hooks/use-fetch";
-import { questionareSchema } from "@/app/lib/schema";
+import { smartAnswerDeskSchema } from "@/app/lib/schema";
 import MDEditor from "@uiw/react-md-editor";
 
-export default function QuestionareGenerator() {
+const SmartAnswerDesk = () => {
   const [answerData, setAnswerData] = useState(null);
 
   const {
@@ -30,7 +30,7 @@ export default function QuestionareGenerator() {
     formState: { errors },
     reset,
   } = useForm({
-    resolver: zodResolver(questionareSchema),
+    resolver: zodResolver(smartAnswerDeskSchema),
   });
 
   const {
@@ -39,7 +39,6 @@ export default function QuestionareGenerator() {
     data: generatedAnswer,
   } = useFetch(generateAnswer);
 
-  // Update local state when answer is generated
   useEffect(() => {
     if (generatedAnswer) {
       setAnswerData(generatedAnswer);
@@ -59,7 +58,7 @@ export default function QuestionareGenerator() {
     <div className="space-y-6">
       <Card>
         <CardHeader>
-          <CardTitle>Company Question Form</CardTitle>
+          <CardTitle>Smart Answer Desk</CardTitle>
           <CardDescription>
             Enter the company details and the question they asked you
           </CardDescription>
@@ -173,3 +172,4 @@ export default function QuestionareGenerator() {
   );
 }
 
+export default SmartAnswerDesk;

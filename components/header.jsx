@@ -8,7 +8,7 @@ import {
   FileText,
   GraduationCap,
   UserPlus,
-  HelpCircle,
+  Brain,
 } from "lucide-react";
 import Link from "next/link";
 import { SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/nextjs";
@@ -37,9 +37,9 @@ const navItems = [
     icon: GraduationCap,
   },
   {
-    label: "Questionare",
-    href: "/questionare",
-    icon: HelpCircle,
+    label: "Smart Answer Desk",
+    href: "/smart-answer-desk",
+    icon: Brain,
   },
   {
     label: "Profile",

@@ -20,7 +20,6 @@ export async function generateAnswer(data) {
 
   if (!user) throw new Error("User not found");
 
-  // Parse industry to get main industry and sub-industry
   let industry = user.industry || "";
   let subIndustry = "";
   if (user.industry) {
@@ -34,7 +33,6 @@ export async function generateAnswer(data) {
     [clerkUser.firstName, clerkUser.lastName].filter(Boolean).join(" ").trim() ||
     "Your Name";
 
-  // Build experience level context
   const experienceLevel = String(user.experience);
 
   const skillsList =
@@ -44,26 +42,65 @@ export async function generateAnswer(data) {
 
   const lowerQuestion = (data.question || "").toLowerCase();
 
-  // Detect "why join this company" style questions
   const isWhyJoinQuestion = [
-    "why do you want to join",
-    "why would you like to join",
-    "why do you want to work",
-    "why work here",
+    "why join",
+    "why do you want",
     "why this company",
     "why our company",
-    "what interests you about our company",
-    "motivate your interest in our company",
-    "why are you interested in this company",
-    "why do you want to be part of",
-    "why do you want to apply to",
-    " what excites you about ",
-  ].some((phrase) => lowerQuestion.includes(phrase));
+    "work here",
+    "why work",
+    "why choose",
+    "reason for joining",
+    "motivate your interest",
+    "what interests you",
+    "what excites you",
+    "why interested",
+    "why apply",
+    "apply here",
+    "join us",
+    "want to join",
+    "want to work",
+    "interest in company",
+    "why should we hire",
+    "fit for this company",
+    "why do you think we",
+    "want to be part",
+    "excites you about",
+    "motivation behind applying",
+    "joining motivation",
+    "joining reason",
+    "like to work here",
+    "like to join",
+    "why suitable",
+    "why are you a fit",
+    "why pick this firm",
+    "interest in role",
+    "interest in organisation",
+    "work culture attracted",
+    "role excites me",
+    "company excites me",
+    "inspired to join",
+    "company values attracted",
+    "what made you apply",
+    "what inspired you",
+    "why should you join",
+    "why did you apply",
+    "personal motivation",
+    "career motivation",
+    "joining interest",
+    "what made you choose",
+    "what motivates you to join",
+    "why apply for job",
+    "why you want this role",
+    "choose our company",
+    "excited to work here",
+  ].some(key => lowerQuestion.includes(key));
+  
 
   let prompt;
 
   if (isWhyJoinQuestion) {
-    // Special prompt for "why join this company" questions
+    // special prompt for "why join this company" questions
     prompt = `
 You are an expert career coach and interview preparation specialist helping candidates answer "why this company" style questions.
 
