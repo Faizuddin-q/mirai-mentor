@@ -100,3 +100,9 @@ export const coverLetterSchema = z.object({
   jobTitle: z.string().min(1, "Job title is required"),
   jobDescription: z.string().min(1, "Job description is required"),
 });
+
+export const questionareSchema = z.object({
+  companyName: z.string().min(1, "Company name is required"),
+  companyJD: z.string().optional(),
+  question: z.string().min(1, "Question is required"),
+});

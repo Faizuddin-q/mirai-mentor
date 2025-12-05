@@ -8,6 +8,7 @@ import {
   FileText,
   GraduationCap,
   UserPlus,
+  HelpCircle,
 } from "lucide-react";
 import Link from "next/link";
 import { SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/nextjs";
@@ -34,6 +35,11 @@ const navItems = [
     label: "Interview",
     href: "/interview",
     icon: GraduationCap,
+  },
+  {
+    label: "Questionare",
+    href: "/questionare",
+    icon: HelpCircle,
   },
   {
     label: "Profile",
