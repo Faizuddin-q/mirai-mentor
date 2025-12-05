@@ -32,23 +32,13 @@ export async function createResume(title) {
     return resume;
   } catch (error) {
     console.error("Error creating resume:", error);
-    console.error("Error code:", error.code);
-    console.error("Error meta:", error.meta);
-    
     // Provide more specific error messages
     if (error.code === "P2002") {
-      // Check if it's actually about the title field
-      const target = error.meta?.target;
-      if (Array.isArray(target) && target.includes("title")) {
-        throw new Error("A resume with this title already exists. Please choose a different title.");
-      }
-      // If it's a different unique constraint violation, show generic message
-      throw new Error("A record with this information already exists. Please try again.");
+      throw new Error("A resume with this title already exists. Please choose a different title.");
     }
     if (error.code === "P2003") {
       throw new Error("Invalid user reference. Please try logging in again.");
     }
-    // Show the actual error message for better debugging
     throw new Error(error.message || "Failed to create resume. Please try again.");
   }
 }
