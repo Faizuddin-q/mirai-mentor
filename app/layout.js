@@ -59,7 +59,7 @@ export default function RootLayout({ children }) {
                 <p>Copyright © {new Date().getFullYear()} All Rights Reserved.</p>
               </div>
               <div className="container mx-auto px-4 text-center text-gray-200">
-                <p>This project is for educational purposes only. It was created by Faizuddin and Dev Sagar for the college minor project.</p>
+                <p>This project is developed by <strong className="text-primary/80">Faizuddin</strong> as a part of his college minor project coursework, is intended for academic and educational use.</p>
               </div>
 
             </footer>

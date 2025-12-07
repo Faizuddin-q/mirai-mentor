@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
-import { Loader2 } from "lucide-react";
+import { Loader2, Copy, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -23,6 +23,7 @@ import MDEditor from "@uiw/react-md-editor";
 
 const SmartAnswerDesk = () => {
   const [answerData, setAnswerData] = useState(null);
+  const [copied, setCopied] = useState(false);
 
   const {
     register,
@@ -51,6 +52,23 @@ const SmartAnswerDesk = () => {
       toast.success("Answer generated successfully!");
     } catch (error) {
       toast.error(error.message || "Failed to generate answer");
+    }
+  };
+
+  const handleCopy = async () => {
+    if (!answerData?.answer) return;
+    
+    try {
+      await navigator.clipboard.writeText(answerData.answer);
+      setCopied(true);
+      toast.success("Answer copied to clipboard!");
+      
+      setTimeout(() => {
+        setCopied(false);
+      }, 3000);
+    } catch (error) {
+      console.error("Failed to copy:", error);
+      toast.error("Failed to copy answer");
     }
   };
 
@@ -149,11 +167,28 @@ const SmartAnswerDesk = () => {
               </div>
               <div>
                 <Label className="text-sm font-semibold mb-2 block">Answer:</Label>
-                <div className="border rounded-lg">
+                <div className="border rounded-lg p-4">
                   <MDEditor.Markdown source={answerData.answer} />
                 </div>
               </div>
-              <div className="flex justify-end">
+              <div className="flex justify-end gap-2">
+                <Button
+                  variant="outline"
+                  onClick={handleCopy}
+                  className="gap-2"
+                >
+                  {copied ? (
+                    <>
+                      <Check className="h-4 w-4" />
+                      Copied!
+                    </>
+                  ) : (
+                    <>
+                      <Copy className="h-4 w-4" />
+                      Copy Answer
+                    </>
+                  )}
+                </Button>
                 <Button
                   variant="outline"
                   onClick={() => {

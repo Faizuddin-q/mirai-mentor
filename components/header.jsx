@@ -16,11 +16,11 @@ import Image from "next/image";
 import { usePathname } from "next/navigation";
 
 const navItems = [
-  {
-    label: "Explore",
-    href: "/explore",
-    icon: LayoutDashboard,
-  },
+  // {
+  //   label: "Explore",
+  //   href: "/explore",
+  //   icon: LayoutDashboard,
+  // },
   {
     label: "Resume",
     href: "/resume",
