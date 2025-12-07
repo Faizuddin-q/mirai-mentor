@@ -3,7 +3,7 @@ import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { getApplication } from "@/actions/application";
-import ApplicationForm from "../_components/application-form";
+import ApplicationForm from "../../_components/application-form";
 
 export default async function EditApplicationPage({ params }) {
   const { id } = await params;

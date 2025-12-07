@@ -152,6 +152,34 @@ export async function updateApplicationStatus(id, status, note) {
   return updated;
 }
 
+export async function updateApplicationPriority(id, priority) {
+  const { userId } = await auth();
+  if (!userId) throw new Error("Unauthorized");
+
+  const user = await db.user.findUnique({
+    where: { clerkUserId: userId },
+  });
+
+  if (!user) throw new Error("User not found");
+
+  const application = await db.application.findUnique({
+    where: { id },
+  });
+
+  if (!application || application.userId !== user.id) {
+    throw new Error("Application not found");
+  }
+
+  const updated = await db.application.update({
+    where: { id },
+    data: { priority },
+  });
+
+  revalidatePath("/applications");
+  revalidatePath(`/applications/${id}`);
+  return updated;
+}
+
 export async function getApplications(filters = {}) {
   const { userId } = await auth();
   if (!userId) throw new Error("Unauthorized");

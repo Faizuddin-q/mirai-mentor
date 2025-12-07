@@ -190,7 +190,7 @@ export default function ApplicationsList({ applications }) {
                   <TableCell className="font-medium">{app.companyName}</TableCell>
                   <TableCell>{app.jobTitle}</TableCell>
                   <TableCell>
-                    <Badge className={statusColors[app.status]}>
+                    <Badge variant="outline" className={statusColors[app.status]}>
                       {app.status}
                     </Badge>
                   </TableCell>

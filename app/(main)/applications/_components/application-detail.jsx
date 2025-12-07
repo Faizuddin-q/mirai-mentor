@@ -32,7 +32,7 @@ import {
   Save,
   Loader2,
 } from "lucide-react";
-import { updateApplicationStatus, addNoteToApplication } from "@/actions/application";
+import { updateApplicationStatus, updateApplicationPriority, addNoteToApplication } from "@/actions/application";
 import Link from "next/link";
 import { getResume } from "@/actions/resume";
 
@@ -49,8 +49,10 @@ const statusColors = {
 export default function ApplicationDetail({ application }) {
   const router = useRouter();
   const [status, setStatus] = useState(application.status);
+  const [priority, setPriority] = useState(application.priority);
   const [notes, setNotes] = useState(application.notes || "");
   const [isSavingStatus, setIsSavingStatus] = useState(false);
+  const [isSavingPriority, setIsSavingPriority] = useState(false);
   const [isSavingNotes, setIsSavingNotes] = useState(false);
   const [resumeContent, setResumeContent] = useState(null);
 
@@ -65,6 +67,20 @@ export default function ApplicationDetail({ application }) {
       toast.error(error.message || "Failed to update status");
     } finally {
       setIsSavingStatus(false);
+    }
+  };
+
+  const handlePriorityChange = async (newPriority) => {
+    setIsSavingPriority(true);
+    try {
+      await updateApplicationPriority(application.id, newPriority);
+      setPriority(newPriority);
+      toast.success("Priority updated successfully");
+      router.refresh();
+    } catch (error) {
+      toast.error(error.message || "Failed to update priority");
+    } finally {
+      setIsSavingPriority(false);
     }
   };
 
@@ -147,8 +163,22 @@ export default function ApplicationDetail({ application }) {
 
             <div>
               <Label className="text-sm text-muted-foreground">Priority</Label>
-              <div className="mt-1">
-                <Badge variant="outline">{application.priority}</Badge>
+              <div className="mt-1 flex items-center gap-2">
+                <Select
+                  value={priority}
+                  onValueChange={handlePriorityChange}
+                  disabled={isSavingPriority}
+                >
+                  <SelectTrigger className="w-[200px]">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="LOW">Low</SelectItem>
+                    <SelectItem value="MEDIUM">Medium</SelectItem>
+                    <SelectItem value="HIGH">High</SelectItem>
+                  </SelectContent>
+                </Select>
+                {isSavingPriority && <Loader2 className="h-4 w-4 animate-spin" />}
               </div>
             </div>
 
