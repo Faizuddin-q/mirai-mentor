@@ -7,7 +7,7 @@ export default async function OnboardingPage() {
   const { isOnboarded } = await getUserOnboardingStatus();
 
   if (isOnboarded) {
-    redirect("/resume");
+    redirect("/applications");
   }
 
   return (

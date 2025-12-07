@@ -55,6 +55,10 @@ export async function updateUser(data) {
     });
 
     revalidatePath("/");
+    revalidatePath("/onboarding");
+    revalidatePath("/applications");
+    revalidatePath("/resume");
+    revalidatePath("/profile");
 
     const updatedUser = {
       ...updatedUserRecord,

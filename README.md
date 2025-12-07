@@ -163,15 +163,16 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 mirai-mentor-minor-project/
 ├── app/                    # Next.js app directory
 │   ├── (auth)/            # Authentication routes
-│   ├── (main)/            # Main application routes
+│   ├── (main)/            # Main application routes (requires onboarding)
 │   │   ├── smart-answer-desk/
 │   │   ├── ai-cover-letter/
 │   │   ├── resume/
-│   │   ├── interview/
+│   │   ├── quiz/
 │   │   ├── profile/
-│   │   └── explore/
+│   │   ├── explore/
+│   │   └── applications/
 │   ├── api/               # API routes
-│   └── onboarding/        # Onboarding flow
+│   └── onboarding/        # Onboarding flow (separate from main to avoid redirect loops)
 ├── actions/               # Server actions
 ├── components/            # Reusable components
 ├── lib/                   # Utility functions
