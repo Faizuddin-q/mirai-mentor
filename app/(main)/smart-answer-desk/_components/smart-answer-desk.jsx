@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
-import { Loader2 } from "lucide-react";
+import { Loader2, Copy, Check, Sparkles, Edit, Monitor } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -16,13 +16,19 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { generateAnswer } from "@/actions/smart-answer-desk";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { generateAnswer, enhanceAnswer } from "@/actions/smart-answer-desk";
 import useFetch from "@/hooks/use-fetch";
 import { smartAnswerDeskSchema } from "@/app/lib/schema";
 import MDEditor from "@uiw/react-md-editor";
 
 const SmartAnswerDesk = () => {
   const [answerData, setAnswerData] = useState(null);
+  const [formData, setFormData] = useState(null);
+  const [copied, setCopied] = useState(false);
+  const [activeTab, setActiveTab] = useState("preview");
+  const [editorContent, setEditorContent] = useState("");
+  const [editorMode, setEditorMode] = useState("preview");
 
   const {
     register,
@@ -39,18 +45,79 @@ const SmartAnswerDesk = () => {
     data: generatedAnswer,
   } = useFetch(generateAnswer);
 
+  const {
+    loading: isEnhancing,
+    fn: enhanceAnswerFn,
+    data: enhancedResult,
+    error: enhanceError,
+  } = useFetch(enhanceAnswer);
+
   useEffect(() => {
     if (generatedAnswer) {
       setAnswerData(generatedAnswer);
+      setEditorContent(generatedAnswer.answer);
     }
   }, [generatedAnswer]);
 
+  useEffect(() => {
+    if (enhancedResult && !isEnhancing) {
+      setEditorContent(enhancedResult.answer);
+      setAnswerData((prev) => ({
+        ...prev,
+        answer: enhancedResult.answer,
+      }));
+      toast.success("Answer enhanced successfully!");
+    }
+    if (enhanceError) {
+      toast.error(enhanceError.message || "Failed to enhance answer");
+    }
+  }, [enhancedResult, enhanceError, isEnhancing]);
+
   const onSubmit = async (data) => {
     try {
+      setFormData(data);
       await generateAnswerFn(data);
       toast.success("Answer generated successfully!");
     } catch (error) {
       toast.error(error.message || "Failed to generate answer");
+    }
+  };
+
+  const handleCopy = async () => {
+    if (!editorContent) return;
+    
+    try {
+      await navigator.clipboard.writeText(editorContent);
+      setCopied(true);
+      toast.success("Answer copied to clipboard!");
+      
+      setTimeout(() => {
+        setCopied(false);
+      }, 3000);
+    } catch (error) {
+      console.error("Failed to copy:", error);
+      toast.error("Failed to copy answer");
+    }
+  };
+
+  const handleEnhance = async () => {
+    if (!answerData) {
+      toast.error("No answer to enhance");
+      return;
+    }
+    if (!editorContent || !editorContent.trim()) {
+      toast.error("Please add some content to enhance");
+      return;
+    }
+    try {
+      await enhanceAnswerFn({
+        currentAnswer: editorContent,
+        companyName: answerData.companyName,
+        question: answerData.question,
+        companyJD: formData?.companyJD || "",
+      });
+    } catch (error) {
+      console.error("Enhance error:", error);
     }
   };
 
@@ -147,18 +214,103 @@ const SmartAnswerDesk = () => {
                   {answerData.question}
                 </p>
               </div>
-              <div>
-                <Label className="text-sm font-semibold mb-2 block">Answer:</Label>
-                <div className="border rounded-lg">
-                  <MDEditor.Markdown source={answerData.answer} />
+              <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+                <div className="flex justify-between items-center mb-4">
+                  <TabsList>
+                    <TabsTrigger value="edit">Edit</TabsTrigger>
+                    <TabsTrigger value="preview">Preview</TabsTrigger>
+                  </TabsList>
+                  <div className="flex gap-2">
+                    {activeTab === "edit" && (
+                      <Button
+                        onClick={handleEnhance}
+                        disabled={isEnhancing || !editorContent?.trim()}
+                        variant="outline"
+                        className="gap-2"
+                      >
+                        {isEnhancing ? (
+                          <>
+                            <Loader2 className="h-4 w-4 animate-spin" />
+                            Enhancing...
+                          </>
+                        ) : (
+                          <>
+                            <Sparkles className="h-4 w-4" />
+                            Enhance Answer
+                          </>
+                        )}
+                      </Button>
+                    )}
+                    <Button
+                      variant="outline"
+                      onClick={handleCopy}
+                      className="gap-2"
+                    >
+                      {copied ? (
+                        <>
+                          <Check className="h-4 w-4" />
+                          Copied!
+                        </>
+                      ) : (
+                        <>
+                          <Copy className="h-4 w-4" />
+                          Copy
+                        </>
+                      )}
+                    </Button>
+                  </div>
                 </div>
-              </div>
+
+                <TabsContent value="edit">
+                  <div className="space-y-2">
+                    {activeTab === "edit" && (
+                      <Button
+                        variant="link"
+                        type="button"
+                        className="mb-2"
+                        onClick={() =>
+                          setEditorMode(editorMode === "preview" ? "edit" : "preview")
+                        }
+                      >
+                        {editorMode === "preview" ? (
+                          <>
+                            <Edit className="h-4 w-4 mr-2" />
+                            Edit Mode
+                          </>
+                        ) : (
+                          <>
+                            <Monitor className="h-4 w-4 mr-2" />
+                            Preview Mode
+                          </>
+                        )}
+                      </Button>
+                    )}
+                    <div className="border rounded-lg">
+                      <MDEditor
+                        value={editorContent}
+                        onChange={setEditorContent}
+                        preview={editorMode}
+                        height={500}
+                      />
+                    </div>
+                  </div>
+                </TabsContent>
+
+                <TabsContent value="preview">
+                  <div className="border rounded-lg p-4">
+                    <MDEditor.Markdown source={editorContent} />
+                  </div>
+                </TabsContent>
+              </Tabs>
               <div className="flex justify-end">
                 <Button
                   variant="outline"
                   onClick={() => {
                     reset();
                     setAnswerData(null);
+                    setFormData(null);
+                    setEditorContent("");
+                    setActiveTab("preview");
                   }}
                 >
                   Generate New Answer
