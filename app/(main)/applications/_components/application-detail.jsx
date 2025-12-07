@@ -126,12 +126,6 @@ export default function ApplicationDetail({ application }) {
                 {application.jobType}
               </CardDescription>
             </div>
-            <Link href={`/applications/${application.id}/edit`}>
-              <Button variant="outline">
-                <Edit className="h-4 w-4 mr-2" />
-                Edit Application
-              </Button>
-            </Link>
           </div>
         </CardHeader>
         <CardContent className="space-y-4">

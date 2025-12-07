@@ -34,7 +34,7 @@ export default async function EditApplicationPage({ params }) {
         </Link>
 
         <h1 className="text-xl font-bold gradient-title mb-6">
-          Edit Application
+          Edit Application for {application.companyName} - {application.jobTitle}
         </h1>
       </div>
 

@@ -27,7 +27,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { MoreVertical, Edit, Trash2, ExternalLink } from "lucide-react";
+import { MoreVertical, Trash2, ExternalLink, Eye } from "lucide-react";
 import { deleteApplication, updateApplicationStatus } from "@/actions/application";
 import { toast } from "sonner";
 import {
@@ -210,8 +210,8 @@ export default function ApplicationsList({ applications }) {
                       <DropdownMenuContent align="end">
                         <DropdownMenuItem asChild>
                           <Link href={`/applications/${app.id}`}>
-                            <Edit className="h-4 w-4 mr-2" />
-                            Edit
+                            <Eye className="h-4 w-4 mr-2" />
+                            More Details
                           </Link>
                         </DropdownMenuItem>
                         <DropdownMenuItem

@@ -58,7 +58,6 @@ An AI-powered career preparation platform that helps job seekers create professi
 ### 7. **Dashboard & Analytics**
 - View interview performance statistics
 - Track resume and cover letter history
-- Industry insights and trends
 - Performance charts and visualizations
 
 ## 🛠️ Tech Stack
@@ -86,8 +85,7 @@ An AI-powered career preparation platform that helps job seekers create professi
 - **Clerk** - Authentication and user management
 
 ### AI & Services
-- **Google Gemini API** (gemini-2.5-flash) - AI-powered content generation
-- **Inngest** - Background job processing
+- **Google Gemini API** - AI-powered content generation
 - **UploadThing** - File upload service for resume PDFs
 
 ### Additional Tools
