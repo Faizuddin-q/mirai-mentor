@@ -262,3 +262,251 @@ Begin when ready.
     throw new Error("Failed to generate answer");
   }
 }
+
+export async function enhanceAnswer(data) {
+  const { userId } = await auth();
+  if (!userId) throw new Error("Unauthorized");
+
+  const clerkUser = await currentUser();
+  if (!clerkUser) throw new Error("Unauthorized");
+
+  const user = await db.user.findUnique({
+    where: { clerkUserId: userId },
+  });
+
+  if (!user) throw new Error("User not found");
+
+  let industry = user.industry || "";
+  let subIndustry = "";
+  if (user.industry) {
+    const parts = user.industry.split("-");
+    industry = parts[0] || "";
+    subIndustry = parts.slice(1).join(" ").replace(/-/g, " ") || "";
+  }
+
+  const candidateName =
+    user.name ||
+    [clerkUser.firstName, clerkUser.lastName].filter(Boolean).join(" ").trim() ||
+    "Your Name";
+
+  const experienceLevel = String(user.experience);
+
+  const skillsList =
+    user.skills && user.skills.length > 0
+      ? user.skills.join(", ")
+      : "general professional skills";
+
+  const lowerQuestion = (data.question || "").toLowerCase();
+
+  const isWhyJoinQuestion = [
+    "why join",
+    "why do you want",
+    "why this company",
+    "why our company",
+    "work here",
+    "why work",
+    "why choose",
+    "reason for joining",
+    "motivate your interest",
+    "what interests you",
+    "what excites you",
+    "why interested",
+    "why apply",
+    "apply here",
+    "join us",
+    "want to join",
+    "want to work",
+    "interest in company",
+    "why should we hire",
+    "fit for this company",
+    "why do you think we",
+    "want to be part",
+    "excites you about",
+    "motivation behind applying",
+    "joining motivation",
+    "joining reason",
+    "like to work here",
+    "like to join",
+    "why suitable",
+    "why are you a fit",
+    "why pick this firm",
+    "interest in role",
+    "interest in organisation",
+    "work culture attracted",
+    "role excites me",
+    "company excites me",
+    "inspired to join",
+    "company values attracted",
+    "what made you apply",
+    "what inspired you",
+    "why should you join",
+    "why did you apply",
+    "personal motivation",
+    "career motivation",
+    "joining interest",
+    "what made you choose",
+    "what motivates you to join",
+    "why apply for job",
+    "why you want this role",
+    "choose our company",
+    "excited to work here",
+  ].some(key => lowerQuestion.includes(key));
+
+  let prompt;
+
+  if (isWhyJoinQuestion) {
+    prompt = `
+You are an expert career coach and interview preparation specialist helping candidates enhance their answers to "why this company" style questions.
+
+Your task is to enhance and improve the following answer to a question asked by ${data.companyName}.
+
+---
+
+## Candidate Profile
+- Name: ${candidateName}
+- Experience Level: ${experienceLevel} (${user.experience || 0} years of experience)
+- Industry: ${industry}${subIndustry ? ` ${subIndustry}` : ""}
+- Key Skills: ${skillsList}
+- Professional Background: ${
+      user.bio ||
+      "Experienced professional with a strong track record in their field"
+    }
+
+---
+
+## Company Information
+- Company Name: ${data.companyName}
+${data.companyJD ? `- Company or Job Description: ${data.companyJD}` : ""}
+
+---
+
+## Question Asked by Company
+${data.question}
+
+---
+
+## Current Answer
+"${data.currentAnswer}"
+
+---
+
+## Enhancement Goals
+
+Enhance the answer while preserving the user's original intent and key points:
+- Improve clarity, flow, and readability
+- Strengthen the connection between the candidate's experience and the company's needs
+- Enhance the professional tone and impact
+- Make the answer more compelling and authentic
+- Use concrete, down to earth details about ${data.companyName}, not buzzwords
+- Keep the answer simple, warm, professional, and human
+- Maintain the first person perspective
+
+---
+
+## Writing Guidelines
+
+- Tone: simple, warm, professional, and human
+- Use plain English and short sentences that a non native speaker can understand
+- Avoid buzzwords and generic phrases that sound like AI
+- Do not use any kind of dash such as -, --, or —
+- It is OK to show a bit of personality and curiosity
+- Use the first person "I"
+- Preserve the user's specific edits, personal touches, and unique points they added
+- Enhance grammar, word choice, sentence structure, and overall impact
+- Return only the answer text in Markdown with normal paragraphs, no headings, no bullet points, no lists
+
+Begin when ready.
+`;
+  } else {
+    prompt = `
+You are an expert career coach and interview preparation specialist helping candidates enhance their answers to company questions.
+
+Your task is to enhance and improve the following answer to a question asked by ${data.companyName}.
+
+---
+
+## Candidate Profile
+- Name: ${candidateName}
+- Experience Level: ${experienceLevel} (${user.experience || 0} years of experience)
+- Industry: ${industry}${subIndustry ? ` ${subIndustry}` : ""}
+- Key Skills: ${skillsList}
+- Professional Background: ${
+      user.bio ||
+      "Experienced professional with a strong track record in their field"
+    }
+
+---
+
+## Company Information
+- Company Name: ${data.companyName}
+${data.companyJD ? `- Company or Job Description: ${data.companyJD}` : ""}
+
+---
+
+## Question Asked by Company
+${data.question}
+
+---
+
+## Current Answer
+"${data.currentAnswer}"
+
+---
+
+## Enhancement Goals
+
+Enhance the answer while preserving the user's original intent and key points:
+- Improve clarity, flow, and readability
+- Strengthen the connection between the candidate's experience and the company's needs
+- Enhance the professional tone and impact
+- Make the answer more compelling and authentic
+- Provide better structure and organization
+- Maintain the appropriate length (around 150 to 300 words)
+- The final paragraph must clearly align the candidate's skills, experience, and goals with the company's needs
+
+---
+
+## Writing Guidelines
+
+- Tone: professional, confident, and authentic, appropriate for a ${experienceLevel} professional
+- Length: comprehensive but concise, around 150 to 300 words depending on the question
+- Structure: well organized with clear paragraphs
+- Voice: write in the first person, from the candidate's perspective
+- Personalization: mention specific skills (${skillsList}) and experience in ${industry}${
+      subIndustry ? `, particularly ${subIndustry}` : ""
+    }
+- Preserve the user's specific edits, personal touches, and unique points they added
+- Enhance grammar, word choice, sentence structure, and overall impact
+- Use simple, plain English and short sentences. Avoid complex sentence structures.
+- Do not use any kind of dash such as -, --, or —. Use commas or periods instead.
+- Keep language natural and realistic. Avoid overly formal, stiff, or flowery language.
+- Avoid generic AI style phrases. Write like a real person who is thinking carefully.
+
+---
+
+## Output Requirements
+
+- Return only the enhanced answer in Markdown format
+- Do not include headings, commentary, or extra text
+- Maintain the same structure and key points as the original
+- Use only normal paragraphs, no bullet points or lists
+- Keep the writing simple, clear, and easy to read
+
+Begin when ready.
+`;
+  }
+
+  try {
+    const result = await model.generateContent(prompt);
+    const enhancedAnswer = result.response.text().trim();
+
+    return {
+      answer: enhancedAnswer,
+      companyName: data.companyName,
+      question: data.question,
+    };
+  } catch (error) {
+    console.error("Error enhancing answer:", error?.message || error);
+    throw new Error("Failed to enhance answer");
+  }
+}
