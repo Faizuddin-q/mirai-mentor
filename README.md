@@ -2,9 +2,24 @@
 
 An AI-powered career preparation platform that helps job seekers create professional resumes, generate personalized cover letters, practice mock interviews, and craft intelligent answers to questions asked in job application forms.
 
-## 🚀 Features
+## Features
 
-### 1. **Smart Answer Desk**
+### 1. **Job Application Tracker**
+- Log and track every job application in one place
+- Comprehensive application details (company, role, location, job type, source)
+- Status tracking with visual timeline (Wishlist → Applied → OA → Interview → Offer/Rejected)
+- Priority levels (Low, Medium, High) for better organization
+- Attach resumes from multiple sources:
+  - Upload pdf from system
+  - Link to internal resumes from your account
+  - External links to documents
+  - Paste text directly
+- Markdown-supported notes editor for each application
+- Filter applications by status, source, priority, and date range
+- Status history tracking to see progression over time
+- Quick actions to update status and manage applications
+
+### 2. **Smart Answer Desk**
 - AI-powered answer generation for questions asked in job application forms
 - Personalized responses based on your profile, skills, and experience
 - Special handling for "Why join this company?" questions
@@ -12,20 +27,20 @@ An AI-powered career preparation platform that helps job seekers create professi
 - AI enhancement to improve your answers
 - Copy to clipboard functionality
 
-### 2. **AI Cover Letter Generator**
+### 3. **AI Cover Letter Generator**
 - Generate personalized cover letters tailored to specific job applications
 - Uses company information and job descriptions
 - Multiple cover letter management
 - Markdown-based editing and preview
 
-### 3. **Resume Builder**
+### 4. **Resume Builder**
 - Create professional resumes with structured sections
 - AI-powered resume improvement suggestions
 - Markdown-based resume editor
 - Multiple resume management
 - Export functionality
 
-### 4. **Mock Interview & Quiz**
+### 5. **Mock Interview & Quiz**
 - AI-generated interview questions based on your profile
 - Multiple choice quiz format
 - Real-time scoring and performance tracking
@@ -33,33 +48,18 @@ An AI-powered career preparation platform that helps job seekers create professi
 - Performance analytics and charts
 - Category-based assessments
 
-### 5. **User Profile Management**
+### 6. **User Profile Management**
 - Comprehensive user onboarding
 - Store personal information, skills, and experience
 - Industry and sub-industry selection
 - Professional bio management
 - Profile-based personalization across all features
 
-### 6. **Dashboard & Analytics**
+### 7. **Dashboard & Analytics**
 - View interview performance statistics
 - Track resume and cover letter history
 - Industry insights and trends
 - Performance charts and visualizations
-
-### 7. **Job Application Tracker**
-- Log and track every job application in one place
-- Comprehensive application details (company, role, location, job type, source)
-- Status tracking with visual timeline (Wishlist → Applied → OA → Interview → Offer/Rejected)
-- Priority levels (Low, Medium, High) for better organization
-- Attach resumes and cover letters from multiple sources:
-  - Link to internal resumes/cover letters from your account
-  - External links to documents
-  - Paste text directly
-- Markdown-supported notes editor for each application
-- Filter applications by status, source, priority, and date range
-- Status history tracking to see progression over time
-- Quick actions to update status and manage applications
-- Application deadline tracking
 
 ## 🛠️ Tech Stack
 
