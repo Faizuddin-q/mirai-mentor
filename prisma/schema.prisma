@@ -148,21 +148,16 @@ model Application {
 
   companyName String
   jobTitle    String
-  jobLocation String?
   jobType     JobType
   jobLink     String?
   source      ApplicationSource
-  appliedAt   DateTime?
-  deadline    DateTime?
   status      ApplicationStatus @default(WISHLIST)
   priority    Priority          @default(MEDIUM)
   nextAction  String?
   notes       String?           @db.Text
 
-  resumeSourceType      AttachmentSourceType?
-  resumeReference       String?
-  coverLetterSourceType AttachmentSourceType?
-  coverLetterReference  String?
+  resumeSourceType AttachmentSourceType?
+  resumeReference  String?
 
   statusHistory ApplicationStatusHistory[]
 

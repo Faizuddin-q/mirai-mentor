@@ -29,17 +29,13 @@ import { applicationSchema } from "@/app/lib/schema";
 import { createApplication, updateApplication } from "@/actions/application";
 import useFetch from "@/hooks/use-fetch";
 import { getResumes } from "@/actions/resume";
-import { getCoverLetters } from "@/actions/cover-letter";
 
 export default function ApplicationForm({ initialData, applicationId }) {
   const router = useRouter();
   const isEditing = !!applicationId;
   const [resumeSourceType, setResumeSourceType] = useState("INTERNAL");
-  const [coverLetterSourceType, setCoverLetterSourceType] = useState("INTERNAL");
   const [resumeText, setResumeText] = useState("");
-  const [coverLetterText, setCoverLetterText] = useState("");
   const [resumes, setResumes] = useState([]);
-  const [coverLetters, setCoverLetters] = useState([]);
 
   const {
     loading: creating,
@@ -54,15 +50,11 @@ export default function ApplicationForm({ initialData, applicationId }) {
   } = useFetch(updateApplication);
 
   useEffect(() => {
-    // Load resumes and cover letters for internal reference
+    // Load resumes for internal reference
     const loadData = async () => {
       try {
-        const [resumesData, coverLettersData] = await Promise.all([
-          getResumes(),
-          getCoverLetters(),
-        ]);
+        const resumesData = await getResumes();
         setResumes(resumesData || []);
-        setCoverLetters(coverLettersData || []);
       } catch (error) {
         console.error("Error loading data:", error);
       }
@@ -89,12 +81,8 @@ export default function ApplicationForm({ initialData, applicationId }) {
   useEffect(() => {
     if (initialData) {
       setResumeSourceType(initialData.resumeSourceType || "INTERNAL");
-      setCoverLetterSourceType(initialData.coverLetterSourceType || "INTERNAL");
       if (initialData.resumeSourceType === "TEXT_PASTE") {
         setResumeText(initialData.resumeReference || "");
-      }
-      if (initialData.coverLetterSourceType === "TEXT_PASTE") {
-        setCoverLetterText(initialData.coverLetterReference || "");
       }
     }
   }, [initialData]);
@@ -110,14 +98,12 @@ export default function ApplicationForm({ initialData, applicationId }) {
     defaultValues: initialData ? {
       ...initialData,
       resumeReference: initialData.resumeReference || "none",
-      coverLetterReference: initialData.coverLetterReference || "none",
     } : {
       status: "WISHLIST",
       priority: "MEDIUM",
       jobType: "FULL_TIME",
       source: "LINKEDIN",
       resumeReference: "none",
-      coverLetterReference: "none",
     },
   });
 
@@ -134,23 +120,10 @@ export default function ApplicationForm({ initialData, applicationId }) {
         resumeRef = resumeText;
       }
 
-      // Handle cover letter reference based on source type
-      let coverLetterRef = null;
-      if (coverLetterSourceType === "INTERNAL" && data.coverLetterReference && data.coverLetterReference !== "none") {
-        coverLetterRef = data.coverLetterReference;
-      } else if (coverLetterSourceType === "EXTERNAL_LINK") {
-        const coverLetterLink = watch("coverLetterLink");
-        if (coverLetterLink) coverLetterRef = coverLetterLink;
-      } else if (coverLetterSourceType === "TEXT_PASTE" && coverLetterText) {
-        coverLetterRef = coverLetterText;
-      }
-
       const applicationData = {
         ...data,
         resumeSourceType: resumeRef ? resumeSourceType : null,
         resumeReference: resumeRef,
-        coverLetterSourceType: coverLetterRef ? coverLetterSourceType : null,
-        coverLetterReference: coverLetterRef,
       };
 
       if (isEditing) {
@@ -198,15 +171,6 @@ export default function ApplicationForm({ initialData, applicationId }) {
               {errors.jobTitle && (
                 <p className="text-sm text-red-500">{errors.jobTitle.message}</p>
               )}
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="jobLocation">Job Location</Label>
-              <Input
-                id="jobLocation"
-                placeholder="e.g., Remote, New York, NY"
-                {...register("jobLocation")}
-              />
             </div>
 
             <div className="space-y-2">
@@ -268,24 +232,6 @@ export default function ApplicationForm({ initialData, applicationId }) {
               {errors.source && (
                 <p className="text-sm text-red-500">{errors.source.message}</p>
               )}
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="appliedAt">Applied Date</Label>
-              <Input
-                id="appliedAt"
-                type="date"
-                {...register("appliedAt")}
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="deadline">Deadline</Label>
-              <Input
-                id="deadline"
-                type="date"
-                {...register("deadline")}
-              />
             </div>
 
             <div className="space-y-2">
@@ -421,75 +367,6 @@ export default function ApplicationForm({ initialData, applicationId }) {
                 className="h-32"
                 value={resumeText}
                 onChange={(e) => setResumeText(e.target.value)}
-              />
-            </div>
-          )}
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardHeader>
-          <CardTitle>Cover Letter</CardTitle>
-          <CardDescription>Attach the cover letter used for this application</CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="space-y-2">
-            <Label>Cover Letter Source</Label>
-            <Select value={coverLetterSourceType} onValueChange={setCoverLetterSourceType}>
-              <SelectTrigger>
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="INTERNAL">From My Cover Letters</SelectItem>
-                <SelectItem value="EXTERNAL_LINK">External Link</SelectItem>
-                <SelectItem value="TEXT_PASTE">Paste Text</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-
-          {coverLetterSourceType === "INTERNAL" && (
-            <div className="space-y-2">
-              <Label htmlFor="coverLetterReference">Select Cover Letter</Label>
-              <Select
-                value={watch("coverLetterReference") || "none"}
-                onValueChange={(value) => setValue("coverLetterReference", value === "none" ? null : value)}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Select a cover letter (optional)" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="none">None</SelectItem>
-                  {coverLetters.map((cl) => (
-                    <SelectItem key={cl.id} value={cl.id}>
-                      {cl.companyName} - {cl.jobTitle}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-          )}
-
-          {coverLetterSourceType === "EXTERNAL_LINK" && (
-            <div className="space-y-2">
-              <Label htmlFor="coverLetterLink">Cover Letter Link</Label>
-              <Input
-                id="coverLetterLink"
-                type="url"
-                placeholder="https://..."
-                {...register("coverLetterLink", { required: false })}
-              />
-            </div>
-          )}
-
-          {coverLetterSourceType === "TEXT_PASTE" && (
-            <div className="space-y-2">
-              <Label htmlFor="coverLetterText">Paste Cover Letter Content</Label>
-              <Textarea
-                id="coverLetterText"
-                placeholder="Paste your cover letter content here..."
-                className="h-32"
-                value={coverLetterText}
-                onChange={(e) => setCoverLetterText(e.target.value)}
               />
             </div>
           )}

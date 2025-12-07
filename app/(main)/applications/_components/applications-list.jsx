@@ -3,7 +3,6 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { format } from "date-fns";
 import {
   Table,
   TableBody,
@@ -175,14 +174,13 @@ export default function ApplicationsList({ applications }) {
               <TableHead>Status</TableHead>
               <TableHead>Source</TableHead>
               <TableHead>Priority</TableHead>
-              <TableHead>Applied Date</TableHead>
               <TableHead className="text-right">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {filteredApplications.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={7} className="text-center py-8 text-muted-foreground">
+                <TableCell colSpan={6} className="text-center py-8 text-muted-foreground">
                   No applications found. Add your first application to get started.
                 </TableCell>
               </TableRow>
@@ -201,11 +199,6 @@ export default function ApplicationsList({ applications }) {
                     <Badge variant="outline" className={priorityColors[app.priority]}>
                       {app.priority}
                     </Badge>
-                  </TableCell>
-                  <TableCell>
-                    {app.appliedAt
-                      ? format(new Date(app.appliedAt), "MMM dd, yyyy")
-                      : "-"}
                   </TableCell>
                   <TableCell className="text-right">
                     <DropdownMenu>

@@ -35,7 +35,6 @@ import {
 import { updateApplicationStatus, addNoteToApplication } from "@/actions/application";
 import Link from "next/link";
 import { getResume } from "@/actions/resume";
-import { getCoverLetter } from "@/actions/cover-letter";
 
 const statusColors = {
   WISHLIST: "bg-gray-500",
@@ -54,7 +53,6 @@ export default function ApplicationDetail({ application }) {
   const [isSavingStatus, setIsSavingStatus] = useState(false);
   const [isSavingNotes, setIsSavingNotes] = useState(false);
   const [resumeContent, setResumeContent] = useState(null);
-  const [coverLetterContent, setCoverLetterContent] = useState(null);
 
   const handleStatusChange = async (newStatus) => {
     setIsSavingStatus(true);
@@ -83,7 +81,7 @@ export default function ApplicationDetail({ application }) {
     }
   };
 
-  // Load resume/cover letter content if they're internal references
+  // Load resume content if it's an internal reference
   useEffect(() => {
     const loadAttachments = async () => {
       if (application.resumeSourceType === "INTERNAL" && application.resumeReference) {
@@ -92,17 +90,6 @@ export default function ApplicationDetail({ application }) {
           setResumeContent(resume?.content);
         } catch (error) {
           console.error("Error loading resume:", error);
-        }
-      }
-      if (
-        application.coverLetterSourceType === "INTERNAL" &&
-        application.coverLetterReference
-      ) {
-        try {
-          const coverLetter = await getCoverLetter(application.coverLetterReference);
-          setCoverLetterContent(coverLetter?.content);
-        } catch (error) {
-          console.error("Error loading cover letter:", error);
         }
       }
     };
@@ -120,7 +107,6 @@ export default function ApplicationDetail({ application }) {
                 {application.companyName} - {application.jobTitle}
               </CardTitle>
               <CardDescription className="mt-2">
-                {application.jobLocation && `${application.jobLocation} • `}
                 {application.jobType}
               </CardDescription>
             </div>
@@ -170,24 +156,6 @@ export default function ApplicationDetail({ application }) {
               <Label className="text-sm text-muted-foreground">Source</Label>
               <div className="mt-1">{application.source}</div>
             </div>
-
-            <div>
-              <Label className="text-sm text-muted-foreground">Applied Date</Label>
-              <div className="mt-1">
-                {application.appliedAt
-                  ? format(new Date(application.appliedAt), "MMM dd, yyyy")
-                  : "Not set"}
-              </div>
-            </div>
-
-            {application.deadline && (
-              <div>
-                <Label className="text-sm text-muted-foreground">Deadline</Label>
-                <div className="mt-1">
-                  {format(new Date(application.deadline), "MMM dd, yyyy")}
-                </div>
-              </div>
-            )}
 
             {application.jobLink && (
               <div>
@@ -287,34 +255,7 @@ export default function ApplicationDetail({ application }) {
             </div>
           )}
 
-          {application.coverLetterSourceType && (
-            <div>
-              <Label className="text-sm font-semibold mb-2 block">Cover Letter</Label>
-              {application.coverLetterSourceType === "INTERNAL" && coverLetterContent && (
-                <div className="border rounded-lg p-4">
-                  <MDEditor.Markdown source={coverLetterContent} />
-                </div>
-              )}
-              {application.coverLetterSourceType === "EXTERNAL_LINK" && (
-                <a
-                  href={application.coverLetterReference}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-blue-600 hover:underline flex items-center gap-1"
-                >
-                  <LinkIcon className="h-4 w-4" />
-                  {application.coverLetterReference}
-                </a>
-              )}
-              {application.coverLetterSourceType === "TEXT_PASTE" && (
-                <div className="border rounded-lg p-4">
-                  <p className="whitespace-pre-wrap">{application.coverLetterReference}</p>
-                </div>
-              )}
-            </div>
-          )}
-
-          {!application.resumeSourceType && !application.coverLetterSourceType && (
+          {!application.resumeSourceType && (
             <p className="text-sm text-muted-foreground">No attachments added yet.</p>
           )}
         </CardContent>

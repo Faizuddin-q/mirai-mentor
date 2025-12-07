@@ -19,15 +19,8 @@ export default async function EditApplicationPage({ params }) {
     redirect("/applications");
   }
 
-  // Format dates for form inputs
   const initialData = {
     ...application,
-    appliedAt: application.appliedAt
-      ? new Date(application.appliedAt).toISOString().split("T")[0]
-      : "",
-    deadline: application.deadline
-      ? new Date(application.deadline).toISOString().split("T")[0]
-      : "",
   };
 
   return (

@@ -19,20 +19,15 @@ export async function createApplication(data) {
       userId: user.id,
       companyName: data.companyName,
       jobTitle: data.jobTitle,
-      jobLocation: data.jobLocation || null,
       jobType: data.jobType,
       jobLink: data.jobLink || null,
       source: data.source,
-      appliedAt: data.appliedAt ? new Date(data.appliedAt) : null,
-      deadline: data.deadline ? new Date(data.deadline) : null,
       status: data.status || "WISHLIST",
       priority: data.priority || "MEDIUM",
       nextAction: data.nextAction || null,
       notes: data.notes || null,
       resumeSourceType: data.resumeSourceType || null,
       resumeReference: data.resumeReference || null,
-      coverLetterSourceType: data.coverLetterSourceType || null,
-      coverLetterReference: data.coverLetterReference || null,
     },
   });
 
@@ -73,20 +68,15 @@ export async function updateApplication(id, data) {
     data: {
       companyName: data.companyName,
       jobTitle: data.jobTitle,
-      jobLocation: data.jobLocation || null,
       jobType: data.jobType,
       jobLink: data.jobLink || null,
       source: data.source,
-      appliedAt: data.appliedAt ? new Date(data.appliedAt) : null,
-      deadline: data.deadline ? new Date(data.deadline) : null,
       status: data.status,
       priority: data.priority,
       nextAction: data.nextAction || null,
       notes: data.notes || null,
       resumeSourceType: data.resumeSourceType || null,
       resumeReference: data.resumeReference || null,
-      coverLetterSourceType: data.coverLetterSourceType || null,
-      coverLetterReference: data.coverLetterReference || null,
     },
   });
 
@@ -178,16 +168,6 @@ export async function getApplications(filters = {}) {
       ...(filters.status && { status: filters.status }),
       ...(filters.source && { source: filters.source }),
       ...(filters.priority && { priority: filters.priority }),
-      ...(filters.dateFrom && {
-        appliedAt: {
-          gte: new Date(filters.dateFrom),
-        },
-      }),
-      ...(filters.dateTo && {
-        appliedAt: {
-          lte: new Date(filters.dateTo),
-        },
-      }),
     };
 
     const applications = await db.application.findMany({
