@@ -8,95 +8,181 @@ datasource db {
 }
 
 model User {
-  id            String    @id @default(uuid())
-  clerkUserId   String    @unique // clerk user id
-  email         String    @unique
-  name          String?
-  imageUrl      String?
-  industry      String?    // Combined industry-subindustry (e.g., "tech-software-development")
+  id              String           @id @default(uuid())
+  clerkUserId     String           @unique // clerk user id
+  email           String           @unique
+  name            String?
+  imageUrl        String?
+  industry        String? // Combined industry-subindustry (e.g., "tech-software-development")
   industryInsight IndustryInsight? @relation(fields: [industry], references: [industry])
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
 
   // Profile fields
-  bio           String?
-  experience    Int?      // Years of experience
-  
+  bio        String?
+  experience Int? // Years of experience
+
   // Relations
-  skills        String[]  // Array of skills
-  assessments   Assessment[]
-  resumes       Resume[]
-  coverLetter   CoverLetter[]
+  skills       String[] // Array of skills
+  assessments  Assessment[]
+  resumes      Resume[]
+  coverLetter  CoverLetter[]
+  applications Application[]
 }
 
 model Assessment {
-  id            String    @id @default(cuid())
-  userId        String
-  user          User      @relation(fields: [userId], references: [id])
-  quizScore     Float     // Overall quiz score
-  questions     Json[]    // Array of {question, answer, userAnswer, isCorrect}
-  category      String    // "Technical", "Behavioral", etc.
-  improvementTip String?  // AI-generated improvement tip
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
+  id             String   @id @default(cuid())
+  userId         String
+  user           User     @relation(fields: [userId], references: [id])
+  quizScore      Float // Overall quiz score
+  questions      Json[] // Array of {question, answer, userAnswer, isCorrect}
+  category       String // "Technical", "Behavioral", etc.
+  improvementTip String? // AI-generated improvement tip
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
 
   @@index([userId])
 }
 
 model Resume {
-  id          String    @id @default(cuid())
-  userId      String
-  user        User      @relation(fields: [userId], references: [id])
-  title       String    // Resume title/name (e.g., "Software Engineer Resume", "Product Manager Resume")
-  content     String    @db.Text // Markdown content
-  atsScore    Float?
-  feedback    String?
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  title     String // Resume title/name (e.g., "Software Engineer Resume", "Product Manager Resume")
+  content   String   @db.Text // Markdown content
+  atsScore  Float?
+  feedback  String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@index([userId])
 }
 
 model CoverLetter {
-  id              String    @id @default(cuid())
-  userId          String
-  user            User      @relation(fields: [userId], references: [id])
-  content         String    // Markdown content
-  jobDescription  String?
-  companyName     String    // Name of the company applying to
-  jobTitle        String    // Position applying for
-  status          String    @default("draft") // draft, completed
-  createdAt       DateTime  @default(now())
-  updatedAt       DateTime  @updatedAt
+  id             String   @id @default(cuid())
+  userId         String
+  user           User     @relation(fields: [userId], references: [id])
+  content        String // Markdown content
+  jobDescription String?
+  companyName    String // Name of the company applying to
+  jobTitle       String // Position applying for
+  status         String   @default("draft") // draft, completed
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
 
   @@index([userId])
 }
 
 // Combined Industry Trends and Salary Insights
 model IndustryInsight {
-  id            String    @id @default(cuid())
-  industry      String    @unique  // The industry this data belongs to (e.g., "tech-software-development")
-  
+  id       String @id @default(cuid())
+  industry String @unique // The industry this data belongs to (e.g., "tech-software-development")
+
   // Users in this industry
-  users         User[]
-  
+  users User[]
+
   // Salary data
-  salaryRanges  Json[]    // Array of { role: string, min: float, max: float, median: float, location: string? }
-  
+  salaryRanges Json[] // Array of { role: string, min: float, max: float, median: float, location: string? }
+
   // Industry trends
-  growthRate    Float     // Industry growth rate
-  demandLevel   String    // "High", "Medium", "Low"
-  topSkills     String[]  // Most in-demand skills
-  
+  growthRate  Float // Industry growth rate
+  demandLevel String // "High", "Medium", "Low"
+  topSkills   String[] // Most in-demand skills
+
   // Market conditions
-  marketOutlook String    // "Positive", "Neutral", "Negative"
-  keyTrends     String[]  // Array of current industry trends
-  
+  marketOutlook String // "Positive", "Neutral", "Negative"
+  keyTrends     String[] // Array of current industry trends
+
   // Learning suggestions
-  recommendedSkills String[]  // Skills recommended for the industry
-  
-  lastUpdated   DateTime  @default(now())
-  nextUpdate    DateTime  // Scheduled update time
+  recommendedSkills String[] // Skills recommended for the industry
+
+  lastUpdated DateTime @default(now())
+  nextUpdate  DateTime // Scheduled update time
 
   @@index([industry])
+}
+
+enum JobType {
+  FULL_TIME
+  INTERN
+  REMOTE
+  HYBRID
+  CONTRACT
+}
+
+enum ApplicationSource {
+  LINKEDIN
+  COMPANY_SITE
+  REFERRAL
+  PORTAL
+  OTHER
+}
+
+enum ApplicationStatus {
+  WISHLIST
+  APPLIED
+  OA
+  INTERVIEW
+  OFFER
+  REJECTED
+  WITHDRAWN
+}
+
+enum Priority {
+  LOW
+  MEDIUM
+  HIGH
+}
+
+enum AttachmentSourceType {
+  INTERNAL
+  FILE_UPLOAD
+  EXTERNAL_LINK
+  TEXT_PASTE
+}
+
+model Application {
+  id     String @id @default(cuid())
+  userId String
+  user   User   @relation(fields: [userId], references: [id])
+
+  companyName String
+  jobTitle    String
+  jobLocation String?
+  jobType     JobType
+  jobLink     String?
+  source      ApplicationSource
+  appliedAt   DateTime?
+  deadline    DateTime?
+  status      ApplicationStatus @default(WISHLIST)
+  priority    Priority          @default(MEDIUM)
+  nextAction  String?
+  notes       String?           @db.Text
+
+  resumeSourceType      AttachmentSourceType?
+  resumeReference       String?
+  coverLetterSourceType AttachmentSourceType?
+  coverLetterReference  String?
+
+  statusHistory ApplicationStatusHistory[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+  @@index([status])
+  @@index([userId, status])
+}
+
+model ApplicationStatusHistory {
+  id            String             @id @default(cuid())
+  applicationId String
+  application   Application        @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+  oldStatus     ApplicationStatus?
+  newStatus     ApplicationStatus
+  changedAt     DateTime           @default(now())
+  note          String?            @db.Text
+
+  @@index([applicationId])
+  @@index([changedAt])
 }

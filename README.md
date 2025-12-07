@@ -24,7 +24,6 @@ An AI-powered career preparation platform that helps job seekers create professi
 - Markdown-based resume editor
 - Multiple resume management
 - Export functionality
-- ATS (Applicant Tracking System) score tracking
 
 ### 4. **Mock Interview & Quiz**
 - AI-generated interview questions based on your profile
@@ -32,7 +31,7 @@ An AI-powered career preparation platform that helps job seekers create professi
 - Real-time scoring and performance tracking
 - Detailed explanations for each question
 - Performance analytics and charts
-- Category-based assessments (Technical, Behavioral, etc.)
+- Category-based assessments
 
 ### 5. **User Profile Management**
 - Comprehensive user onboarding
@@ -46,6 +45,21 @@ An AI-powered career preparation platform that helps job seekers create professi
 - Track resume and cover letter history
 - Industry insights and trends
 - Performance charts and visualizations
+
+### 7. **Job Application Tracker**
+- Log and track every job application in one place
+- Comprehensive application details (company, role, location, job type, source)
+- Status tracking with visual timeline (Wishlist → Applied → OA → Interview → Offer/Rejected)
+- Priority levels (Low, Medium, High) for better organization
+- Attach resumes and cover letters from multiple sources:
+  - Link to internal resumes/cover letters from your account
+  - External links to documents
+  - Paste text directly
+- Markdown-supported notes editor for each application
+- Filter applications by status, source, priority, and date range
+- Status history tracking to see progression over time
+- Quick actions to update status and manage applications
+- Application deadline tracking
 
 ## 🛠️ Tech Stack
 
