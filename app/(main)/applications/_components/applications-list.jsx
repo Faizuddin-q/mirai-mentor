@@ -52,8 +52,8 @@ const statusColors = {
 };
 
 const priorityColors = {
-  LOW: "bg-gray-400",
-  MEDIUM: "bg-yellow-500",
+  LOW: "bg-green-500",
+  MEDIUM: "bg-orange-500",
   HIGH: "bg-red-500",
 };
 
@@ -228,6 +228,11 @@ export default function ApplicationsList({ applications }) {
                           onClick={() => handleStatusChange(app.id, "REJECTED")}
                         >
                           Mark as Rejected
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
+                          onClick={() => handleStatusChange(app.id, "OFFER")}
+                        >
+                          Mark as Offer
                         </DropdownMenuItem>
                         {app.jobLink && (
                           <DropdownMenuItem asChild>

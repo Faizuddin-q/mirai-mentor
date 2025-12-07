@@ -158,6 +158,7 @@ model Application {
 
   resumeSourceType AttachmentSourceType?
   resumeReference  String?
+  resumePdfPath    String? // Path to uploaded PDF file
 
   statusHistory ApplicationStatusHistory[]
 

@@ -255,7 +255,7 @@ export default function ApplicationDetail({ application }) {
       <Card>
         <CardHeader>
           <CardTitle>Attachments</CardTitle>
-          <CardDescription>Resume and cover letter used for this application</CardDescription>
+          <CardDescription>Resume used for this application</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           {application.resumeSourceType && (
@@ -280,6 +280,53 @@ export default function ApplicationDetail({ application }) {
               {application.resumeSourceType === "TEXT_PASTE" && (
                 <div className="border rounded-lg p-4">
                   <p className="whitespace-pre-wrap">{application.resumeReference}</p>
+                </div>
+              )}
+              {application.resumeSourceType === "FILE_UPLOAD" && application.resumePdfPath && (
+                <div className="border rounded-lg overflow-hidden">
+                  <div className="w-full h-[600px] bg-gray-50">
+                    <object
+                      data={application.resumePdfPath}
+                      type="application/pdf"
+                      className="w-full h-full"
+                      aria-label="Resume PDF"
+                    >
+                      <div className="flex flex-col items-center justify-center h-full p-8 text-center">
+                        <FileText className="h-12 w-12 text-muted-foreground mb-4" />
+                        <p className="text-muted-foreground mb-4">
+                          Your browser doesn't support PDF preview.
+                        </p>
+                        <a
+                          href={application.resumePdfPath}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-blue-600 hover:underline flex items-center gap-2"
+                        >
+                          <FileText className="h-4 w-4" />
+                          Open PDF in new tab
+                        </a>
+                      </div>
+                    </object>
+                  </div>
+                  <div className="p-2 bg-muted border-t flex items-center justify-between">
+                    <a
+                      href={application.resumePdfPath}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-blue-600 hover:underline flex items-center gap-1 text-sm"
+                    >
+                      <FileText className="h-4 w-4" />
+                      Open PDF in new tab
+                    </a>
+                    <a
+                      href={application.resumePdfPath}
+                      download
+                      className="text-blue-600 hover:underline flex items-center gap-1 text-sm"
+                    >
+                      <FileText className="h-4 w-4" />
+                      Download PDF
+                    </a>
+                  </div>
                 </div>
               )}
             </div>

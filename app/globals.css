@@ -209,4 +209,29 @@ html {
     box-shadow: 0 0 0 1px hsl(var(--primary) / 0.3),
                 0 4px 12px hsl(var(--primary) / 0.1);
   }
+
+  /* Hide UploadThing progress bar and percentage - be specific to avoid hiding buttons */
+  .ut-progress-bar,
+  [class*="ut-progress-bar"],
+  [class*="ut-percentage"],
+  [class*="ut-percent"],
+  [class*="progress-bar"],
+  [class*="percentage"],
+  [data-ut-element="progress-bar"] {
+    display: none !important;
+  }
+  
+  /* Ensure UploadThing button and container are visible */
+  [data-ut-element="button"],
+  button[data-ut-element="button"],
+  [data-ut-element="button-wrapper"],
+  [data-ut-element="upload-button"] {
+    display: inline-flex !important;
+    visibility: visible !important;
+  }
+  
+  /* Hide allowed content text */
+  [data-ut-element="allowed-content"] {
+    display: none !important;
+  }
 }

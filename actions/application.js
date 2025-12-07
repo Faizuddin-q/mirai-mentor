@@ -28,6 +28,7 @@ export async function createApplication(data) {
       notes: data.notes || null,
       resumeSourceType: data.resumeSourceType || null,
       resumeReference: data.resumeReference || null,
+      resumePdfPath: data.resumePdfPath || null,
     },
   });
 
@@ -77,6 +78,7 @@ export async function updateApplication(id, data) {
       notes: data.notes || null,
       resumeSourceType: data.resumeSourceType || null,
       resumeReference: data.resumeReference || null,
+      resumePdfPath: data.resumePdfPath || null,
     },
   });
 
@@ -101,6 +103,24 @@ export async function deleteApplication(id) {
 
   if (!application || application.userId !== user.id) {
     throw new Error("Application not found");
+  }
+
+  // Delete file from UploadThing if it exists
+  if (application.resumePdfPath) {
+    try {
+      const { UTApi } = await import("uploadthing/server");
+      const utapi = new UTApi();
+      
+      // UploadThing URLs format: https://utfs.io/f/{fileKey} or https://uploadthing.com/f/{fileKey}
+      const urlParts = application.resumePdfPath.split("/");
+      const fileKey = urlParts[urlParts.length - 1];
+      
+      if (fileKey) {
+        await utapi.deleteFiles(fileKey);
+      }
+    } catch (error) {
+      console.error("Error deleting file from UploadThing:", error);
+    }
   }
 
   await db.application.delete({

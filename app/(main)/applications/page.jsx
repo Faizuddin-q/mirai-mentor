@@ -19,7 +19,7 @@ export default async function ApplicationsPage({ searchParams }) {
   return (
     <div>
       <div className="flex flex-col md:flex-row gap-2 items-center justify-between mb-5">
-        <h1 className="text-6xl font-bold gradient-title">Job Applications</h1>
+        <h1 className="text-6xl font-bold gradient-title">Job Applications Tracker</h1>
         <Link href="/applications/new">
           <Button>
             <Plus className="h-4 w-4 mr-2" />

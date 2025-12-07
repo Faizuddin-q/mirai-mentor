@@ -88,6 +88,7 @@ An AI-powered career preparation platform that helps job seekers create professi
 ### AI & Services
 - **Google Gemini API** (gemini-2.5-flash) - AI-powered content generation
 - **Inngest** - Background job processing
+- **UploadThing** - File upload service for resume PDFs
 
 ### Additional Tools
 - **date-fns** - Date utility library
@@ -100,6 +101,7 @@ An AI-powered career preparation platform that helps job seekers create professi
 - PostgreSQL database
 - Clerk account (for authentication)
 - Google Gemini API key
+- UploadThing account (for file uploads)
 
 ## 🔧 Installation
 
@@ -129,6 +131,10 @@ NEXT_PUBLIC_CLERK_AFTER_SIGN_IN_URL=/onboarding
 NEXT_PUBLIC_CLERK_AFTER_SIGN_UP_URL=/onboarding
 
 GEMINI_API_KEY=your_gemini_api_key
+
+# UploadThing Configuration
+UPLOADTHING_SECRET=your_uploadthing_secret_key
+UPLOADTHING_APP_ID=your_uploadthing_app_id
 ```
 
 4. Set up the database:

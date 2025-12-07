@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Loader2 } from "lucide-react";
+import { Loader2, FileText, X, CheckCircle2 } from "lucide-react";
 import { toast } from "sonner";
 import {
   Card,
@@ -29,12 +29,18 @@ import { applicationSchema } from "@/app/lib/schema";
 import { createApplication, updateApplication } from "@/actions/application";
 import useFetch from "@/hooks/use-fetch";
 import { getResumes } from "@/actions/resume";
+import { generateUploadButton } from "@uploadthing/react";
+
+const UploadButton = generateUploadButton();
 
 export default function ApplicationForm({ initialData, applicationId }) {
   const router = useRouter();
   const isEditing = !!applicationId;
   const [resumeSourceType, setResumeSourceType] = useState("INTERNAL");
   const [resumeText, setResumeText] = useState("");
+  const [resumeFile, setResumeFile] = useState(null);
+  const [resumeFileName, setResumeFileName] = useState(null);
+  const [uploadingFile, setUploadingFile] = useState(false);
   const [resumes, setResumes] = useState([]);
 
   const {
@@ -65,7 +71,7 @@ export default function ApplicationForm({ initialData, applicationId }) {
   useEffect(() => {
     if (createdApplication) {
       toast.success("Application created successfully!");
-      router.push(`/applications/${createdApplication.id}`);
+      router.push("/applications");
       router.refresh();
     }
   }, [createdApplication, router]);
@@ -73,7 +79,7 @@ export default function ApplicationForm({ initialData, applicationId }) {
   useEffect(() => {
     if (updatedApplication) {
       toast.success("Application updated successfully!");
-      router.push(`/applications/${updatedApplication.id}`);
+      router.push("/applications");
       router.refresh();
     }
   }, [updatedApplication, router]);
@@ -83,6 +89,13 @@ export default function ApplicationForm({ initialData, applicationId }) {
       setResumeSourceType(initialData.resumeSourceType || "INTERNAL");
       if (initialData.resumeSourceType === "TEXT_PASTE") {
         setResumeText(initialData.resumeReference || "");
+      }
+      if (initialData.resumeSourceType === "FILE_UPLOAD" && initialData.resumePdfPath) {
+        setResumeFile(initialData.resumePdfPath);
+        // Extract filename from URL if available
+        const urlParts = initialData.resumePdfPath.split("/");
+        const fileName = urlParts[urlParts.length - 1] || "resume.pdf";
+        setResumeFileName(fileName);
       }
     }
   }, [initialData]);
@@ -111,8 +124,12 @@ export default function ApplicationForm({ initialData, applicationId }) {
     try {
       // Handle resume reference based on source type
       let resumeRef = null;
+      let resumePdfPath = null;
+      
       if (resumeSourceType === "INTERNAL" && data.resumeReference && data.resumeReference !== "none") {
         resumeRef = data.resumeReference;
+      } else if (resumeSourceType === "FILE_UPLOAD" && resumeFile) {
+        resumePdfPath = resumeFile;
       } else if (resumeSourceType === "EXTERNAL_LINK") {
         const resumeLink = watch("resumeLink");
         if (resumeLink) resumeRef = resumeLink;
@@ -122,8 +139,9 @@ export default function ApplicationForm({ initialData, applicationId }) {
 
       const applicationData = {
         ...data,
-        resumeSourceType: resumeRef ? resumeSourceType : null,
+        resumeSourceType: (resumeRef || resumePdfPath) ? resumeSourceType : null,
         resumeReference: resumeRef,
+        resumePdfPath: resumePdfPath,
       };
 
       if (isEditing) {
@@ -134,6 +152,31 @@ export default function ApplicationForm({ initialData, applicationId }) {
     } catch (error) {
       toast.error(error.message || "Failed to save application");
     }
+  };
+
+  const handleRemoveResume = async () => {
+    if (resumeFile) {
+      try {
+        const response = await fetch("/api/uploadthing/delete", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ fileUrl: resumeFile }),
+        });
+
+        if (!response.ok) {
+          console.error("Failed to delete file from UploadThing");
+        }
+      } catch (error) {
+        console.error("Error deleting file:", error);
+      }
+    }
+
+    // Clear local state
+    setResumeFile(null);
+    setResumeFileName(null);
+    setUploadingFile(false);
   };
 
   return (
@@ -318,6 +361,7 @@ export default function ApplicationForm({ initialData, applicationId }) {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="INTERNAL">From My Resumes</SelectItem>
+                <SelectItem value="FILE_UPLOAD">Upload PDF</SelectItem>
                 <SelectItem value="EXTERNAL_LINK">External Link</SelectItem>
                 <SelectItem value="TEXT_PASTE">Paste Text</SelectItem>
               </SelectContent>
@@ -355,6 +399,96 @@ export default function ApplicationForm({ initialData, applicationId }) {
                 placeholder="https://..."
                 {...register("resumeLink", { required: false })}
               />
+            </div>
+          )}
+
+          {resumeSourceType === "FILE_UPLOAD" && (
+            <div className="space-y-3">
+              <Label>Upload Resume PDF (Max 1MB)</Label>
+              
+              {/* Upload Area - Show only when no file is uploaded */}
+              {!resumeFile && (
+                <div className="space-y-3">
+                  <div className="border-2 border-dashed border-muted-foreground/25 rounded-lg p-6 bg-muted/30">
+                    <div className="flex flex-col items-center justify-center space-y-4">
+                      <div className="relative w-full flex justify-center">
+                        <div className="[&_button]:!block [&_button]:!inline-flex border-2 border border-muted-foreground/25 rounded-lg px-4 bg-muted/30 hover:bg-orange-500 hover:text-white">
+                          <UploadButton
+                            endpoint="resumeUploader"
+                            onClientUploadComplete={(res) => {
+                              if (res && res[0]) {
+                                setResumeFile(res[0].url);
+                                setResumeFileName(res[0].name || "resume.pdf");
+                                setUploadingFile(false);
+                                toast.success("Resume uploaded successfully");
+                              }
+                            }}
+                            onUploadError={(error) => {
+                              setUploadingFile(false);
+                              toast.error(`Upload failed: ${error.message}`);
+                            }}
+                            onUploadBegin={(name) => {
+                              setUploadingFile(true);
+                              setResumeFileName(name || "resume.pdf");
+                            }}
+                            className="ut-button:bg-primary ut-button:ut-readying:bg-primary/50 ut-button:ut-uploading:bg-primary/50 ut-allowed-content:hidden"
+                          />
+                        </div>
+                      </div>
+                      <p className="text-xs text-muted-foreground text-center">
+                        Select a PDF file to upload (max 1MB)
+                      </p>
+                    </div>
+                  </div>
+                  
+                  {uploadingFile && (
+                    <div className="flex items-center gap-2 p-3 bg-muted rounded-lg border">
+                      <Loader2 className="h-4 w-4 animate-spin text-primary" />
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-medium">Uploading...</p>
+                        {resumeFileName && (
+                          <p className="text-xs text-muted-foreground truncate">
+                            {resumeFileName}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* Success State - Show only when file is uploaded */}
+              {resumeFile && !uploadingFile && (
+                <div className="p-4 bg-green-50 dark:bg-green-950/20 border border-green-200 dark:border-green-900 rounded-lg">
+                  <div className="flex items-start gap-3">
+                    <div className="flex-shrink-0 mt-0.5">
+                      <CheckCircle2 className="h-5 w-5 text-green-600 dark:text-green-400" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 mb-1">
+                        <FileText className="h-4 w-4 text-green-600 dark:text-green-400" />
+                        <p className="text-sm font-medium text-green-900 dark:text-green-100">
+                          Resume uploaded successfully
+                        </p>
+                      </div>
+                      {resumeFileName && (
+                        <p className="text-xs text-green-700 dark:text-green-300 truncate">
+                          {resumeFileName}
+                        </p>
+                      )}
+                    </div>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      className="flex-shrink-0 h-8 w-8 p-0 hover:bg-red-100 dark:hover:bg-red-900/20"
+                      onClick={handleRemoveResume}
+                    >
+                      <X className="h-4 w-4 text-red-600 dark:text-red-400" />
+                    </Button>
+                  </div>
+                </div>
+              )}
             </div>
           )}
 

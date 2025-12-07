@@ -119,6 +119,7 @@ export const applicationSchema = z.object({
   notes: z.string().optional(),
   resumeSourceType: z.enum(["INTERNAL", "FILE_UPLOAD", "EXTERNAL_LINK", "TEXT_PASTE"]).optional(),
   resumeReference: z.string().optional(),
+  resumePdfPath: z.string().optional(),
 });
 
 export const updateApplicationStatusSchema = z.object({

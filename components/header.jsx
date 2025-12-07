@@ -33,8 +33,8 @@ const navItems = [
     icon: PenBox,
   },
   {
-    label: "Interview",
-    href: "/interview",
+    label: "Quiz",
+    href: "/quiz",
     icon: GraduationCap,
   },
   {
