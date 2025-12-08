@@ -27,7 +27,8 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { MoreVertical, Trash2, ExternalLink, Eye } from "lucide-react";
+import { MoreVertical, Trash2, ExternalLink, Eye, Search } from "lucide-react";
+import { format } from "date-fns";
 import { deleteApplication, updateApplicationStatus } from "@/actions/application";
 import { toast } from "sonner";
 import {
@@ -51,9 +52,21 @@ const statusColors = {
   WITHDRAWN: "bg-gray-400",
 };
 
+export const formatJobType = (jobType) => {
+  const jobTypeMap = {
+    FULL_TIME: "Full Time",
+    INTERN: "Intern",
+    REMOTE: "Remote",
+    HYBRID: "Hybrid",
+    CONTRACT: "Contract",
+  };
+  return jobTypeMap[jobType] || jobType;
+};
+
 export default function ApplicationsList({ applications }) {
   const router = useRouter();
   const [filterStatus, setFilterStatus] = useState("all");
+  const [searchQuery, setSearchQuery] = useState("");
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [applicationToDelete, setApplicationToDelete] = useState(null);
 
@@ -81,24 +94,39 @@ export default function ApplicationsList({ applications }) {
   };
 
   const filteredApplications = applications.filter((app) => {
+    // Filter by status
     if (filterStatus && filterStatus !== "all" && app.status !== filterStatus) return false;
+    
+    // Filter by search query (company name or job title)
+    if (searchQuery.trim()) {
+      const query = searchQuery.toLowerCase().trim();
+      const companyMatch = app.companyName.toLowerCase().includes(query);
+      const jobTitleMatch = app.jobTitle.toLowerCase().includes(query);
+      if (!companyMatch && !jobTitleMatch) return false;
+    }
+    
     return true;
   });
 
-  const updateFilters = () => {
-    const params = new URLSearchParams();
-    if (filterStatus && filterStatus !== "all") params.set("status", filterStatus);
-    router.push(`/applications?${params.toString()}`);
-  };
-
   const clearFilters = () => {
     setFilterStatus("all");
+    setSearchQuery("");
     router.push("/applications");
   };
 
   return (
     <>
-      <div className="mb-4 flex gap-2 flex-wrap">
+      <div className="mb-4 flex gap-2 flex-wrap items-center">
+        <div className="relative flex-1 min-w-[200px] max-w-[400px]">
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Input
+            placeholder="Search by company name or job title..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="pl-10"
+          />
+        </div>
+        
         <Select value={filterStatus} onValueChange={setFilterStatus}>
           <SelectTrigger className="w-[180px]">
             <SelectValue placeholder="Filter by Status" />
@@ -115,10 +143,7 @@ export default function ApplicationsList({ applications }) {
           </SelectContent>
         </Select>
 
-        <Button onClick={updateFilters} variant="outline">
-          Apply Filters
-        </Button>
-        {filterStatus !== "all" && (
+        {(filterStatus !== "all" || searchQuery.trim()) && (
           <Button onClick={clearFilters} variant="ghost">
             Clear Filters
           </Button>
@@ -131,15 +156,17 @@ export default function ApplicationsList({ applications }) {
             <TableRow>
               <TableHead>Company</TableHead>
               <TableHead>Job Title</TableHead>
+              <TableHead>Job Type</TableHead>
               <TableHead>Status</TableHead>
               <TableHead>Job Link</TableHead>
+              <TableHead>Date Applied</TableHead>
               <TableHead className="text-right">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {filteredApplications.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={5} className="text-center py-8 text-muted-foreground">
+                <TableCell colSpan={7} className="text-center py-8 text-muted-foreground">
                   No applications found. Add your first application to get started.
                 </TableCell>
               </TableRow>
@@ -153,6 +180,7 @@ export default function ApplicationsList({ applications }) {
                       {app.status}
                     </Badge>
                   </TableCell>
+                  <TableCell>{formatJobType(app.jobType)}</TableCell>
                   <TableCell>
                     {app.jobLink ? (
                       <a
@@ -164,6 +192,13 @@ export default function ApplicationsList({ applications }) {
                         <ExternalLink className="h-4 w-4" />
                         Job Link
                       </a>
+                    ) : (
+                      <span className="text-muted-foreground text-sm">—</span>
+                    )}
+                  </TableCell>
+                  <TableCell>
+                    {app.appliedAt ? (
+                      format(new Date(app.appliedAt), "MMM dd, yyyy")
                     ) : (
                       <span className="text-muted-foreground text-sm">—</span>
                     )}

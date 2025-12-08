@@ -138,6 +138,7 @@ model Application {
   jobLink     String?
   status      ApplicationStatus @default(WISHLIST)
   nextAction  String?
+  appliedAt   DateTime?
 
   resumeSourceType AttachmentSourceType?
   resumeReference  String?

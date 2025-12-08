@@ -31,6 +31,7 @@ import {
 import { updateApplicationStatus } from "@/actions/application";
 import Link from "next/link";
 import { getResume } from "@/actions/resume";
+import { formatJobType } from "./applications-list";
 
 const statusColors = {
   WISHLIST: "bg-gray-500",
@@ -89,7 +90,7 @@ export default function ApplicationDetail({ application }) {
                 {application.companyName} - {application.jobTitle}
               </CardTitle>
               <CardDescription className="mt-2">
-                {application.jobType}
+                {formatJobType(application.jobType)}
               </CardDescription>
             </div>
           </div>
@@ -142,6 +143,15 @@ export default function ApplicationDetail({ application }) {
               <div>
                 <Label className="text-sm text-muted-foreground">Next Action</Label>
                 <div className="mt-1">{application.nextAction}</div>
+              </div>
+            )}
+
+            {application.appliedAt && (
+              <div>
+                <Label className="text-sm text-muted-foreground">Date Applied</Label>
+                <div className="mt-1">
+                  {format(new Date(application.appliedAt), "MMM dd, yyyy 'at' h:mm a")}
+                </div>
               </div>
             )}
           </div>
