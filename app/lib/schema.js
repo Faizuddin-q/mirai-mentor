@@ -114,6 +114,7 @@ export const applicationSchema = z.object({
   jobLink: z.union([z.string().url("Invalid URL"), z.literal(""), z.undefined()]).optional(),
   status: z.enum(["WISHLIST", "APPLIED", "OA", "INTERVIEW", "OFFER", "REJECTED", "WITHDRAWN"]),
   nextAction: z.string().optional(),
+  appliedAt: z.coerce.date().optional(),
   resumeSourceType: z.enum(["INTERNAL", "FILE_UPLOAD", "EXTERNAL_LINK", "TEXT_PASTE"]).optional(),
   resumeReference: z.string().optional(),
   resumePdfPath: z.string().optional(),

@@ -4,7 +4,8 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Loader2, FileText, X, CheckCircle2 } from "lucide-react";
+import { format } from "date-fns";
+import { Calendar as CalendarIcon, Loader2, FileText, X, CheckCircle2 } from "lucide-react";
 import { toast } from "sonner";
 import {
   Card,
@@ -24,6 +25,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Calendar } from "@/components/ui/calendar";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { cn } from "@/lib/utils";
 import { applicationSchema } from "@/app/lib/schema";
 import { createApplication, updateApplication } from "@/actions/application";
 import useFetch from "@/hooks/use-fetch";
@@ -35,12 +43,13 @@ const UploadButton = generateUploadButton();
 export default function ApplicationForm({ initialData, applicationId }) {
   const router = useRouter();
   const isEditing = !!applicationId;
-  const [resumeSourceType, setResumeSourceType] = useState("INTERNAL");
+  const [resumeSourceType, setResumeSourceType] = useState("NONE");
   const [resumeText, setResumeText] = useState("");
   const [resumeFile, setResumeFile] = useState(null);
   const [resumeFileName, setResumeFileName] = useState(null);
   const [uploadingFile, setUploadingFile] = useState(false);
   const [resumes, setResumes] = useState([]);
+  const [appliedDate, setAppliedDate] = useState(null);
 
   const {
     loading: creating,
@@ -85,16 +94,19 @@ export default function ApplicationForm({ initialData, applicationId }) {
 
   useEffect(() => {
     if (initialData) {
-      setResumeSourceType(initialData.resumeSourceType || "INTERNAL");
+      setResumeSourceType(initialData.resumeSourceType || "NONE");
       if (initialData.resumeSourceType === "TEXT_PASTE") {
         setResumeText(initialData.resumeReference || "");
       }
       if (initialData.resumeSourceType === "FILE_UPLOAD" && initialData.resumePdfPath) {
         setResumeFile(initialData.resumePdfPath);
-        // Extract filename from URL if available
+        // extract filename from URL if available
         const urlParts = initialData.resumePdfPath.split("/");
         const fileName = urlParts[urlParts.length - 1] || "resume.pdf";
         setResumeFileName(fileName);
+      }
+      if (initialData.appliedAt) {
+        setAppliedDate(new Date(initialData.appliedAt));
       }
     }
   }, [initialData]);
@@ -123,7 +135,11 @@ export default function ApplicationForm({ initialData, applicationId }) {
       let resumeRef = null;
       let resumePdfPath = null;
       
-      if (resumeSourceType === "INTERNAL" && data.resumeReference && data.resumeReference !== "none") {
+      if (resumeSourceType === "NONE") {
+        // Explicitly no resume - set everything to null
+        resumeRef = null;
+        resumePdfPath = null;
+      } else if (resumeSourceType === "INTERNAL" && data.resumeReference && data.resumeReference !== "none") {
         resumeRef = data.resumeReference;
       } else if (resumeSourceType === "FILE_UPLOAD" && resumeFile) {
         resumePdfPath = resumeFile;
@@ -134,11 +150,26 @@ export default function ApplicationForm({ initialData, applicationId }) {
         resumeRef = resumeText;
       }
 
+      // If no date is selected, use current date and time
+      let appliedAtDateTime = null;
+      if (appliedDate) {
+        const now = new Date();
+        appliedAtDateTime = new Date(appliedDate);
+        appliedAtDateTime.setHours(now.getHours());
+        appliedAtDateTime.setMinutes(now.getMinutes());
+        appliedAtDateTime.setSeconds(now.getSeconds());
+        appliedAtDateTime.setMilliseconds(now.getMilliseconds());
+      } else {
+        appliedAtDateTime = new Date();
+      }
+
       const applicationData = {
         ...data,
-        resumeSourceType: (resumeRef || resumePdfPath) ? resumeSourceType : null,
+        // Transform "NONE" to null, or set to null if no resume data provided
+        resumeSourceType: (resumeSourceType === "NONE" || !(resumeRef || resumePdfPath)) ? null : resumeSourceType,
         resumeReference: resumeRef,
         resumePdfPath: resumePdfPath,
+        appliedAt: appliedAtDateTime,
       };
 
       if (isEditing) {
@@ -237,8 +268,9 @@ export default function ApplicationForm({ initialData, applicationId }) {
               )}
             </div>
 
+
             <div className="space-y-2">
-              <Label htmlFor="jobLink">Job Link</Label>
+              <Label htmlFor="jobLink">Job Link <span className="text-gray-500">(optional)</span></Label>
               <Input
                 id="jobLink"
                 type="url"
@@ -276,10 +308,38 @@ export default function ApplicationForm({ initialData, applicationId }) {
               )}
             </div>
 
+            <div className="space-y-2">
+              <Label>Date Applied <span className="text-gray-500">(optional)</span></Label>
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant={"outline"}
+                    className={cn(
+                      "w-full justify-start text-left font-normal",
+                      !appliedDate && "text-muted-foreground"
+                    )}
+                  >
+                    <CalendarIcon className="mr-2 h-4 w-4" />
+                    {appliedDate ? format(appliedDate, "PPP") : <span>Pick a date</span>}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-6" align="start">
+                  <Calendar
+                    selected={appliedDate}
+                    onSelect={setAppliedDate}
+                    className="rounded-md "
+                  />
+                </PopoverContent>
+              </Popover>
+              {errors.appliedAt && (
+                <p className="text-sm text-red-500">{errors.appliedAt.message}</p>
+              )}
+            </div>
+
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="nextAction">Next Action</Label>
+            <Label htmlFor="nextAction">Next Action <span className="text-gray-500">(optional)</span></Label>
             <Input
               id="nextAction"
               placeholder="e.g., Follow up in 3 days"
@@ -292,16 +352,17 @@ export default function ApplicationForm({ initialData, applicationId }) {
       <Card>
         <CardHeader>
           <CardTitle>Resume</CardTitle>
-          <CardDescription>Attach the resume used for this application</CardDescription>
+          <CardDescription>Attach the resume used for this application <span className="text-gray-500">(optional)</span></CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="space-y-2">
-            <Label>Resume Source</Label>
+            <Label>Resume Source <span className="text-gray-500">(optional)</span></Label>
             <Select value={resumeSourceType} onValueChange={setResumeSourceType}>
               <SelectTrigger>
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
+                <SelectItem value="NONE">No Resume</SelectItem>
                 <SelectItem value="INTERNAL">From My Resumes</SelectItem>
                 <SelectItem value="FILE_UPLOAD">Upload PDF</SelectItem>
                 <SelectItem value="EXTERNAL_LINK">External Link</SelectItem>
@@ -309,6 +370,10 @@ export default function ApplicationForm({ initialData, applicationId }) {
               </SelectContent>
             </Select>
           </div>
+
+          {resumeSourceType === "NONE" && (
+            <p className="text-sm text-muted-foreground">No resume will be attached to this application.</p>
+          )}
 
           {resumeSourceType === "INTERNAL" && (
             <div className="space-y-2">
