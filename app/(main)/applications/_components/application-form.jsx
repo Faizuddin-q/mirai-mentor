@@ -24,7 +24,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { applicationSchema } from "@/app/lib/schema";
 import { createApplication, updateApplication } from "@/actions/application";
 import useFetch from "@/hooks/use-fetch";
@@ -113,9 +112,7 @@ export default function ApplicationForm({ initialData, applicationId }) {
       resumeReference: initialData.resumeReference || "none",
     } : {
       status: "WISHLIST",
-      priority: "MEDIUM",
       jobType: "FULL_TIME",
-      source: "LINKEDIN",
       resumeReference: "none",
     },
   });
@@ -254,30 +251,6 @@ export default function ApplicationForm({ initialData, applicationId }) {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="source">
-                Source <span className="text-red-500">*</span>
-              </Label>
-              <Select
-                value={watch("source")}
-                onValueChange={(value) => setValue("source", value)}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Select source" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="LINKEDIN">LinkedIn</SelectItem>
-                  <SelectItem value="COMPANY_SITE">Company Site</SelectItem>
-                  <SelectItem value="REFERRAL">Referral</SelectItem>
-                  <SelectItem value="PORTAL">Portal</SelectItem>
-                  <SelectItem value="OTHER">Other</SelectItem>
-                </SelectContent>
-              </Select>
-              {errors.source && (
-                <p className="text-sm text-red-500">{errors.source.message}</p>
-              )}
-            </div>
-
-            <div className="space-y-2">
               <Label htmlFor="status">
                 Status <span className="text-red-500">*</span>
               </Label>
@@ -303,27 +276,6 @@ export default function ApplicationForm({ initialData, applicationId }) {
               )}
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="priority">
-                Priority <span className="text-red-500">*</span>
-              </Label>
-              <Select
-                value={watch("priority")}
-                onValueChange={(value) => setValue("priority", value)}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Select priority" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="LOW">Low</SelectItem>
-                  <SelectItem value="MEDIUM">Medium</SelectItem>
-                  <SelectItem value="HIGH">High</SelectItem>
-                </SelectContent>
-              </Select>
-              {errors.priority && (
-                <p className="text-sm text-red-500">{errors.priority.message}</p>
-              )}
-            </div>
           </div>
 
           <div className="space-y-2">
@@ -332,16 +284,6 @@ export default function ApplicationForm({ initialData, applicationId }) {
               id="nextAction"
               placeholder="e.g., Follow up in 3 days"
               {...register("nextAction")}
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="notes">Notes</Label>
-            <Textarea
-              id="notes"
-              placeholder="e.g., Follow up in 3 days"
-              className="h-32"
-              {...register("notes")}
             />
           </div>
         </CardContent>

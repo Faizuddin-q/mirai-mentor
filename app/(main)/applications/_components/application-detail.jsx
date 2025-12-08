@@ -13,7 +13,6 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import {
   Select,
   SelectContent,
@@ -22,17 +21,14 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import MDEditor from "@uiw/react-md-editor";
 import {
   ExternalLink,
   FileText,
   Link as LinkIcon,
-  Edit,
-  Save,
   Loader2,
 } from "lucide-react";
-import { updateApplicationStatus, updateApplicationPriority, addNoteToApplication } from "@/actions/application";
+import { updateApplicationStatus } from "@/actions/application";
 import Link from "next/link";
 import { getResume } from "@/actions/resume";
 
@@ -49,11 +45,7 @@ const statusColors = {
 export default function ApplicationDetail({ application }) {
   const router = useRouter();
   const [status, setStatus] = useState(application.status);
-  const [priority, setPriority] = useState(application.priority);
-  const [notes, setNotes] = useState(application.notes || "");
   const [isSavingStatus, setIsSavingStatus] = useState(false);
-  const [isSavingPriority, setIsSavingPriority] = useState(false);
-  const [isSavingNotes, setIsSavingNotes] = useState(false);
   const [resumeContent, setResumeContent] = useState(null);
 
   const handleStatusChange = async (newStatus) => {
@@ -70,32 +62,6 @@ export default function ApplicationDetail({ application }) {
     }
   };
 
-  const handlePriorityChange = async (newPriority) => {
-    setIsSavingPriority(true);
-    try {
-      await updateApplicationPriority(application.id, newPriority);
-      setPriority(newPriority);
-      toast.success("Priority updated successfully");
-      router.refresh();
-    } catch (error) {
-      toast.error(error.message || "Failed to update priority");
-    } finally {
-      setIsSavingPriority(false);
-    }
-  };
-
-  const handleSaveNotes = async () => {
-    setIsSavingNotes(true);
-    try {
-      await addNoteToApplication(application.id, notes);
-      toast.success("Notes saved successfully");
-      router.refresh();
-    } catch (error) {
-      toast.error(error.message || "Failed to save notes");
-    } finally {
-      setIsSavingNotes(false);
-    }
-  };
 
   // Load resume content if it's an internal reference
   useEffect(() => {
@@ -153,32 +119,6 @@ export default function ApplicationDetail({ application }) {
                 </Select>
                 {isSavingStatus && <Loader2 className="h-4 w-4 animate-spin" />}
               </div>
-            </div>
-
-            <div>
-              <Label className="text-sm text-muted-foreground">Priority</Label>
-              <div className="mt-1 flex items-center gap-2">
-                <Select
-                  value={priority}
-                  onValueChange={handlePriorityChange}
-                  disabled={isSavingPriority}
-                >
-                  <SelectTrigger className="w-[200px]">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="LOW">Low</SelectItem>
-                    <SelectItem value="MEDIUM">Medium</SelectItem>
-                    <SelectItem value="HIGH">High</SelectItem>
-                  </SelectContent>
-                </Select>
-                {isSavingPriority && <Loader2 className="h-4 w-4 animate-spin" />}
-              </div>
-            </div>
-
-            <div>
-              <Label className="text-sm text-muted-foreground">Source</Label>
-              <div className="mt-1">{application.source}</div>
             </div>
 
             {application.jobLink && (
@@ -332,50 +272,6 @@ export default function ApplicationDetail({ application }) {
         </CardContent>
       </Card>
 
-      {/* Notes Section */}
-      <Card>
-        <CardHeader>
-          <div className="flex items-center justify-between">
-            <div>
-              <CardTitle>Notes</CardTitle>
-              <CardDescription>Add notes and updates about this application</CardDescription>
-            </div>
-            <Button onClick={handleSaveNotes} disabled={isSavingNotes} size="sm">
-              {isSavingNotes ? (
-                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-              ) : (
-                <Save className="h-4 w-4 mr-2" />
-              )}
-              Save Notes
-            </Button>
-          </div>
-        </CardHeader>
-        <CardContent>
-          <Tabs defaultValue="edit" className="w-full">
-            <TabsList>
-              <TabsTrigger value="edit">Edit</TabsTrigger>
-              <TabsTrigger value="preview">Preview</TabsTrigger>
-            </TabsList>
-            <TabsContent value="edit">
-              <Textarea
-                value={notes}
-                onChange={(e) => setNotes(e.target.value)}
-                placeholder="Add your notes here... (Markdown supported)"
-                className="h-64"
-              />
-            </TabsContent>
-            <TabsContent value="preview">
-              <div className="border rounded-lg p-4 min-h-[256px]">
-                {notes ? (
-                  <MDEditor.Markdown source={notes} />
-                ) : (
-                  <p className="text-muted-foreground">No notes yet.</p>
-                )}
-              </div>
-            </TabsContent>
-          </Tabs>
-        </CardContent>
-      </Card>
     </div>
   );
 }
