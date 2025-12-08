@@ -132,13 +132,14 @@ export default function ApplicationsList({ applications }) {
               <TableHead>Company</TableHead>
               <TableHead>Job Title</TableHead>
               <TableHead>Status</TableHead>
+              <TableHead>Job Link</TableHead>
               <TableHead className="text-right">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {filteredApplications.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={4} className="text-center py-8 text-muted-foreground">
+                <TableCell colSpan={5} className="text-center py-8 text-muted-foreground">
                   No applications found. Add your first application to get started.
                 </TableCell>
               </TableRow>
@@ -151,6 +152,21 @@ export default function ApplicationsList({ applications }) {
                     <Badge variant="outline" className={statusColors[app.status]}>
                       {app.status}
                     </Badge>
+                  </TableCell>
+                  <TableCell>
+                    {app.jobLink ? (
+                      <a
+                        href={app.jobLink}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-blue-600 hover:underline flex items-center gap-1 w-fit"
+                      >
+                        <ExternalLink className="h-4 w-4" />
+                        Job Link
+                      </a>
+                    ) : (
+                      <span className="text-muted-foreground text-sm">—</span>
+                    )}
                   </TableCell>
                   <TableCell className="text-right">
                     <DropdownMenu>
@@ -186,18 +202,6 @@ export default function ApplicationsList({ applications }) {
                         >
                           Mark as Offer
                         </DropdownMenuItem>
-                        {app.jobLink && (
-                          <DropdownMenuItem asChild>
-                            <a
-                              href={app.jobLink}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                            >
-                              <ExternalLink className="h-4 w-4 mr-2" />
-                              Open Job Link
-                            </a>
-                          </DropdownMenuItem>
-                        )}
                         <DropdownMenuItem
                           className="text-red-600"
                           onClick={() => {
