@@ -9,6 +9,7 @@ import {
   GraduationCap,
   UserPlus,
   Brain,
+  Briefcase,
 } from "lucide-react";
 import Link from "next/link";
 import { SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/nextjs";
@@ -32,14 +33,19 @@ const navItems = [
     icon: PenBox,
   },
   {
-    label: "Interview",
-    href: "/interview",
+    label: "Quiz",
+    href: "/quiz",
     icon: GraduationCap,
   },
   {
     label: "Smart Answer Desk",
     href: "/smart-answer-desk",
     icon: Brain,
+  },
+  {
+    label: "Applications",
+    href: "/applications",
+    icon: Briefcase,
   },
   {
     label: "Profile",

@@ -24,7 +24,7 @@ import useFetch from "@/hooks/use-fetch";
 import { useUser } from "@clerk/nextjs";
 import { entriesToMarkdown, parseMarkdownToFormData } from "@/app/lib/helper";
 import { resumeSchema } from "@/app/lib/schema";
-// import html2pdf from "html2pdf.js/dist/html2pdf.min.js";
+import * as html2pdf from "html2pdf.js/dist/html2pdf.min.js";
 
 export default function ResumeBuilder({ initialContent, resumeId }) {
   console.log({ resumeId });
@@ -110,16 +110,16 @@ export default function ResumeBuilder({ initialContent, resumeId }) {
       if (contactInfo?.twitter) contactParts.push(`[Twitter](${contactInfo.twitter})`);
 
       const contactMarkdown = contactParts.length > 0
-        ? `## <div align="center">${user?.fullName || 'Your Name'}</div>\n\n<div align="center">\n\n${contactParts.join(" | ")}\n\n</div>`
+        ? `<div align="center">\n\n# ${user?.fullName || 'Your Name'}\n\n${contactParts.join(" | ")}\n\n</div>\n\n---\n\n`
         : "";
 
       const newContent = [
         contactMarkdown,
-        summary && `## Professional Summary\n\n${summary}`,
-        skills && `## Skills\n\n${skills}`,
-        entriesToMarkdown(experience, "Work Experience"),
-        entriesToMarkdown(education, "Education"),
-        entriesToMarkdown(projects, "Projects"),
+        summary && `## PROFESSIONAL SUMMARY\n\n${summary}\n\n---\n\n`,
+        skills && `## TECHNICAL SKILLS\n\n${skills}\n\n---\n\n`,
+        entriesToMarkdown(experience, "EXPERIENCE"),
+        entriesToMarkdown(education, "EDUCATION"),
+        entriesToMarkdown(projects, "PERSONAL PROJECTS"),
       ]
         .filter(Boolean)
         .join("\n\n");
@@ -177,28 +177,29 @@ export default function ResumeBuilder({ initialContent, resumeId }) {
         const normalized = normalizeIndianPhone(value);
         if (!normalized || !indianPhoneRegex.test(normalized)) {
           message = "Enter a valid 10-digit mobile number";
-
         }
       }
+    }
 
-      setContactErrors((prev) => ({ ...prev, [field]: message }));
+    setContactErrors((prev) => ({ ...prev, [field]: message }));
 
-      if (message) {
-        setError(`contactInfo.${field}`, { type: "manual", message });
-      } else {
-        clearErrors(`contactInfo.${field}`);
-      }
-    };
+    if (message) {
+      setError(`contactInfo.${field}`, { type: "manual", message });
+    } else {
+      clearErrors(`contactInfo.${field}`);
+    }
+  };
 
-    const handleContactChange = (field) => (event) => {
-      const value = event.target.value;
-      runContactValidation(field, value, true);
-    };
+  const handleContactChange = (field) => (event) => {
+    const value = event.target.value;
+    runContactValidation(field, value, true);
+  };
 
-    const handleContactBlur = (field) => (event) => {
-      runContactValidation(field, event.target.value, true);
-    };
-    const handleImproveSection = async (section) => {
+  const handleContactBlur = (field) => (event) => {
+    runContactValidation(field, event.target.value, true);
+  };
+
+  const handleImproveSection = async (section) => {
       if (section === "summary") {
         const summaryText = watch("summary");
         if (!summaryText) {
@@ -224,7 +225,7 @@ export default function ResumeBuilder({ initialContent, resumeId }) {
       if (contactInfo.twitter) parts.push(`[Twitter](${contactInfo.twitter})`);
 
       return parts.length > 0
-        ? `## <div align="center">${user.fullName}</div>\n\n<div align="center">\n\n${parts.join(" | ")}\n\n</div>`
+        ? `<div align="center">\n\n# ${user?.fullName || 'Your Name'}\n\n${parts.join(" | ")}\n\n</div>\n\n---\n\n`
         : "";
     };
 
@@ -232,11 +233,11 @@ export default function ResumeBuilder({ initialContent, resumeId }) {
       const { summary, skills, experience, education, projects } = formValues;
       return [
         getContactMarkdown(),
-        summary && `## Professional Summary\n\n${summary}`,
-        skills && `## Skills\n\n${skills}`,
-        entriesToMarkdown(experience, "Work Experience"),
-        entriesToMarkdown(education, "Education"),
-        entriesToMarkdown(projects, "Projects"),
+        summary && `## PROFESSIONAL SUMMARY\n\n${summary}\n\n---\n\n`,
+        skills && `## TECHNICAL SKILLS\n\n${skills}\n\n---\n\n`,
+        entriesToMarkdown(experience, "EXPERIENCE"),
+        entriesToMarkdown(education, "EDUCATION"),
+        entriesToMarkdown(projects, "PERSONAL PROJECTS"),
       ]
         .filter(Boolean)
         .join("\n\n");
@@ -269,7 +270,6 @@ export default function ResumeBuilder({ initialContent, resumeId }) {
           jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
         };
 
-        const html2pdf = (await import("html2pdf.js/dist/html2pdf.min.js")).default;
         await html2pdf().set(opt).from(element).save();
       } catch (error) {
         console.error("PDF generation error:", error);
@@ -609,12 +609,12 @@ export default function ResumeBuilder({ initialContent, resumeId }) {
               />
             </div>
             <div className="hidden">
-              <div id="resume-pdf">
+              <div id="resume-pdf" style={{ background: "white", color: "#000", padding: "20mm", maxWidth: "210mm", margin: "0 auto" }}>
                 <MDEditor.Markdown
                   source={previewContent}
                   style={{
                     background: "white",
-                    color: "black",
+                    color: "#000",
                   }}
                 />
               </div>
@@ -623,5 +623,4 @@ export default function ResumeBuilder({ initialContent, resumeId }) {
         </Tabs>
       </div>
     );
-  }
 }
