@@ -8,8 +8,6 @@ export default async function ApplicationsPage({ searchParams }) {
   const params = await searchParams;
   const filters = {
     status: params?.status,
-    source: params?.source,
-    priority: params?.priority,
     dateFrom: params?.dateFrom,
     dateTo: params?.dateTo,
   };

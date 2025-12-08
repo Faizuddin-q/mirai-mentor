@@ -110,14 +110,6 @@ enum JobType {
   CONTRACT
 }
 
-enum ApplicationSource {
-  LINKEDIN
-  COMPANY_SITE
-  REFERRAL
-  PORTAL
-  OTHER
-}
-
 enum ApplicationStatus {
   WISHLIST
   APPLIED
@@ -126,12 +118,6 @@ enum ApplicationStatus {
   OFFER
   REJECTED
   WITHDRAWN
-}
-
-enum Priority {
-  LOW
-  MEDIUM
-  HIGH
 }
 
 enum AttachmentSourceType {
@@ -150,11 +136,8 @@ model Application {
   jobTitle    String
   jobType     JobType
   jobLink     String?
-  source      ApplicationSource
   status      ApplicationStatus @default(WISHLIST)
-  priority    Priority          @default(MEDIUM)
   nextAction  String?
-  notes       String?           @db.Text
 
   resumeSourceType AttachmentSourceType?
   resumeReference  String?

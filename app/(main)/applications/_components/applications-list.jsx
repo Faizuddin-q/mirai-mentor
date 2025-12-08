@@ -51,17 +51,9 @@ const statusColors = {
   WITHDRAWN: "bg-gray-400",
 };
 
-const priorityColors = {
-  LOW: "bg-green-500",
-  MEDIUM: "bg-orange-500",
-  HIGH: "bg-red-500",
-};
-
 export default function ApplicationsList({ applications }) {
   const router = useRouter();
   const [filterStatus, setFilterStatus] = useState("all");
-  const [filterSource, setFilterSource] = useState("all");
-  const [filterPriority, setFilterPriority] = useState("all");
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [applicationToDelete, setApplicationToDelete] = useState(null);
 
@@ -90,23 +82,17 @@ export default function ApplicationsList({ applications }) {
 
   const filteredApplications = applications.filter((app) => {
     if (filterStatus && filterStatus !== "all" && app.status !== filterStatus) return false;
-    if (filterSource && filterSource !== "all" && app.source !== filterSource) return false;
-    if (filterPriority && filterPriority !== "all" && app.priority !== filterPriority) return false;
     return true;
   });
 
   const updateFilters = () => {
     const params = new URLSearchParams();
     if (filterStatus && filterStatus !== "all") params.set("status", filterStatus);
-    if (filterSource && filterSource !== "all") params.set("source", filterSource);
-    if (filterPriority && filterPriority !== "all") params.set("priority", filterPriority);
     router.push(`/applications?${params.toString()}`);
   };
 
   const clearFilters = () => {
     setFilterStatus("all");
-    setFilterSource("all");
-    setFilterPriority("all");
     router.push("/applications");
   };
 
@@ -129,36 +115,10 @@ export default function ApplicationsList({ applications }) {
           </SelectContent>
         </Select>
 
-        <Select value={filterSource} onValueChange={setFilterSource}>
-          <SelectTrigger className="w-[180px]">
-            <SelectValue placeholder="Filter by Source" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">All Sources</SelectItem>
-            <SelectItem value="LINKEDIN">LinkedIn</SelectItem>
-            <SelectItem value="COMPANY_SITE">Company Site</SelectItem>
-            <SelectItem value="REFERRAL">Referral</SelectItem>
-            <SelectItem value="PORTAL">Portal</SelectItem>
-            <SelectItem value="OTHER">Other</SelectItem>
-          </SelectContent>
-        </Select>
-
-        <Select value={filterPriority} onValueChange={setFilterPriority}>
-          <SelectTrigger className="w-[180px]">
-            <SelectValue placeholder="Filter by Priority" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">All Priorities</SelectItem>
-            <SelectItem value="LOW">Low</SelectItem>
-            <SelectItem value="MEDIUM">Medium</SelectItem>
-            <SelectItem value="HIGH">High</SelectItem>
-          </SelectContent>
-        </Select>
-
         <Button onClick={updateFilters} variant="outline">
           Apply Filters
         </Button>
-        {(filterStatus !== "all" || filterSource !== "all" || filterPriority !== "all") && (
+        {filterStatus !== "all" && (
           <Button onClick={clearFilters} variant="ghost">
             Clear Filters
           </Button>
@@ -172,15 +132,13 @@ export default function ApplicationsList({ applications }) {
               <TableHead>Company</TableHead>
               <TableHead>Job Title</TableHead>
               <TableHead>Status</TableHead>
-              <TableHead>Source</TableHead>
-              <TableHead>Priority</TableHead>
               <TableHead className="text-right">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {filteredApplications.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={6} className="text-center py-8 text-muted-foreground">
+                <TableCell colSpan={4} className="text-center py-8 text-muted-foreground">
                   No applications found. Add your first application to get started.
                 </TableCell>
               </TableRow>
@@ -192,12 +150,6 @@ export default function ApplicationsList({ applications }) {
                   <TableCell>
                     <Badge variant="outline" className={statusColors[app.status]}>
                       {app.status}
-                    </Badge>
-                  </TableCell>
-                  <TableCell>{app.source}</TableCell>
-                  <TableCell>
-                    <Badge variant="outline" className={priorityColors[app.priority]}>
-                      {app.priority}
                     </Badge>
                   </TableCell>
                   <TableCell className="text-right">

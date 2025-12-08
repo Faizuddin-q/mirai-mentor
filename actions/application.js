@@ -21,11 +21,8 @@ export async function createApplication(data) {
       jobTitle: data.jobTitle,
       jobType: data.jobType,
       jobLink: data.jobLink || null,
-      source: data.source,
       status: data.status || "WISHLIST",
-      priority: data.priority || "MEDIUM",
       nextAction: data.nextAction || null,
-      notes: data.notes || null,
       resumeSourceType: data.resumeSourceType || null,
       resumeReference: data.resumeReference || null,
       resumePdfPath: data.resumePdfPath || null,
@@ -71,11 +68,8 @@ export async function updateApplication(id, data) {
       jobTitle: data.jobTitle,
       jobType: data.jobType,
       jobLink: data.jobLink || null,
-      source: data.source,
       status: data.status,
-      priority: data.priority,
       nextAction: data.nextAction || null,
-      notes: data.notes || null,
       resumeSourceType: data.resumeSourceType || null,
       resumeReference: data.resumeReference || null,
       resumePdfPath: data.resumePdfPath || null,
@@ -172,34 +166,6 @@ export async function updateApplicationStatus(id, status, note) {
   return updated;
 }
 
-export async function updateApplicationPriority(id, priority) {
-  const { userId } = await auth();
-  if (!userId) throw new Error("Unauthorized");
-
-  const user = await db.user.findUnique({
-    where: { clerkUserId: userId },
-  });
-
-  if (!user) throw new Error("User not found");
-
-  const application = await db.application.findUnique({
-    where: { id },
-  });
-
-  if (!application || application.userId !== user.id) {
-    throw new Error("Application not found");
-  }
-
-  const updated = await db.application.update({
-    where: { id },
-    data: { priority },
-  });
-
-  revalidatePath("/applications");
-  revalidatePath(`/applications/${id}`);
-  return updated;
-}
-
 export async function getApplications(filters = {}) {
   const { userId } = await auth();
   if (!userId) throw new Error("Unauthorized");
@@ -214,8 +180,6 @@ export async function getApplications(filters = {}) {
     const where = {
       userId: user.id,
       ...(filters.status && { status: filters.status }),
-      ...(filters.source && { source: filters.source }),
-      ...(filters.priority && { priority: filters.priority }),
     };
 
     const applications = await db.application.findMany({
@@ -270,34 +234,5 @@ export async function getApplication(id) {
   }
 
   return application;
-}
-
-export async function addNoteToApplication(id, note) {
-  const { userId } = await auth();
-  if (!userId) throw new Error("Unauthorized");
-
-  const user = await db.user.findUnique({
-    where: { clerkUserId: userId },
-  });
-
-  if (!user) throw new Error("User not found");
-
-  const application = await db.application.findUnique({
-    where: { id },
-  });
-
-  if (!application || application.userId !== user.id) {
-    throw new Error("Application not found");
-  }
-
-  const updated = await db.application.update({
-    where: { id },
-    data: {
-      notes: note,
-    },
-  });
-
-  revalidatePath(`/applications/${id}`);
-  return updated;
 }
 
