@@ -234,4 +234,130 @@ html {
   [data-ut-element="allowed-content"] {
     display: none !important;
   }
+
+  /* Professional Resume Styling */
+  #resume-pdf,
+  #resume-pdf * {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    color: #000;
+    line-height: 1.6;
+  }
+
+  #resume-pdf {
+    margin: 0 auto;
+    padding: 20mm;
+    background: white;
+    color: #000;
+  }
+
+  /* Center aligned header */
+  #resume-pdf div[align="center"] {
+    text-align: center;
+    margin-bottom: 1.5rem;
+  }
+
+  #resume-pdf div[align="center"] h1 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin: 0 0 0.5rem 0;
+    letter-spacing: 0.5px;
+    color: #000;
+  }
+
+  #resume-pdf div[align="center"] p {
+    font-size: 0.9rem;
+    margin: 0.25rem 0;
+    color: #333;
+  }
+
+  /* Section headings - ALL CAPS, bold */
+  #resume-pdf h2 {
+    font-size: 1.1rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin: 1.5rem 0 1rem 0;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid #000;
+    color: #000;
+  }
+
+  /* Horizontal rule */
+  #resume-pdf hr {
+    border: none;
+    border-top: 1px solid #ccc;
+    margin: 1.5rem 0;
+  }
+
+  /* Entry titles - bold */
+  #resume-pdf h3,
+  #resume-pdf strong {
+    font-weight: 700;
+    color: #000;
+    font-size: 1rem;
+  }
+
+  /* Date ranges */
+  #resume-pdf p {
+    margin: 0.5rem 0;
+    color: #333;
+  }
+
+  /* Lists */
+  #resume-pdf ul {
+    margin: 0.5rem 0;
+    padding-left: 1.5rem;
+  }
+
+  #resume-pdf li {
+    margin: 0.25rem 0;
+    color: #333;
+  }
+
+  /* Links */
+  #resume-pdf a {
+    color: #0066cc;
+    text-decoration: none;
+  }
+
+  #resume-pdf a:hover {
+    text-decoration: underline;
+  }
+
+  /* Markdown preview styling */
+  .w-md-editor-preview {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  }
+
+  .w-md-editor-preview div[align="center"] {
+    text-align: center;
+    margin-bottom: 1.5rem;
+  }
+
+  .w-md-editor-preview div[align="center"] h1 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin: 0 0 0.5rem 0;
+    letter-spacing: 0.5px;
+  }
+
+  .w-md-editor-preview h2 {
+    font-size: 1.1rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin: 1.5rem 0 1rem 0;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid currentColor;
+  }
+
+  .w-md-editor-preview hr {
+    border: none;
+    border-top: 1px solid #ccc;
+    margin: 1.5rem 0;
+  }
+
+  .w-md-editor-preview strong {
+    font-weight: 700;
+  }
 }

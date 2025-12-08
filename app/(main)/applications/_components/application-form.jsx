@@ -339,7 +339,7 @@ export default function ApplicationForm({ initialData, applicationId }) {
             <Label htmlFor="notes">Notes</Label>
             <Textarea
               id="notes"
-              placeholder="Add any notes about this application..."
+              placeholder="e.g., Follow up in 3 days"
               className="h-32"
               {...register("notes")}
             />
