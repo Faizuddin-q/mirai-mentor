@@ -150,7 +150,7 @@ export default function ApplicationForm({ initialData, applicationId }) {
         resumeRef = resumeText;
       }
 
-      // Handle applied date - combine selected date with current time
+      // If no date is selected, use current date and time
       let appliedAtDateTime = null;
       if (appliedDate) {
         const now = new Date();
@@ -159,6 +159,8 @@ export default function ApplicationForm({ initialData, applicationId }) {
         appliedAtDateTime.setMinutes(now.getMinutes());
         appliedAtDateTime.setSeconds(now.getSeconds());
         appliedAtDateTime.setMilliseconds(now.getMilliseconds());
+      } else {
+        appliedAtDateTime = new Date();
       }
 
       const applicationData = {
