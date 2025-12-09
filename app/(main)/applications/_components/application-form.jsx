@@ -40,7 +40,7 @@ import { generateUploadButton } from "@uploadthing/react";
 
 const UploadButton = generateUploadButton();
 
-export default function ApplicationForm({ initialData, applicationId }) {
+export default function ApplicationForm({ initialData, applicationId, onCancel }) {
   const router = useRouter();
   const isEditing = !!applicationId;
   const [resumeSourceType, setResumeSourceType] = useState("NONE");
@@ -134,7 +134,7 @@ export default function ApplicationForm({ initialData, applicationId }) {
       // Handle resume reference based on source type
       let resumeRef = null;
       let resumePdfPath = null;
-      
+
       if (resumeSourceType === "NONE") {
         // Explicitly no resume - set everything to null
         resumeRef = null;
@@ -412,7 +412,7 @@ export default function ApplicationForm({ initialData, applicationId }) {
           {resumeSourceType === "FILE_UPLOAD" && (
             <div className="space-y-3">
               <Label>Upload Resume PDF (Max 1MB)</Label>
-              
+
               {/* Upload Area - Show only when no file is uploaded */}
               {!resumeFile && (
                 <div className="space-y-3">
@@ -447,7 +447,7 @@ export default function ApplicationForm({ initialData, applicationId }) {
                       </p>
                     </div>
                   </div>
-                  
+
                   {uploadingFile && (
                     <div className="flex items-center gap-2 p-3 bg-muted rounded-lg border">
                       <Loader2 className="h-4 w-4 animate-spin text-primary" />
@@ -518,7 +518,7 @@ export default function ApplicationForm({ initialData, applicationId }) {
         <Button
           type="button"
           variant="outline"
-          onClick={() => router.back()}
+          onClick={onCancel || (() => router.back())}
         >
           Cancel
         </Button>

@@ -71,7 +71,7 @@ export default function Header() {
         <Link href="/">
           <Image
             src={"/logo.png"}
-            alt="Sensai Logo"
+            alt="Mirai Mentor Logo"
             width={200}
             height={200}
             className="h-12 py-1 w-auto object-contain"

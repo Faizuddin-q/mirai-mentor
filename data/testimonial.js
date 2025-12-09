@@ -1,26 +1,26 @@
 export const testimonial = [
   {
     quote:
-      "Mirai Mentor helped me map out a five-year plan and stick to it. I now lead strategic initiatives I once thought were out of reach.",
-    author: "Danielle Morgan",
-    image: "https://randomuser.me/api/portraits/women/12.jpg",
-    role: "Strategy Lead",
-    company: "Northbridge Consulting",
+      "The AI Resume Builder is a game-changer. It helped me highlight the right skills, and I immediately started getting more callbacks.",
+    author: "Sarah Chen",
+    image: "https://randomuser.me/api/portraits/women/44.jpg",
+    role: "Product Manager",
+    company: "TechFlow",
   },
   {
     quote:
-      "The weekly coaching nudged me to sell my strengths confidently. Closing clients feels natural now—and my revenue doubled.",
-    author: "Logan Reyes",
-    image: "https://randomuser.me/api/portraits/men/45.jpg",
-    role: "Freelance UX Designer",
-    company: "Reyes Studio",
+      "I was terrified of technical interviews until I used the AI mock interview tool. The feedback was spot-on and helped me land the job!",
+    author: "Michael Rodriguez",
+    image: "https://randomuser.me/api/portraits/men/32.jpg",
+    role: "Software Engineer",
+    company: "Innovate Inc",
   },
   {
     quote:
-      "From negotiation scripts to practice sessions, the platform gave me everything. I secured an offer with a 22% raise.",
-    author: "Meera Krishnan",
-    image: "https://randomuser.me/api/portraits/women/28.jpg",
-    role: "Operations Manager",
-    company: "Lumen Logistics",
+      "Tracking 50+ applications was a nightmare before. Now, I have a clear view of where I stand with every company. Highly recommended!",
+    author: "Emily Watson",
+    image: "https://randomuser.me/api/portraits/women/26.jpg",
+    role: "Marketing Director",
+    company: "Global Reach",
   },
 ];

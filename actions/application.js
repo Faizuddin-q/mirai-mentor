@@ -106,11 +106,11 @@ export async function deleteApplication(id) {
     try {
       const { UTApi } = await import("uploadthing/server");
       const utapi = new UTApi();
-      
+
       // UploadThing URLs format: https://utfs.io/f/{fileKey} or https://uploadthing.com/f/{fileKey}
       const urlParts = application.resumePdfPath.split("/");
       const fileKey = urlParts[urlParts.length - 1];
-      
+
       if (fileKey) {
         await utapi.deleteFiles(fileKey);
       }
@@ -238,3 +238,57 @@ export async function getApplication(id) {
   return application;
 }
 
+
+export async function parseJobDetails(content) {
+  const { userId } = await auth();
+  if (!userId) throw new Error("Unauthorized");
+
+  if (!content || typeof content !== "string") {
+    throw new Error("Invalid input content");
+  }
+
+  try {
+    const { GoogleGenerativeAI } = await import("@google/generative-ai");
+    const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+    const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
+
+    const prompt = `
+      You are an expert job application parser. Analyze the following job description or job link content and extract the following information in JSON format:
+      - companyName: The name of the company.
+      - jobTitle: The title of the job.
+      - jobType: Determine the type based on the content: If the job title includes "intern", use "INTERN". If the content specifies "remote", use "REMOTE". If the content specifies "hybrid", use "HYBRID". Otherwise, default to "FULL_TIME". The allowed values are "FULL_TIME", "INTERN", "REMOTE", "HYBRID", "CONTRACT".
+      - jobLink: If a link is present in the text, extract it.
+      - status: Default to "WISHLIST".
+      - nextAction: Suggest a next action (e.g., "Review job description", "Prepare resume").
+      - appliedAt: null.
+      - resumeSourceType: "NONE".
+      - resumeReference: null.
+      
+      Input content:
+      "${content}"
+      
+      Return ONLY the JSON object.
+    `;
+
+    const result = await model.generateContent(prompt);
+    const response = result.response;
+    const text = response.text();
+    console.log("AI Raw Response:", text);
+
+    const cleanedText = text.replace(/```json/g, "").replace(/```/g, "").trim();
+
+    try {
+      return JSON.parse(cleanedText);
+    } catch (jsonError) {
+      console.error("JSON Parse Error:", jsonError);
+      throw new Error("Invalid response format from AI");
+    }
+  } catch (error) {
+    console.error("Error parsing job details:", error);
+    // Return a more user-friendly error message
+    if (error.message.includes("Invalid response format")) {
+      throw error;
+    }
+    throw new Error("Failed to parse job details. Please try again or fill the form manually.");
+  }
+}
