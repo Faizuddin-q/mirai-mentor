@@ -1,28 +1,34 @@
-import { FileText, Brain, Mail, TrendingUp } from "lucide-react";
+import { FileText, Brain, Mail, TrendingUp, BriefcaseBusiness, Lightbulb } from "lucide-react";
 
 export const features = [
   {
-    icon: <FileText className="w-10 h-10 mb-4 text-primary" />,
-    title: "Resume Builder",
+    icon: <FileText className="w-10 h-10 text-primary" />,
+    title: "AI Resume Builder",
     description:
-      "Create professional resumes with AI-powered suggestions and customizable templates tailored to your industry.",
+      "Create ATS-optimized resumes with AI-powered suggestions, formatting, and industry-specific templates.",
   },
   {
-    icon: <Brain className="w-10 h-10 mb-4 text-primary" />,
-    title: "AI Interview Quiz",
-    description:
-      "Practice for interviews with AI-generated questions and get instant feedback to improve your responses.",
-  },
-  {
-    icon: <Mail className="w-10 h-10 mb-4 text-primary" />,
+    icon: <Mail className="w-10 h-10 text-primary" />,
     title: "Cover Letter Generator",
     description:
-      "Generate personalized cover letters that highlight your skills and match job requirements using AI assistance.",
+      "Generate tailored cover letters for specific job roles that highlight your unique skills and experiences.",
   },
   {
-    icon: <TrendingUp className="w-10 h-10 mb-4 text-primary" />,
-    title: "Market Trends",
+    icon: <Brain className="w-10 h-10 text-primary" />,
+    title: "AI Interview Prep",
     description:
-      "Stay updated with current job market trends, salary insights, and in-demand skills in your field.",
+      "Practice with role-specific interview questions and get real-time feedback on your answers.",
+  },
+  {
+    icon: <BriefcaseBusiness className="w-10 h-10 text-primary" />,
+    title: "Application Tracker",
+    description:
+      "Organize and track all your job applications in one place with status updates and reminders.",
+  },
+  {
+    icon: <Lightbulb className="w-10 h-10 text-primary" />,
+    title: "Smart Answer Desk",
+    description:
+      "Get instant answers to your job application questions from our AI-powered career assistant.",
   },
 ];

@@ -1,32 +1,32 @@
 export const faqs = [
   {
-    question: "How does Mirai Mentor accelerate my career growth?",
+    question: "How does the AI Resume Builder work?",
     answer:
-      "Mirai Mentor blends AI coaching with human-curated playbooks to help you progress faster. You get adaptive action plans, targeted challenges, and accountability nudges that keep you on track toward promotions, pivots, or new roles.",
+      "Our AI Resume Builder analyzes your experience and industry trends to suggest optimal formatting, keywords, and strong action verbs. It ensures your resume is ATS-friendly and tailored to the roles you're targeting.",
   },
   {
-    question: "What kind of personalization can I expect?",
+    question: "Can I practice for specific job roles?",
     answer:
-      "During onboarding we capture your role, experience, and aspirations. Our AI then builds tailored interview drills, resume language, and leadership exercises, updating recommendations every time you log progress or complete a session.",
+      "Yes! You can select from a wide range of industries and specific job titles. Our AI generates relevant interview questions and scenarios to provide you with realistic practice.",
   },
   {
-    question: "Where does Mirai Mentor source labor market data?",
+    question: "Is my data secure?",
     answer:
-      "We aggregate reports from vetted labor databases, salary benchmarks, and hiring trend APIs. The insights are refreshed twice weekly and distilled into dashboards so you always see the newest demand signals and compensation ranges.",
+      "Absolutely. We prioritize your privacy and data security. Your personal information, resumes, and application data are encrypted and never shared with third parties without your consent.",
   },
   {
-    question: "Can I bring my own coach or mentor into the platform?",
+    question: "How accurate is the interview feedback?",
     answer:
-      "Yes. Invite your mentor or manager to review your plans, leave feedback, and co-sign milestones. They get a lightweight viewer dashboard while your private notes stay visible to you alone.",
+      "Our AI provides feedback based on industry best practices, analyzing your clarity, confidence, and content relevance. While it's highly accurate for practice, we always recommend combining it with human mentorship for the best results.",
   },
   {
-    question: "How do I monitor progress week to week?",
+    question: "Can I track applications from any site?",
     answer:
-      "The progress hub highlights streaks, completed modules, and skill scores. Automated reflections summarize what you accomplished, what’s trending up, and which habits need attention before the next check-in.",
+      "Yes, our Application Tracker allows you to manually add jobs from any platform (LinkedIn, Indeed, etc.) and manage them all in one centralized dashboard.",
   },
   {
-    question: "Can I customize the AI-generated drafts and scripts?",
+    question: "What makes the Cover Letter Generator unique?",
     answer:
-      "Absolutely. Every resume bullet, outreach script, and interview answer is fully editable. Use the in-app editor to adjust tone, swap metrics, or add your own talking points while the AI suggests refinements in real time.",
+      "It doesn't just use generic templates. It reads your resume and the specific job description to craft a personalized letter that connects your actual skills to the company's needs.",
   },
 ];

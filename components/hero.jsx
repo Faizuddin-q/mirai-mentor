@@ -5,16 +5,14 @@ import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { ArrowRight, PlayCircle, Sparkles } from "lucide-react";
+import SectionBadge from "./ui/section-badge";
 
 const HeroSection = () => {
   return (
     <section className="w-full pt-32 md:pt-40 pb-10">
       <div className="mx-auto flex flex-col items-center gap-8 px-10 text-center md:flex-row md:items-start md:text-left">
         <div className="flex-1 space-y-6">
-          <span className="inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-4 py-1 text-sm font-medium text-primary">
-            <Sparkles className="h-4 w-4" />
-            AI-Powered Career Assistant
-          </span>
+          <SectionBadge icon={<Sparkles className="h-4 w-4" />} title="AI-Powered Career Assistant" />
           <div className="space-y-5">
             <h1 className="text-4xl font-bold md:text-5xl lg:text-6xl xl:text-7xl gradient-title animate-gradient">
               Build Your Career
@@ -51,7 +49,7 @@ const HeroSection = () => {
             </li>
             <li className="flex items-center gap-2 rounded-md border border-border bg-card px-4 py-3 shadow-sm">
               <span className="h-2 w-2 rounded-full bg-primary" aria-hidden />
-              Practice interviews with AI-generated questions
+              Practice interviews with AI-generated quiz
             </li>
             <li className="flex items-center gap-2 rounded-md border border-border bg-card px-4 py-3 shadow-sm">
               <span className="h-2 w-2 rounded-full bg-primary" aria-hidden />
@@ -59,12 +57,12 @@ const HeroSection = () => {
             </li>
             <li className="flex items-center gap-2 rounded-md border border-border bg-card px-4 py-3 shadow-sm">
               <span className="h-2 w-2 rounded-full bg-primary" aria-hidden />
-              Stay updated with market trends and insights
+              Track your applications and progress
             </li>
           </ul>
         </div>
         <div className="flex flex-1 items-center justify-center">
-          <div className=" w-full mt-24  md:mt-0">
+          <div className=" w-full mt-24  md:mt-0 animate-float">
             <div className="relative overflow-hidden rounded-2xl border shadow-2xl">
               <div className="pointer-events-none absolute inset-0 bg-gradient-to-tr from-primary/10 via-transparent to-transparent" />
               <Image

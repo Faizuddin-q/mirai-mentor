@@ -66,6 +66,7 @@ export const formatJobType = (jobType) => {
 export default function ApplicationsList({ applications }) {
   const router = useRouter();
   const [filterStatus, setFilterStatus] = useState("all");
+  const [dateRange, setDateRange] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [applicationToDelete, setApplicationToDelete] = useState(null);
@@ -96,6 +97,17 @@ export default function ApplicationsList({ applications }) {
   const filteredApplications = applications.filter((app) => {
     // Filter by status
     if (filterStatus && filterStatus !== "all" && app.status !== filterStatus) return false;
+
+    // Filter by date range
+    if (dateRange !== "all") {
+      const appDate = new Date(app.createdAt);
+      const now = new Date();
+      const diffTime = Math.abs(now - appDate);
+      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); 
+      
+      const days = parseInt(dateRange); // 7, 14, 30
+      if (diffDays > days) return false;
+    }
     
     // Filter by search query (company name or job title)
     if (searchQuery.trim()) {
@@ -110,6 +122,7 @@ export default function ApplicationsList({ applications }) {
 
   const clearFilters = () => {
     setFilterStatus("all");
+    setDateRange("all");
     setSearchQuery("");
     router.push("/applications");
   };
@@ -143,7 +156,19 @@ export default function ApplicationsList({ applications }) {
           </SelectContent>
         </Select>
 
-        {(filterStatus !== "all" || searchQuery.trim()) && (
+        <Select value={dateRange} onValueChange={setDateRange}>
+          <SelectTrigger className="w-[180px]">
+            <SelectValue placeholder="Filter by Days" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All Time</SelectItem>
+            <SelectItem value="7">Last 7 Days</SelectItem>
+            <SelectItem value="14">Last 14 Days</SelectItem>
+            <SelectItem value="30">Last 30 Days</SelectItem>
+          </SelectContent>
+        </Select>
+
+        {(filterStatus !== "all" || dateRange !== "all" || searchQuery.trim()) && (
           <Button onClick={clearFilters} variant="ghost">
             Clear Filters
           </Button>
