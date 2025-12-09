@@ -1,8 +1,9 @@
-import { getApplications } from "@/actions/application";
+import { getApplications, getApplicationStats } from "@/actions/application";
 import Link from "next/link";
 import { Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import ApplicationsList from "./_components/applications-list";
+import StatsCards from "./_components/stats-cards";
 
 import QuickAddDialog from "./_components/quick-add-dialog";
 
@@ -14,7 +15,10 @@ export default async function ApplicationsPage({ searchParams }) {
     dateTo: params?.dateTo,
   };
 
-  const applications = await getApplications(filters);
+  const [applications, stats] = await Promise.all([
+    getApplications(filters),
+    getApplicationStats(),
+  ]);
 
   return (
     <div>
@@ -30,6 +34,8 @@ export default async function ApplicationsPage({ searchParams }) {
           </Link>
         </div>
       </div>
+
+      <StatsCards stats={stats} />
 
       <ApplicationsList applications={applications} />
     </div>

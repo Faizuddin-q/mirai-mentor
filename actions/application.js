@@ -292,3 +292,46 @@ export async function parseJobDetails(content) {
     throw new Error("Failed to parse job details. Please try again or fill the form manually.");
   }
 }
+
+export async function getApplicationStats() {
+  const { userId } = await auth();
+  if (!userId) throw new Error("Unauthorized");
+
+  const user = await db.user.findUnique({
+    where: { clerkUserId: userId },
+  });
+
+  if (!user) throw new Error("User not found");
+
+  const stats = await db.application.aggregate({
+    where: { userId: user.id },
+    _count: {
+      _all: true, // Total applications
+    },
+  });
+
+  const interviewCount = await db.application.count({
+    where: {
+      userId: user.id,
+      status: "INTERVIEW",
+    },
+  });
+
+  // Calculate momentum: Number of applications created in the last 30 days
+  const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
+
+  const momentum = await db.application.count({
+    where: {
+      userId: user.id,
+      createdAt: {
+        gte: thirtyDaysAgo,
+      },
+    },
+  });
+
+  return {
+    total: stats._count._all,
+    interviews: interviewCount,
+    momentum,
+  };
+}

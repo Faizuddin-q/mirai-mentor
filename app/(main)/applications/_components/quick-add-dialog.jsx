@@ -55,7 +55,7 @@ export default function QuickAddDialog() {
                     <div className="space-y-4">
                         <div className="space-y-2">
                             <p className="text-sm text-muted-foreground">
-                                Paste a job description or link below. AI will extract the details for you.
+                                Paste a job description or link below. AI will extract the details for you. (Paste both for better handling)
                             </p>
                             <Textarea
                                 placeholder="Paste job description or link here..."
