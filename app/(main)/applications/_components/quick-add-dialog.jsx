@@ -22,6 +22,8 @@ export default function QuickAddDialog() {
         setIsParsing(true);
         try {
             const data = await parseJobDetails(input);
+            data.status = "APPLIED";
+            data.appliedAt = new Date().toISOString();
             setParsedData(data);
             setStep(2);
         } catch (error) {
@@ -38,15 +40,29 @@ export default function QuickAddDialog() {
         setParsedData(null);
     };
 
+    const handleOpenChange = (isOpen) => {
+        if (!isOpen) {
+            handleClose();
+        } else {
+            setOpen(isOpen);
+        }
+    };
+
     return (
-        <Dialog open={open} onOpenChange={setOpen}>
+        <Dialog 
+            open={open} 
+            onOpenChange={handleOpenChange}
+        >
             <DialogTrigger asChild>
-                <Button variant="secondary" className="gap-2">
+                <Button variant="secondary" className="gap-2 border border-border">
                     <Sparkles className="h-4 w-4" />
                     Quick Add
                 </Button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-[800px] max-h-[90vh] overflow-y-auto">
+            <DialogContent 
+                className="sm:max-w-[800px] max-h-[90vh] overflow-y-auto"
+                onInteractOutside={(e) => e.preventDefault()}
+            >
                 <DialogHeader>
                     <DialogTitle>Quick Add Application</DialogTitle>
                 </DialogHeader>
