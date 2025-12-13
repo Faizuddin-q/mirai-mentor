@@ -50,6 +50,7 @@ export default function ApplicationForm({ initialData, applicationId, onCancel }
   const [uploadingFile, setUploadingFile] = useState(false);
   const [resumes, setResumes] = useState([]);
   const [appliedDate, setAppliedDate] = useState(null);
+  const [isCalendarOpen, setIsCalendarOpen] = useState(false);
 
   const {
     loading: creating,
@@ -310,7 +311,7 @@ export default function ApplicationForm({ initialData, applicationId, onCancel }
 
             <div className="space-y-2">
               <Label>Date Applied <span className="text-gray-500">(optional)</span></Label>
-              <Popover>
+              <Popover open={isCalendarOpen} onOpenChange={setIsCalendarOpen}>
                 <PopoverTrigger asChild>
                   <Button
                     variant={"outline"}
@@ -325,9 +326,13 @@ export default function ApplicationForm({ initialData, applicationId, onCancel }
                 </PopoverTrigger>
                 <PopoverContent className="w-auto p-6" align="start">
                   <Calendar
+                    mode="single"
                     selected={appliedDate}
-                    onSelect={setAppliedDate}
-                    className="rounded-md "
+                    onSelect={(date) => {
+                      setAppliedDate(date);
+                      setIsCalendarOpen(false);
+                    }}
+                    className="rounded-md border"
                   />
                 </PopoverContent>
               </Popover>
@@ -530,4 +535,3 @@ export default function ApplicationForm({ initialData, applicationId, onCancel }
     </form>
   );
 }
-

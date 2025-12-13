@@ -27,7 +27,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { MoreVertical, Trash2, ExternalLink, Eye, Search } from "lucide-react";
+import { MoreVertical, Trash2, ExternalLink, Eye, Search, Check, ChevronDown } from "lucide-react";
 import { format } from "date-fns";
 import { deleteApplication, updateApplicationStatus } from "@/actions/application";
 import { toast } from "sonner";
@@ -74,7 +74,29 @@ export default function ApplicationsList({ applications }) {
   const handleStatusChange = async (applicationId, newStatus) => {
     try {
       await updateApplicationStatus(applicationId, newStatus);
-      toast.success("Status updated successfully");
+      
+      const statusMessages = {
+        WISHLIST: "Added to your wishlist!",
+        APPLIED: "Application sent! Good luck!",
+        OA: "Online Assessment received! You got this!",
+        INTERVIEW: "Interview scheduled! Go get them!",
+        OFFER: "Offer received! Congratulations!",
+        REJECTED: "Keep going! The right one is out there.",
+        WITHDRAWN: "Application withdrawn. On to the next!",
+      };
+
+      // const statusToastMap = {
+      //   WISHLIST: toast.info,
+      //   APPLIED: toast.info,
+      //   OA: toast.info,
+      //   INTERVIEW: toast.success,
+      //   OFFER: toast.success,
+      //   REJECTED: toast.error,
+      //   WITHDRAWN: toast.warning,
+      // };
+
+      // const toastFn = statusToastMap[newStatus] || toast.success;
+      toast.success(statusMessages[newStatus] || "Status updated successfully");
       router.refresh();
     } catch (error) {
       toast.error(error.message || "Failed to update status");
@@ -201,9 +223,32 @@ export default function ApplicationsList({ applications }) {
                   <TableCell className="font-medium">{app.companyName}</TableCell>
                   <TableCell>{app.jobTitle}</TableCell>
                   <TableCell>
-                    <Badge variant="outline" className={statusColors[app.status]}>
-                      {app.status}
-                    </Badge>
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Badge
+                          variant="outline"
+                          className={`${statusColors[app.status]} cursor-pointer flex w-fit items-center gap-1`}
+                        >
+                          {app.status}
+                          <ChevronDown className="h-3 w-3" />
+                        </Badge>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="start">
+                        {Object.keys(statusColors).map((status) => (
+                          <DropdownMenuItem
+                            key={status}
+                            onClick={() => handleStatusChange(app.id, status)}
+                            className={status === app.status ? "bg-primary" : ""}
+                          >
+                            <span className={`w-2 h-2 rounded-full mr-2 ${statusColors[status]}`} />
+                            {status}
+                            {status === app.status && (
+                              <Check className="ml-auto h-4 w-4" />
+                            )}
+                          </DropdownMenuItem>
+                        ))}
+                      </DropdownMenuContent>
+                    </DropdownMenu>
                   </TableCell>
                   <TableCell>{formatJobType(app.jobType)}</TableCell>
                   <TableCell>
@@ -241,26 +286,6 @@ export default function ApplicationsList({ applications }) {
                             <Eye className="h-4 w-4 mr-2" />
                             More Details
                           </Link>
-                        </DropdownMenuItem>
-                        <DropdownMenuItem
-                          onClick={() => handleStatusChange(app.id, "APPLIED")}
-                        >
-                          Mark as Applied
-                        </DropdownMenuItem>
-                        <DropdownMenuItem
-                          onClick={() => handleStatusChange(app.id, "INTERVIEW")}
-                        >
-                          Mark as Interview
-                        </DropdownMenuItem>
-                        <DropdownMenuItem
-                          onClick={() => handleStatusChange(app.id, "REJECTED")}
-                        >
-                          Mark as Rejected
-                        </DropdownMenuItem>
-                        <DropdownMenuItem
-                          onClick={() => handleStatusChange(app.id, "OFFER")}
-                        >
-                          Mark as Offer
                         </DropdownMenuItem>
                         <DropdownMenuItem
                           className="text-red-600"

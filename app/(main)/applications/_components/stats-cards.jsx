@@ -37,9 +37,7 @@ export default function StatsCards({ stats }) {
       </Card>
 
       <Card
-        className={`relative overflow-hidden transition-all duration-300 hover:shadow-lg hover:-translate-y-1 bg-muted/40 border-muted-foreground/20 ${
-          interviews > 0 ? "border-primary/50 shadow-primary/10" : ""
-        }`}
+        className={`relative overflow-hidden transition-all duration-300 hover:shadow-lg hover:-translate-y-1 bg-muted/40 border-primary/50 shadow-primary/10`}
       >
         <CardHeader className="flex flex-row items-center justify-between space-y-0 p-4">
           <CardTitle className="text-sm font-medium">Interviews Scheduled</CardTitle>
@@ -56,9 +54,7 @@ export default function StatsCards({ stats }) {
       </Card>
 
       <Card
-        className={`relative overflow-hidden transition-all duration-300 hover:shadow-lg hover:-translate-y-1 bg-muted/40 border-muted-foreground/20 ${
-          momentum > 5 ? "border-primary/50 shadow-primary/10" : ""
-        }`}
+        className={`relative overflow-hidden transition-all duration-300 hover:shadow-lg hover:-translate-y-1 bg-muted/40 border-primary/50 shadow-primary/10`}
       >
         <CardHeader className="flex flex-row items-center justify-between space-y-0 p-4">
           <CardTitle className="text-sm font-medium">Monthly Momentum</CardTitle>
