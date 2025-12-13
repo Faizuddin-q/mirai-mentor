@@ -78,29 +78,33 @@ export default function ApplicationsList({ applications }) {
     }
   );
 
-  const handleStatusChange = async (applicationId, newStatus) => {
-    startTransition(async () => {
-      setOptimisticApplications({ id: applicationId, status: newStatus });
-      try {
-        await updateApplicationStatus(applicationId, newStatus);
-        
-        const statusMessages = {
-          WISHLIST: "Added to your wishlist!",
-          APPLIED: "Application sent! Good luck!",
-          OA: "Online Assessment received! You got this!",
-          INTERVIEW: "Interview scheduled! Go get them!",
-          OFFER: "Offer received! Congratulations!",
-          REJECTED: "Keep going! The right one is out there.",
-          WITHDRAWN: "Application withdrawn. On to the next!",
-        };
+const handleStatusChange = (applicationId, newStatus) => {
+  const previousStatus = optimisticApplications.find(
+    (app) => app.id === applicationId
+  )?.status;
 
-        toast.success(statusMessages[newStatus] || "Status updated successfully");
-        router.refresh();
-      } catch (error) {
-        toast.error(error.message || "Failed to update status");
-      }
-    });
-  };
+  startTransition(async () => {
+    // Optimistic update
+    setOptimisticApplications({ id: applicationId, status: newStatus });
+
+    try {
+      // Server update
+      await updateApplicationStatus(applicationId, newStatus);
+
+      toast.success("Status updated successfully");
+      router.refresh();
+    } catch (error) {
+      // Rollback on failure
+      setOptimisticApplications({
+        id: applicationId,
+        status: previousStatus,
+      });
+
+      toast.error(error.message || "Failed to update status");
+    }
+  });
+};
+
 
   const handleDelete = async () => {
     if (!applicationToDelete) return;
