@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useOptimistic, startTransition } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
@@ -71,36 +71,35 @@ export default function ApplicationsList({ applications }) {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [applicationToDelete, setApplicationToDelete] = useState(null);
 
-  const handleStatusChange = async (applicationId, newStatus) => {
-    try {
-      await updateApplicationStatus(applicationId, newStatus);
-      
-      const statusMessages = {
-        WISHLIST: "Added to your wishlist!",
-        APPLIED: "Application sent! Good luck!",
-        OA: "Online Assessment received! You got this!",
-        INTERVIEW: "Interview scheduled! Go get them!",
-        OFFER: "Offer received! Congratulations!",
-        REJECTED: "Keep going! The right one is out there.",
-        WITHDRAWN: "Application withdrawn. On to the next!",
-      };
-
-      // const statusToastMap = {
-      //   WISHLIST: toast.info,
-      //   APPLIED: toast.info,
-      //   OA: toast.info,
-      //   INTERVIEW: toast.success,
-      //   OFFER: toast.success,
-      //   REJECTED: toast.error,
-      //   WITHDRAWN: toast.warning,
-      // };
-
-      // const toastFn = statusToastMap[newStatus] || toast.success;
-      toast.success(statusMessages[newStatus] || "Status updated successfully");
-      router.refresh();
-    } catch (error) {
-      toast.error(error.message || "Failed to update status");
+  const [optimisticApplications, setOptimisticApplications] = useOptimistic(
+    applications,
+    (state, { id, status }) => {
+      return state.map((app) => (app.id === id ? { ...app, status } : app));
     }
+  );
+
+  const handleStatusChange = async (applicationId, newStatus) => {
+    startTransition(async () => {
+      setOptimisticApplications({ id: applicationId, status: newStatus });
+      try {
+        await updateApplicationStatus(applicationId, newStatus);
+        
+        const statusMessages = {
+          WISHLIST: "Added to your wishlist!",
+          APPLIED: "Application sent! Good luck!",
+          OA: "Online Assessment received! You got this!",
+          INTERVIEW: "Interview scheduled! Go get them!",
+          OFFER: "Offer received! Congratulations!",
+          REJECTED: "Keep going! The right one is out there.",
+          WITHDRAWN: "Application withdrawn. On to the next!",
+        };
+
+        toast.success(statusMessages[newStatus] || "Status updated successfully");
+        router.refresh();
+      } catch (error) {
+        toast.error(error.message || "Failed to update status");
+      }
+    });
   };
 
   const handleDelete = async () => {
@@ -116,7 +115,7 @@ export default function ApplicationsList({ applications }) {
     }
   };
 
-  const filteredApplications = applications.filter((app) => {
+  const filteredApplications = optimisticApplications.filter((app) => {
     // Filter by status
     if (filterStatus && filterStatus !== "all" && app.status !== filterStatus) return false;
 
