@@ -21,7 +21,7 @@ import { Input } from "@/components/ui/input";
 import { improveWithAI, saveResume } from "@/actions/resume";
 import { EntryForm } from "./entry-form";
 import useFetch from "@/hooks/use-fetch";
-import { useUser } from "@clerk/nextjs";
+import { useUser } from "@/contexts/user-context";
 import { entriesToMarkdown, parseMarkdownToFormData } from "@/app/lib/helper";
 import { resumeSchema } from "@/app/lib/schema";
 import * as html2pdf from "html2pdf.js/dist/html2pdf.min.js";
@@ -110,7 +110,7 @@ export default function ResumeBuilder({ initialContent, resumeId }) {
       if (contactInfo?.twitter) contactParts.push(`[Twitter](${contactInfo.twitter})`);
 
       const contactMarkdown = contactParts.length > 0
-        ? `<div align="center">\n\n# ${user?.fullName || 'Your Name'}\n\n${contactParts.join(" | ")}\n\n</div>\n\n---\n\n`
+        ? `<div align="center">\n\n# ${user?.name || 'Your Name'}\n\n${contactParts.join(" | ")}\n\n</div>\n\n---\n\n`
         : "";
 
       const newContent = [
@@ -225,7 +225,7 @@ export default function ResumeBuilder({ initialContent, resumeId }) {
       if (contactInfo.twitter) parts.push(`[Twitter](${contactInfo.twitter})`);
 
       return parts.length > 0
-        ? `<div align="center">\n\n# ${user?.fullName || 'Your Name'}\n\n${parts.join(" | ")}\n\n</div>\n\n---\n\n`
+        ? `<div align="center">\n\n# ${user?.name || 'Your Name'}\n\n${parts.join(" | ")}\n\n</div>\n\n---\n\n`
         : "";
     };
 
@@ -252,9 +252,7 @@ export default function ResumeBuilder({ initialContent, resumeId }) {
 
         let filename = "resume.pdf";
         if (user) {
-          const firstName = user.firstName || "";
-          const lastName = user.lastName || "";
-          const fullName = `${firstName} ${lastName}`.trim();
+          const fullName = user.name || "";
 
           if (fullName) {
             const username = fullName.toLowerCase().replace(/\s+/g, "_");

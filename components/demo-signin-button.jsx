@@ -38,12 +38,12 @@ export default function DemoSignInButton() {
       variant="outline"
       onClick={handleDemoLogin}
       disabled={!isLoaded}
-      className="border-primary text-primary hover:bg-primary/10"
+      className="border-border"
     >
       {!isLoaded ? (
         <Loader2 className="mr-2 h-4 w-4 animate-spin" />
       ) : null}
-      Demo Login
+      Demo Sign In
     </Button>
   );
 }

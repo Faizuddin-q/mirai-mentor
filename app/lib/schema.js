@@ -4,6 +4,8 @@ export const onboardingSchema = z.object({
   industry: z.string({
     required_error: "Please select an industry",
   }),
+  firstName: z.string().min(1, "First Name is required"),
+  lastName: z.string().optional(),
   subIndustry: z.string({
     required_error: "Please select a specialization",
   }),
