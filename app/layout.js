@@ -6,6 +6,7 @@ import Header from "@/components/header";
 import { ThemeProvider } from "@/components/theme-provider";
 import { UserProvider } from "@/contexts/user-context";
 import { dark } from "@clerk/themes";
+import { Analytics } from "@vercel/analytics/next"
 
 const spaceGrotesk = Space_Grotesk({
   subsets: ["latin"],
@@ -63,6 +64,7 @@ export default function RootLayout({ children }) {
               </div>
 
             </footer>
+            <Analytics />
           </ThemeProvider>
         </body>
       </html>
