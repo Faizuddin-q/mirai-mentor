@@ -4,6 +4,8 @@ export const onboardingSchema = z.object({
   industry: z.string({
     required_error: "Please select an industry",
   }),
+  firstName: z.string().min(1, "First Name is required"),
+  lastName: z.string().optional(),
   subIndustry: z.string({
     required_error: "Please select a specialization",
   }),
@@ -115,7 +117,7 @@ export const applicationSchema = z.object({
   status: z.enum(["WISHLIST", "APPLIED", "OA", "INTERVIEW", "OFFER", "REJECTED", "WITHDRAWN"]),
   nextAction: z.string().optional(),
   appliedAt: z.coerce.date().optional(),
-  resumeSourceType: z.enum(["INTERNAL", "FILE_UPLOAD", "EXTERNAL_LINK", "TEXT_PASTE"]).optional(),
+  resumeSourceType: z.enum(["INTERNAL", "FILE_UPLOAD", "EXTERNAL_LINK", "TEXT_PASTE", "NONE"]).optional(),
   resumeReference: z.string().optional(),
   resumePdfPath: z.string().optional(),
 });

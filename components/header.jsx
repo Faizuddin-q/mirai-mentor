@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/nextjs";
+import DemoSignInButton from "./demo-signin-button";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 
@@ -105,6 +106,7 @@ export default function Header() {
           </SignedIn>
 
           <SignedOut>
+            <DemoSignInButton />
             <SignInButton>
               <Button variant="outline">Sign In</Button>
             </SignInButton>

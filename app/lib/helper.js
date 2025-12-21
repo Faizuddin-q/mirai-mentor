@@ -27,7 +27,7 @@ export function entriesToMarkdown(entries, type) {
     })
     .join("\n\n");
 
-  return `## ${type}\n\n${formattedEntries}\n\n---\n\n`;
+  return `## ${type}\n\n${formattedEntries}`;
 }
 
 // Helper function to parse markdown back into form data
@@ -180,13 +180,14 @@ export function parseMarkdownToFormData(markdown) {
       
       // Get date range (next line after title)
       const dateRangeMatch = block.match(/\n(.+?)\n\n/);
-      const description = block.split(/\n\n/).slice(2).join("\n\n").trim();
-
+      
       if (!dateRangeMatch) return;
 
       const dateRange = dateRangeMatch[1].trim();
       const isCurrent = dateRange.includes("Present");
       const dateParts = dateRange.split(" - ");
+
+      const description = block.substring(dateRangeMatch.index + dateRangeMatch[0].length).trim();
 
       entries.push({
         title,

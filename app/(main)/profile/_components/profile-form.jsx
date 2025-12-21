@@ -52,6 +52,8 @@ const ProfileForm = ({ industries, initialData }) => {
   } = useForm({
     resolver: zodResolver(onboardingSchema),
     defaultValues: {
+      firstName: initialData?.name?.split(" ")[0] || "",
+      lastName: initialData?.name?.split(" ").slice(1).join(" ") || "",
       industry: initialData?.industry || "",
       subIndustry: initialData?.subIndustry || "",
       experience: initialData?.experience ? String(initialData.experience) : "",
@@ -72,6 +74,8 @@ const ProfileForm = ({ industries, initialData }) => {
   useEffect(() => {
     if (initialData) {
       reset({
+        firstName: initialData?.name?.split(" ")[0] || "",
+        lastName: initialData?.name?.split(" ").slice(1).join(" ") || "",
         industry: initialData.industry || "",
         subIndustry: initialData.subIndustry || "",
         experience: initialData.experience ? String(initialData.experience) : "",
@@ -156,6 +160,35 @@ const ProfileForm = ({ industries, initialData }) => {
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="firstName">First Name</Label>
+                <Input
+                  id="firstName"
+                  placeholder="John"
+                  {...register("firstName")}
+                />
+                {errors.firstName && (
+                  <p className="text-sm text-red-500">
+                    {errors.firstName.message}
+                  </p>
+                )}
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="lastName">Last Name</Label>
+                <Input
+                  id="lastName"
+                  placeholder="Doe"
+                  {...register("lastName")}
+                />
+                {errors.lastName && (
+                  <p className="text-sm text-red-500">
+                    {errors.lastName.message}
+                  </p>
+                )}
+              </div>
+            </div>
+
             <div className="space-y-2">
               <Label htmlFor="industry">Industry</Label>
               <Select

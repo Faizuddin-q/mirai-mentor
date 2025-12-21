@@ -122,11 +122,11 @@ export default function ApplicationForm({ initialData, applicationId, onCancel }
     resolver: zodResolver(applicationSchema),
     defaultValues: initialData ? {
       ...initialData,
-      resumeReference: initialData.resumeReference || "none",
+      resumeReference: initialData.resumeReference || "NONE",
     } : {
       status: "WISHLIST",
       jobType: "FULL_TIME",
-      resumeReference: "none",
+      resumeReference: "NONE",
     },
   });
 
@@ -140,7 +140,7 @@ export default function ApplicationForm({ initialData, applicationId, onCancel }
         // Explicitly no resume - set everything to null
         resumeRef = null;
         resumePdfPath = null;
-      } else if (resumeSourceType === "INTERNAL" && data.resumeReference && data.resumeReference !== "none") {
+      } else if (resumeSourceType === "INTERNAL" && data.resumeReference && data.resumeReference !== "NONE") {
         resumeRef = data.resumeReference;
       } else if (resumeSourceType === "FILE_UPLOAD" && resumeFile) {
         resumePdfPath = resumeFile;
@@ -384,14 +384,14 @@ export default function ApplicationForm({ initialData, applicationId, onCancel }
             <div className="space-y-2">
               <Label htmlFor="resumeReference">Select Resume</Label>
               <Select
-                value={watch("resumeReference") || "none"}
-                onValueChange={(value) => setValue("resumeReference", value === "none" ? null : value)}
+                value={watch("resumeReference") || "NONE"}
+                onValueChange={(value) => setValue("resumeReference", value === "NONE" ? null : value)}
               >
                 <SelectTrigger>
                   <SelectValue placeholder="Select a resume (optional)" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="none">None</SelectItem>
+                  <SelectItem value="NONE">None</SelectItem>
                   {resumes.map((resume) => (
                     <SelectItem key={resume.id} value={resume.id}>
                       {resume.title}
