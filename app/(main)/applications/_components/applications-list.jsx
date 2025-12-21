@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useOptimistic, startTransition } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
@@ -52,6 +52,23 @@ const statusColors = {
   WITHDRAWN: "bg-gray-400",
 };
 
+const dateRangeOptions = [
+  { value: "all", label: "All Time" },
+  { value: "7", label: "Last 7 Days" },
+  { value: "14", label: "Last 14 Days" },
+  { value: "30", label: "Last 30 Days" },
+];
+
+const statusMessages = {
+  WISHLIST: "Added to your wishlist!",
+  APPLIED: "Application sent! Good luck!",
+  OA: "Online Assessment received! You got this!",
+  INTERVIEW: "Interview scheduled! Go get them!",
+  OFFER: "Offer received! Congratulations!",
+  REJECTED: "Keep going! The right one is out there.",
+  WITHDRAWN: "Application withdrawn. On to the next!",
+};
+
 export const formatJobType = (jobType) => {
   const jobTypeMap = {
     FULL_TIME: "Full Time",
@@ -65,46 +82,55 @@ export const formatJobType = (jobType) => {
 
 export default function ApplicationsList({ applications }) {
   const router = useRouter();
+
   const [filterStatus, setFilterStatus] = useState("all");
   const [dateRange, setDateRange] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
+
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [applicationToDelete, setApplicationToDelete] = useState(null);
 
-  const handleStatusChange = async (applicationId, newStatus) => {
-    try {
-      await updateApplicationStatus(applicationId, newStatus);
-      
-      const statusMessages = {
-        WISHLIST: "Added to your wishlist!",
-        APPLIED: "Application sent! Good luck!",
-        OA: "Online Assessment received! You got this!",
-        INTERVIEW: "Interview scheduled! Go get them!",
-        OFFER: "Offer received! Congratulations!",
-        REJECTED: "Keep going! The right one is out there.",
-        WITHDRAWN: "Application withdrawn. On to the next!",
-      };
+  const [optimisticApplications, setOptimisticApplications] = useOptimistic(
+    applications,
+    (state, { id, status }) =>
+      state.map((app) =>
+        app.id === id ? { ...app, status } : app
+      )
+  );
 
-      // const statusToastMap = {
-      //   WISHLIST: toast.info,
-      //   APPLIED: toast.info,
-      //   OA: toast.info,
-      //   INTERVIEW: toast.success,
-      //   OFFER: toast.success,
-      //   REJECTED: toast.error,
-      //   WITHDRAWN: toast.warning,
-      // };
+  const handleStatusChange = (applicationId, newStatus) => {
+    const previousStatus = optimisticApplications.find(
+      (app) => app.id === applicationId
+    )?.status;
 
-      // const toastFn = statusToastMap[newStatus] || toast.success;
-      toast.success(statusMessages[newStatus] || "Status updated successfully");
-      router.refresh();
-    } catch (error) {
-      toast.error(error.message || "Failed to update status");
-    }
+    startTransition(async () => {
+    // Optimistic update
+      setOptimisticApplications({ id: applicationId, status: newStatus });
+
+      try {
+      // Server update
+        await updateApplicationStatus(applicationId, newStatus);
+
+        toast.success(
+          statusMessages[newStatus] || "Status updated successfully"
+        );
+
+        router.refresh();
+      } catch (error) {
+      // Rollback on failure
+        setOptimisticApplications({
+          id: applicationId,
+          status: previousStatus,
+        });
+
+        toast.error(error.message || "Failed to update status");
+      }
+    });
   };
 
   const handleDelete = async () => {
     if (!applicationToDelete) return;
+
     try {
       await deleteApplication(applicationToDelete);
       toast.success("Application deleted successfully");
@@ -116,11 +142,9 @@ export default function ApplicationsList({ applications }) {
     }
   };
 
-  const filteredApplications = applications.filter((app) => {
-    // Filter by status
-    if (filterStatus && filterStatus !== "all" && app.status !== filterStatus) return false;
+  const filteredApplications = optimisticApplications.filter((app) => {
+    if (filterStatus !== "all" && app.status !== filterStatus) return false;
 
-    // Filter by date range
     if (dateRange !== "all") {
       const appDate = new Date(app.createdAt);
       const now = new Date();
@@ -130,15 +154,14 @@ export default function ApplicationsList({ applications }) {
       const days = parseInt(dateRange); // 7, 14, 30
       if (diffDays > days) return false;
     }
-    
-    // Filter by search query (company name or job title)
+
     if (searchQuery.trim()) {
       const query = searchQuery.toLowerCase().trim();
       const companyMatch = app.companyName.toLowerCase().includes(query);
       const jobTitleMatch = app.jobTitle.toLowerCase().includes(query);
       if (!companyMatch && !jobTitleMatch) return false;
     }
-    
+
     return true;
   });
 
@@ -149,32 +172,31 @@ export default function ApplicationsList({ applications }) {
     router.push("/applications");
   };
 
+
   return (
     <>
       <div className="mb-4 flex gap-2 flex-wrap items-center">
         <div className="relative flex-1 min-w-[200px] max-w-[400px]">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input
-            placeholder="Search by company name or job title..."
+            placeholder="Search by company or job title..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="pl-10"
           />
         </div>
-        
+
         <Select value={filterStatus} onValueChange={setFilterStatus}>
           <SelectTrigger className="w-[180px]">
             <SelectValue placeholder="Filter by Status" />
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">All Statuses</SelectItem>
-            <SelectItem value="WISHLIST">Wishlist</SelectItem>
-            <SelectItem value="APPLIED">Applied</SelectItem>
-            <SelectItem value="OA">OA</SelectItem>
-            <SelectItem value="INTERVIEW">Interview</SelectItem>
-            <SelectItem value="OFFER">Offer</SelectItem>
-            <SelectItem value="REJECTED">Rejected</SelectItem>
-            <SelectItem value="WITHDRAWN">Withdrawn</SelectItem>
+            {Object.keys(statusColors).map((status) => (
+              <SelectItem key={status} value={status}>
+                {status}
+              </SelectItem>
+            ))}
           </SelectContent>
         </Select>
 
@@ -183,15 +205,18 @@ export default function ApplicationsList({ applications }) {
             <SelectValue placeholder="Filter by Days" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">All Time</SelectItem>
-            <SelectItem value="7">Last 7 Days</SelectItem>
-            <SelectItem value="14">Last 14 Days</SelectItem>
-            <SelectItem value="30">Last 30 Days</SelectItem>
+            {dateRangeOptions.map((option) => (
+              <SelectItem key={option.value} value={option.value}>
+                {option.label}
+              </SelectItem>
+            ))}
           </SelectContent>
         </Select>
 
-        {(filterStatus !== "all" || dateRange !== "all" || searchQuery.trim()) && (
-          <Button onClick={clearFilters} variant="ghost">
+        {(filterStatus !== "all" ||
+          dateRange !== "all" ||
+          searchQuery) && (
+          <Button variant="ghost" onClick={clearFilters}>
             Clear Filters
           </Button>
         )}
@@ -210,6 +235,7 @@ export default function ApplicationsList({ applications }) {
               <TableHead className="text-right">Actions</TableHead>
             </TableRow>
           </TableHeader>
+
           <TableBody>
             {filteredApplications.length === 0 ? (
               <TableRow>
@@ -222,6 +248,7 @@ export default function ApplicationsList({ applications }) {
                 <TableRow key={app.id}>
                   <TableCell className="font-medium">{app.companyName}</TableCell>
                   <TableCell>{app.jobTitle}</TableCell>
+                  <TableCell>{formatJobType(app.jobType)}</TableCell>
                   <TableCell>
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
@@ -250,14 +277,13 @@ export default function ApplicationsList({ applications }) {
                       </DropdownMenuContent>
                     </DropdownMenu>
                   </TableCell>
-                  <TableCell>{formatJobType(app.jobType)}</TableCell>
                   <TableCell>
                     {app.jobLink ? (
                       <a
                         href={app.jobLink}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-blue-600 hover:underline flex items-center gap-1 w-fit"
+                        className="text-blue-600 hover:underline flex items-center gap-1"
                       >
                         <ExternalLink className="h-4 w-4" />
                         Job Link
@@ -266,6 +292,7 @@ export default function ApplicationsList({ applications }) {
                       <span className="text-muted-foreground text-sm">—</span>
                     )}
                   </TableCell>
+
                   <TableCell>
                     {app.appliedAt ? (
                       format(new Date(app.appliedAt), "MMM dd, yyyy")
@@ -273,6 +300,7 @@ export default function ApplicationsList({ applications }) {
                       <span className="text-muted-foreground text-sm">—</span>
                     )}
                   </TableCell>
+
                   <TableCell className="text-right">
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
