@@ -226,6 +226,7 @@ export default function ApplicationsList({ applications }) {
         <Table>
           <TableHeader>
             <TableRow>
+              <TableHead>S. No.</TableHead>
               <TableHead>Company</TableHead>
               <TableHead>Job Title</TableHead>
               <TableHead>Job Type</TableHead>
@@ -244,8 +245,9 @@ export default function ApplicationsList({ applications }) {
                 </TableCell>
               </TableRow>
             ) : (
-              filteredApplications.map((app) => (
+              filteredApplications.map((app, index) => (
                 <TableRow key={app.id}>
+                  <TableCell>{index + 1}</TableCell>
                   <TableCell className="font-medium">{app.companyName}</TableCell>
                   <TableCell>{app.jobTitle}</TableCell>
                   <TableCell>{formatJobType(app.jobType)}</TableCell>

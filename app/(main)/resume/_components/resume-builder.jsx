@@ -107,7 +107,7 @@ export default function ResumeBuilder({ initialContent, resumeId }) {
       if (contactInfo?.email) contactParts.push(`${contactInfo.email}`);
       if (contactInfo?.mobile) contactParts.push(`${contactInfo.mobile}`);
       if (contactInfo?.linkedin) contactParts.push(`[LinkedIn](${contactInfo.linkedin})`);
-      if (contactInfo?.twitter) contactParts.push(`[Twitter](${contactInfo.twitter})`);
+      if (contactInfo?.twitter) contactParts.push(contactInfo.twitter);
 
       const contactMarkdown = contactParts.length > 0
         ? `<div align="center">\n\n# ${user?.name || 'Your Name'}\n\n${contactParts.join(" | ")}\n\n</div>\n\n---\n\n`
@@ -115,8 +115,8 @@ export default function ResumeBuilder({ initialContent, resumeId }) {
 
       const newContent = [
         contactMarkdown,
-        summary && `## PROFESSIONAL SUMMARY\n\n${summary}\n\n---\n\n`,
-        skills && `## TECHNICAL SKILLS\n\n${skills}\n\n---\n\n`,
+        summary && `## PROFESSIONAL SUMMARY\n\n${summary}`,
+        skills && `## TECHNICAL SKILLS\n\n${skills}`,
         entriesToMarkdown(experience, "EXPERIENCE"),
         entriesToMarkdown(education, "EDUCATION"),
         entriesToMarkdown(projects, "PERSONAL PROJECTS"),
@@ -222,10 +222,10 @@ export default function ResumeBuilder({ initialContent, resumeId }) {
       if (contactInfo.mobile) parts.push(`${contactInfo.mobile}`);
       if (contactInfo.linkedin)
         parts.push(`[LinkedIn](${contactInfo.linkedin})`);
-      if (contactInfo.twitter) parts.push(`[Twitter](${contactInfo.twitter})`);
+      if (contactInfo.twitter) parts.push(contactInfo.twitter);
 
       return parts.length > 0
-        ? `<div align="center">\n\n# ${user?.name || 'Your Name'}\n\n${parts.join(" | ")}\n\n</div>\n\n---\n\n`
+        ? `<div align="center">\n\n# ${user?.name || 'Your Name'}\n\n${parts.join(" | ")}\n\n</div>`
         : "";
     };
 
@@ -233,8 +233,8 @@ export default function ResumeBuilder({ initialContent, resumeId }) {
       const { summary, skills, experience, education, projects } = formValues;
       return [
         getContactMarkdown(),
-        summary && `## PROFESSIONAL SUMMARY\n\n${summary}\n\n---\n\n`,
-        skills && `## TECHNICAL SKILLS\n\n${skills}\n\n---\n\n`,
+        summary && `## PROFESSIONAL SUMMARY\n\n${summary}`,
+        skills && `## TECHNICAL SKILLS\n\n${skills}`,
         entriesToMarkdown(experience, "EXPERIENCE"),
         entriesToMarkdown(education, "EDUCATION"),
         entriesToMarkdown(projects, "PERSONAL PROJECTS"),
@@ -261,10 +261,10 @@ export default function ResumeBuilder({ initialContent, resumeId }) {
         }
 
         const opt = {
-          margin: [15, 15],
+          margin: [0, 0],
           filename: filename,
           image: { type: "jpeg", quality: 1 },
-          html2canvas: { scale: 2 },
+          html2canvas: { scale: 2, useCORS: true },
           jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
         };
 
@@ -607,12 +607,120 @@ export default function ResumeBuilder({ initialContent, resumeId }) {
               />
             </div>
             <div className="hidden">
-              <div id="resume-pdf" style={{ background: "white", color: "#000", padding: "20mm", maxWidth: "210mm", margin: "0 auto" }}>
+              <div id="resume-pdf">
+                <style>
+                  {`
+                    @import url('https://fonts.googleapis.com/css2?family=Merriweather:wght@300;400;700&family=Open+Sans:wght@300;400;600&display=swap');
+                    #resume-pdf {
+                      font-family: 'Merriweather', serif;
+                      font-size: 9pt;
+                      line-height: 1.4;
+                      color: #333;
+                      width: 210mm;
+                      min-height: 297mm;
+                      padding: 2mm 10mm 10mm 10mm; /* Minimized top padding */
+                      background: white;
+                    }
+                    #resume-pdf * {
+                        box-sizing: border-box;
+                    }
+                    /* Reset markdown library default styles */
+                    #resume-pdf .wmde-markdown {
+                        background: transparent !important;
+                        font-family: inherit !important;
+                        padding-top: 0 !important;
+                        color: inherit !important;
+                    }
+                    #resume-pdf .wmde-markdown > :first-child {
+                        margin-top: 0 !important;
+                        padding-top: 0 !important;
+                    }
+                    #resume-pdf h1 {
+                      font-family: 'Open Sans', sans-serif;
+                      font-size: 16pt;
+                      font-weight: 700;
+                      text-transform: uppercase;
+                      letter-spacing: 1px;
+                      color: #2c3e50;
+                      margin-top: 0 !important; /* Force 0 */
+                      margin-bottom: 5px;
+                      text-align: center;
+                    }
+                    #resume-pdf > div:first-child {
+                        margin-top: 0 !important;
+                    }
+                    #resume-pdf h2 {
+                      font-family: 'Open Sans', sans-serif;
+                      font-size: 11pt;
+                      font-weight: 700;
+                      text-transform: uppercase;
+                      border-bottom: 1.5px solid #2c3e50;
+                      padding-bottom: 4px;
+                      margin-top: 10px;
+                      margin-bottom: 10px;
+                      color: #2c3e50;
+                    }
+                     #resume-pdf h3 {
+                      font-size: 10pt;
+                      font-weight: 700;
+                      margin-top: 6px;
+                      margin-bottom: 2px;
+                    }
+                    #resume-pdf p {
+                      margin-bottom: 4px;
+                      font-size: 10pt;
+                      line-height: 1.35;
+                    }
+                    #resume-pdf ul {
+                      padding-left: 0 !important;
+                      list-style: none !important; /* Remove default bullets */
+                      margin-bottom: 1px;
+                    }
+                    #resume-pdf li {
+                      margin-bottom: 1px;
+                      padding-left: 12px;
+                      position: relative;
+                      line-height: 1.35;
+                      font-size: 10pt;
+                    }
+                    /* Custom bullet point for perfect alignment */
+                    #resume-pdf li::before {
+                      content: "•";
+                      position: absolute;
+                      left: 0;
+                      top: 2px; /* Adjust vertical position for 9pt font */
+                      font-size: 1.2em;
+                      line-height: 1.1;
+                    }
+                    /* Fix bullet alignment if p content exists inside li */
+                    #resume-pdf li p {
+                        margin: 0;
+                        padding: 0;
+                        display: inline; /* Keep text inline with bullet */
+                    }
+                    #resume-pdf  a {
+                      color: #2980b9;
+                      text-decoration: none;
+                    }
+                     /* Contact Info Handling */
+                    #resume-pdf .contact-info {
+                      text-align: center;
+                      font-size: 10pt;
+                      margin-bottom: 15px;
+                      border-bottom: 10px solid #eb0c0cff;
+                    }
+                   #resume-pdf hr {
+                      border: 0;
+                      border-top: 10px solid #eb0c0cff;
+                      margin: 10px 0;
+                   }
+                  `}
+                </style>
                 <MDEditor.Markdown
                   source={previewContent}
                   style={{
                     background: "white",
-                    color: "#000",
+                    color: "black",
                   }}
                 />
               </div>
