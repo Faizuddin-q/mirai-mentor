@@ -20,7 +20,7 @@ export default function DemoSignInButton() {
       });
 
       if (result.status === "complete") {
-        await setActive({ session: result.createdSessionId });
+        setActive({ session: result.createdSessionId });
         router.push("/applications");
         toast.success("Welcome back! Signed in with demo account.");
       } else {
