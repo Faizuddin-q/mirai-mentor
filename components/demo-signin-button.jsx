@@ -21,7 +21,7 @@ export default function DemoSignInButton() {
 
       if (result.status === "complete") {
         setActive({ session: result.createdSessionId });
-        router.push("/applications");
+        router.push("/");
         toast.success("Welcome back! Signed in with demo account.");
       } else {
         console.error(result);

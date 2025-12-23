@@ -33,7 +33,22 @@ import { howItWorks } from "@/data/howItWorks";
 
 
 
-export default function LandingPage() {
+import { auth } from "@clerk/nextjs/server";
+import { redirect } from "next/navigation";
+import { getUserOnboardingStatus } from "@/actions/user";
+
+export default async function LandingPage() {
+  const { userId } = await auth();
+
+  if (userId) {
+    const { isOnboarded } = await getUserOnboardingStatus();
+    if (isOnboarded) {
+      redirect("/applications");
+    } else {
+      redirect("/onboarding");
+    }
+  }
+
   return (
     <>
       <div className="grid-background"></div>
