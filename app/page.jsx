@@ -35,7 +35,6 @@ import { howItWorks } from "@/data/howItWorks";
 // import { getUserOnboardingStatus } from "@/actions/user";
 
 
-
 export default async function LandingPage() {
   // const { userId } = await auth();
 
