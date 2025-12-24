@@ -178,7 +178,7 @@ export default function Quiz() {
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
-        <p className="text-lg font-medium">{question.question}</p>
+        <p className="text-lg font-medium text-gray-400 ">{question.question}</p>
         <RadioGroup
           onValueChange={handleAnswer}
           value={answers[currentQuestion]}
@@ -187,7 +187,7 @@ export default function Quiz() {
           {question.options.map((option, index) => (
             <div key={index} className="flex items-center space-x-2">
               <RadioGroupItem value={option} id={`option-${index}`} />
-              <Label htmlFor={`option-${index}`}>{option}</Label>
+              <Label htmlFor={`option-${index}`} className="text-gray-300 leading-1 mt-2">{option}</Label>
             </div>
           ))}
         </RadioGroup>
@@ -219,6 +219,8 @@ export default function Quiz() {
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
               Finishing quiz...
             </>
+          ) : currentQuestion < quizData.length - 1 ? (
+            "Next Question"
           ) : (
             currentQuestion < quizData.length - 1
               ? "Next Question"

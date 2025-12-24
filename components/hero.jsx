@@ -25,7 +25,7 @@ const HeroSection = () => {
             </p>
           </div>
           <div className="flex flex-col items-center gap-3 md:flex-row md:items-center">
-            <Link href="/dashboard">
+            <Link href="/sign-in">
               <Button size="lg" className="w-full gap-2 px-8 md:w-auto">
                 Get Started
                 <ArrowRight className="h-5 w-5" />
