@@ -214,7 +214,7 @@ export async function getDashboardData() {
   const recentApplications = await db.application.findMany({
     where: { userId: user.id },
     orderBy: { updatedAt: "desc" },
-    take: 5,
+    take: 6,
     include: {
       statusHistory: {
         orderBy: { changedAt: "desc" },

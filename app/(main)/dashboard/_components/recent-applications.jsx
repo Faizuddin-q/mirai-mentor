@@ -46,33 +46,38 @@ export default function RecentApplications({ applications }) {
         ) : (
           <div className="space-y-4">
             {applications.map((app) => (
-              <div
+              <Link
+                href={`/applications/${app.id}`}
                 key={app.id}
-                className="flex items-start justify-between p-3 rounded-lg border hover:bg-muted/50 transition-colors group"
+                className="block"
               >
-                <div className="space-y-1">
-                  <h4 className="font-semibold text-sm line-clamp-1 group-hover:text-primary transition-colors">
-                    {app.jobTitle}
-                  </h4>
-                  <p className="text-xs text-muted-foreground line-clamp-1">
-                    {app.companyName}
-                  </p>
-                  <p className="text-[10px] text-muted-foreground mt-1">
-                    {formatDistanceToNow(new Date(app.updatedAt), {
-                      addSuffix: true,
-                    })}
-                  </p>
-                </div>
+                <div className="flex items-start justify-between p-3 rounded-lg border hover:bg-muted/50 transition-colors group">
+                  <div className="space-y-2">
+                    <h4 className="font-semibold text-sm line-clamp-1 group-hover:text-primary transition-colors">
+                      {app.jobTitle}
+                    </h4>
+                    <p className="text-xs text-muted-foreground line-clamp-1">
+                      {app.companyName}
+                    </p>
+                  </div>
 
-                <Badge
-                  variant="secondary"
-                  className={`text-[10px] px-2 py-0.5 text-white ${
-                    statusColors[app.status] || "bg-gray-500"
-                  }`}
-                >
-                  {app.status}
-                </Badge>
-              </div>
+                  <div className="flex flex-col items-end space-y-2">
+                    <Badge
+                      variant="secondary"
+                      className={`text-[10px] px-2 py-0.5 text-white ${
+                        statusColors[app.status] || "bg-gray-500"
+                      }`}
+                    >
+                      {app.status}
+                    </Badge>
+                    <span className="text-[10px] text-muted-foreground">
+                      {formatDistanceToNow(new Date(app.updatedAt), {
+                        addSuffix: true,
+                      })}
+                    </span>
+                  </div>
+                </div>
+              </Link>
             ))}
           </div>
         )}

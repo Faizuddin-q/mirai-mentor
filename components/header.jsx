@@ -19,16 +19,6 @@ import { usePathname } from "next/navigation";
 
 const navItems = [
   {
-    label: "Dashboard",
-    href: "/dashboard",
-    icon: LayoutDashboard,
-  },
-  // {
-  //   label: "Explore",
-  //   href: "/explore",
-  //   icon: LayoutDashboard,
-  // },
-  {
     label: "Resume",
     href: "/resume",
     icon: FileText,
@@ -54,6 +44,11 @@ const navItems = [
     icon: Briefcase,
   },
   {
+    label: "Dashboard",
+    href: "/dashboard",
+    icon: LayoutDashboard,
+  },
+  {
     label: "Profile",
     href: "/profile",
     icon: UserPlus,
@@ -64,64 +59,76 @@ export default function Header() {
   const pathname = usePathname();
 
   const isActive = (href) => {
-    if (href === "/") {
-      return pathname === "/";
-    }
-
     return pathname === href || pathname?.startsWith(`${href}/`);
   };
 
   return (
     <header className="fixed top-0 w-full border-b bg-background/80 backdrop-blur-md z-50 supports-[backdrop-filter]:bg-background/60">
       <nav className="container mx-auto px-4 h-16 flex items-center justify-between">
-        <SignedIn>
-          <Link href="/dashboard">
-            <Image
-              src={"/logo.png"}
-              alt="Mirai Mentor Logo"
-              width={200}
-              height={200}
-              className="h-12 py-1 w-auto object-contain"
-            />
-          </Link>
-        </SignedIn>
+          <SignedIn>
+            <Link href="/dashboard">
+              <Image
+                src={"/logo.png"}
+                alt="Mirai Mentor Logo"
+                width={200}
+                height={200}
+                className="h-12 py-1 w-auto object-contain"
+              />
+            </Link>
+          </SignedIn>
 
-        <SignedOut>
-          <Link href="/">
-            <Image
-              src={"/logo.png"}
-              alt="Mirai Mentor Logo"
-              width={200}
-              height={200}
-              className="h-12 py-1 w-auto object-contain"
-            />
-          </Link>
-        </SignedOut>
+          <SignedOut>
+            <Link href="/">
+              <Image
+                src={"/logo.png"}
+                alt="Mirai Mentor Logo"
+                width={200}
+                height={200}
+                className="h-12 py-1 w-auto object-contain"
+              />
+            </Link>
+          </SignedOut>
 
         {/* Action Buttons */}
-        <div className="flex items-center space-x-1 md:space-x-2">
+        <div className="flex items-center space-x-1 md:space-x-2 gap-2">
           <SignedIn>
-            {navItems.map(({ label, href, icon: Icon }) => {
-              const active = isActive(href);
-
-              return (
-                <Link key={href} href={href} prefetch>
-                  <Button
-                    variant={active ? "default" : "outline"}
-                    className="hidden md:inline-flex items-center gap-2"
+              {navItems.map(({ label, href, icon: Icon }) => {
+                const active = isActive(href);
+                return (
+                  <Link
+                    key={href}
+                    href={href}
+                    prefetch
+                    className={`text-sm font-medium transition-colors hover:text-primary flex items-center gap-2 ${
+                      active
+                        ? "text-primary border-b border-primary pb-1"
+                        : "text-muted-foreground"
+                    }`}
                   >
                     <Icon className="h-4 w-4" />
                     {label}
-                  </Button>
-                  <Button
-                    variant={active ? "default" : "ghost"}
-                    className="md:hidden w-10 h-10 p-0"
-                  >
-                    <Icon className="h-4 w-4" />
-                  </Button>
-                </Link>
-              );
-            })}
+                  </Link>
+                );
+              })}
+          </SignedIn>
+
+          <SignedIn>
+            <div className="md:hidden flex items-center gap-2 mr-2">
+               {navItems.map(({ href, icon: Icon }) => {
+                   const active = isActive(href);
+                   return(
+                     <Link key={href} href={href}>
+                         <Button
+                            variant={active ? "default" : "ghost"}
+                            size="icon"
+                            className="h-8 w-8"
+                         >
+                            <Icon className="h-4 w-4" />
+                         </Button>
+                     </Link>
+                   )
+               })}
+            </div>
           </SignedIn>
 
           <SignedOut>
