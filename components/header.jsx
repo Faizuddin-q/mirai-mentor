@@ -18,6 +18,11 @@ import Image from "next/image";
 import { usePathname } from "next/navigation";
 
 const navItems = [
+  {
+    label: "Dashboard",
+    href: "/dashboard",
+    icon: LayoutDashboard,
+  },
   // {
   //   label: "Explore",
   //   href: "/explore",
@@ -69,15 +74,29 @@ export default function Header() {
   return (
     <header className="fixed top-0 w-full border-b bg-background/80 backdrop-blur-md z-50 supports-[backdrop-filter]:bg-background/60">
       <nav className="container mx-auto px-4 h-16 flex items-center justify-between">
-        <Link href="/">
-          <Image
-            src={"/logo.png"}
-            alt="Mirai Mentor Logo"
-            width={200}
-            height={200}
-            className="h-12 py-1 w-auto object-contain"
-          />
-        </Link>
+        <SignedIn>
+          <Link href="/dashboard">
+            <Image
+              src={"/logo.png"}
+              alt="Mirai Mentor Logo"
+              width={200}
+              height={200}
+              className="h-12 py-1 w-auto object-contain"
+            />
+          </Link>
+        </SignedIn>
+
+        <SignedOut>
+          <Link href="/">
+            <Image
+              src={"/logo.png"}
+              alt="Mirai Mentor Logo"
+              width={200}
+              height={200}
+              className="h-12 py-1 w-auto object-contain"
+            />
+          </Link>
+        </SignedOut>
 
         {/* Action Buttons */}
         <div className="flex items-center space-x-1 md:space-x-2">

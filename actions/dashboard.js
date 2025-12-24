@@ -172,44 +172,35 @@ Your output will be parsed by an automated system. **Return only the complete JS
   return JSON.parse(cleanedText);
 };
 
-export async function getIndustryInsights() {
+export async function getLastInsights() {
   const { userId } = await auth();
   if (!userId) throw new Error("Unauthorized");
 
   const user = await db.user.findUnique({
     where: { clerkUserId: userId },
     include: {
-      industryInsight: true,
-    },
+        industryInsight: true
+    }
   });
 
   if (!user) throw new Error("User not found");
 
-  // If no insights exist, generate them
+  // If no industry selected, default to generic insights
   if (!user.industryInsight) {
-    const insights = await generateAIInsights(user.industry, {
-      experience: user.experience,
-      skills: user.skills,
-      bio: user.bio,
-    });
-
-    const industryInsight = await db.industryInsight.create({
-      data: {
-        industry: user.industry,
-        ...insights,
-        lastUpdated: new Date(),
-        nextUpdate: new Date(Date.now() + 2 * 60 * 1000), // 2 minutes from now
-      },
-    });
-
-    return industryInsight;
+      return {
+          salaryRanges: [],
+          growthRate: 0,
+          demandLevel: "Unknown",
+          topSkills: [],
+          recommendedSkills: [],
+          keyTrends: ["Update your industry in profile to see trends"]
+      }
   }
 
   return user.industryInsight;
 }
 
-// Manual trigger to update insights immediately
-export async function refreshIndustryInsights() {
+export async function getDashboardData() {
   const { userId } = await auth();
   if (!userId) throw new Error("Unauthorized");
 
@@ -219,87 +210,47 @@ export async function refreshIndustryInsights() {
 
   if (!user) throw new Error("User not found");
 
-  try {    
-    // Force generate new insights with current time
-    const insights = await generateAIInsights(user.industry, {
-      experience: user.experience,
-      skills: user.skills,
-      bio: user.bio,
-    });
-    
-    const updatedInsight = await db.industryInsight.upsert({
-      where: { industry: user.industry },
-      update: {
-        ...insights,
-        lastUpdated: new Date(),
-        nextUpdate: new Date(Date.now() + 2 * 60 * 1000),
+  // Get recent applications (limit 5)
+  const recentApplications = await db.application.findMany({
+    where: { userId: user.id },
+    orderBy: { updatedAt: "desc" },
+    take: 5,
+    include: {
+      statusHistory: {
+        orderBy: { changedAt: "desc" },
+        take: 1,
       },
-      create: {
-        industry: user.industry,
-        ...insights,
-        lastUpdated: new Date(),
-        nextUpdate: new Date(Date.now() + 2 * 60 * 1000),
-      },
-    });
-
-    return updatedInsight;
-  } catch (error) {
-    console.error("Error refreshing insights:", error);
-    throw new Error("Failed to refresh insights");
-  }
-}
-
-// Fix incomplete industry data and regenerate insights
-export async function fixIndustryData() {
-  const { userId } = await auth();
-  if (!userId) throw new Error("Unauthorized");
-
-  const user = await db.user.findUnique({
-    where: { clerkUserId: userId },
+    },
   });
 
-  if (!user) throw new Error("User not found");
+  // Get total stats (reusing logic from getApplicationStats but we can optimize if needed)
+  // For now, let's just do a quick count
+  const totalCount = await db.application.count({
+    where: { userId: user.id },
+  });
+  
+  const interviewCount = await db.application.count({
+    where: { 
+        userId: user.id,
+        status: "INTERVIEW" 
+    },
+  });
 
-  try {    
-    // Check if industry field is incomplete
-    if (user.industry && user.industry.endsWith('-')) {      
-      // For now, let's set it to a complete tech industry
-      const completeIndustry = user.industry + 'software-development';
-      
-      // Update user's industry
-      await db.user.update({
-        where: { clerkUserId: userId },
-        data: { industry: completeIndustry },
-      });
-      
-      // Delete old incomplete industry insight
-      await db.industryInsight.deleteMany({
-        where: { industry: user.industry },
-      });
-      
-      // Generate new insights with complete industry
-      const insights = await generateAIInsights(completeIndustry, {
-        experience: user.experience,
-        skills: user.skills,
-        bio: user.bio,
-      });
-      
-      const newInsight = await db.industryInsight.create({
-        data: {
-          industry: completeIndustry,
-          ...insights,
-          lastUpdated: new Date(),
-          nextUpdate: new Date(Date.now() + 2 * 60 * 1000),
-        },
-      });
-      return newInsight;
-    }
-    
-    // If industry is complete, just refresh insights
-    return await refreshIndustryInsights();
-    
-  } catch (error) {
-    console.error("Error fixing industry data:", error);
-    throw new Error("Failed to fix industry data");
-  }
+  const activeCount = await db.application.count({
+    where: { 
+        userId: user.id,
+        status: {
+            in: ["APPLIED", "OA", "INTERVIEW"]
+        }
+    },
+  });
+
+  return {
+    stats: {
+        total: totalCount,
+        interviews: interviewCount,
+        active: activeCount
+    },
+    recentApplications,
+  };
 }
