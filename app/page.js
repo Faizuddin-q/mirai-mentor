@@ -30,23 +30,23 @@ import { faqs } from "@/data/faqs";
 import { stats } from "@/data/stats";
 import { roadmap } from "@/data/roadmap";
 import { howItWorks } from "@/data/howItWorks";
-import { auth } from "@clerk/nextjs/server";
-import { redirect } from "next/navigation";
-import { getUserOnboardingStatus } from "@/actions/user";
+// import { auth } from "@clerk/nextjs/server";
+// import { redirect } from "next/navigation";
+// import { getUserOnboardingStatus } from "@/actions/user";
 
 
 
 export default async function LandingPage() {
-  const { userId } = await auth();
+  // const { userId } = await auth();
 
-  if (userId) {
-    const { isOnboarded } = await getUserOnboardingStatus();
-    if (isOnboarded) {
-      redirect("/dashboard");
-    } else {
-      redirect("/onboarding");
-    }
-  }
+  // if (userId) {
+  //   const { isOnboarded } = await getUserOnboardingStatus();
+  //   if (isOnboarded) {
+  //     redirect("/dashboard");
+  //   } else {
+  //     redirect("/onboarding");
+  //   }
+  // }
   
   return (
     <>
