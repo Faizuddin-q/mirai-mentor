@@ -47,6 +47,7 @@ export default async function LandingPage() {
       redirect("/onboarding");
     }
   }
+  
   return (
     <>
       <div className="grid-background"></div>
