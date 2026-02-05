@@ -84,19 +84,20 @@ html {
 
 /* Custom Scrollbar */
 ::-webkit-scrollbar {
-  width: 2px;
-  height: 2px;
+  width: 8px;
+  height: 8px;
 }
 ::-webkit-scrollbar-track {
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: hsl(var(--primary));
+  background: hsl(var(--secondary));
+  border: 1px solid hsl(var(--muted));
   border-radius: 50px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: hsl(var(--primary));
-  box-shadow: 0 0 10px hsl(var(--primary));
+  background: hsl(var(--secondary));
+  box-shadow: 0 0 10px hsl(var(--secondary));
 }
 
 @layer base {
@@ -119,6 +120,45 @@ html {
 
   .text-glow {
     text-shadow: 0 0 10px rgba(249, 115, 22, 0.5);
+  }
+
+  @keyframes shimmer-slide {
+    0% {
+      transform: translateX(-100%);
+    }
+    100% {
+      transform: translateX(200%);
+    }
+  }
+
+  .animate-shimmer-slide {
+    animation: shimmer-slide 4s linear infinite;
+  }
+
+  @keyframes border-beam {
+    0%,
+    100% {
+      border-color: rgba(255, 255, 255, 0.1);
+      box-shadow: none;
+    }
+    10% {
+      border-color: rgba(255, 255, 255, 0.1);
+      box-shadow: none;
+    }
+    20% {
+      border-color: rgba(249, 115, 22, 0.6);
+      box-shadow: 0 0 20px rgba(249, 115, 22, 0.3);
+      transform: scale(1.05);
+    }
+    30% {
+      border-color: rgba(255, 255, 255, 0.1);
+      box-shadow: none;
+      transform: scale(1);
+    }
+  }
+
+  .animate-border-beam {
+    animation: border-beam 4s linear infinite;
   }
 }
 

@@ -22,7 +22,7 @@ const HeroSection = () => {
               <h1 className="text-5xl font-black md:text-6xl lg:text-7xl xl:text-8xl tracking-tighter leading-[1.1] md:leading-[1.1]">
                 Details Matter.
                 <br />
-                <span className="gradient-title text-glow">
+                <span className="gradient-title">
                   Career Defying.
                 </span>
               </h1>
@@ -54,7 +54,6 @@ const HeroSection = () => {
                 </Button>
               </Link>
             </div>
-
           </div>
 
           {/* Right Column: 3D Dashboard */}
@@ -62,7 +61,7 @@ const HeroSection = () => {
             {/* Decorative Background Elements */}
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-primary/20 rounded-full blur-[120px] -z-10 animate-pulse" />
 
-            <div className="hero-image relative z-10 transform-gpu transition-all duration-500 hover:scale-[1.02] hover:rotate-x-12 hover:rotate-y-12">
+            <div className="hero-image relative z-10 transform-gpu transition-all duration-500 hover:scale-[1.01] hover:rotate-x-12 hover:rotate-y-12">
               <div className="glass-card p-2 rounded-2xl border-white/10 bg-black/40 backdrop-blur-xl shadow-2xl shadow-primary/20">
                 <Image
                   src="/banner.png"
@@ -83,9 +82,9 @@ const HeroSection = () => {
                     </div>
                     <div>
                       <p className="text-xs text-muted-foreground uppercase">
-                        Success Rate
+                        Career Growth
                       </p>
-                      <p className="text-lg font-bold">98.5%</p>
+                      <p className="text-lg font-bold">Accelerated</p>
                     </div>
                   </div>
                 </div>
@@ -100,9 +99,9 @@ const HeroSection = () => {
                     </div>
                     <div>
                       <p className="text-xs text-muted-foreground uppercase">
-                        Goal Reached
+                        Resources
                       </p>
-                      <p className="text-lg font-bold">Offer Letter</p>
+                      <p className="text-lg font-bold">Premium</p>
                     </div>
                   </div>
                 </div>

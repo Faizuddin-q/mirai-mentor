@@ -1,6 +1,6 @@
 export const stats = [
-    { label: "Industries Covered", value: "50+" },
-    { label: "Interview Questions", value: "1000+" },
-    { label: "Success Rate", value: "95%" },
-    { label: "24/7 Support", value: "AI" },
+    { value: "Curated", label: "Scenarios" },
+    { value: "Dynamic", label: "Question Engine" },
+    { value: "Real-time", label: "Performance Score" },
+    { value: "24/7", label: "AI Mentor Access" },
 ];

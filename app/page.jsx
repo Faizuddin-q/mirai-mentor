@@ -116,17 +116,17 @@ export default async function LandingPage() {
       <section className="w-full py-12 md:py-24 bg-muted/30 border-y border-border">
         <div className="container mx-auto px-4 md:px-6">
           <ScrollReveal>
-            <div className="flex flex-wrap justify-center gap-8 md:gap-16 text-center max-w-6xl mx-auto relative z-10">
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 max-w-6xl mx-auto relative z-10">
               {stats.map((stat, index) => (
                 <div
                   key={index}
-                  className="glass-card p-8 rounded-full aspect-square w-48 md:w-64 flex flex-col items-center justify-center hover:scale-110 transition-transform duration-500 animate-float shadow-[0_0_40px_-10px_rgba(249,115,22,0.3)] border-primary/20"
-                  style={{ animationDelay: `${index * 1.5}s` }}
+                  className="glass-card p-6 rounded-2xl flex flex-col items-center justify-center hover:scale-105 transition-transform duration-500 hover:border-primary/50 group"
+                  style={{ transitionDelay: `${index * 100}ms` }}
                 >
-                  <h3 className="text-5xl md:text-6xl font-black gradient-title mb-2 tracking-tight">
+                  <h3 className="text-4xl md:text-5xl font-black gradient-title mb-2 tracking-tight group-hover:scale-110 transition-transform duration-300">
                     {stat.value}
                   </h3>
-                  <p className="text-muted-foreground font-medium uppercase tracking-widest text-sm">
+                  <p className="text-muted-foreground font-bold uppercase tracking-widest text-xs text-center">
                     {stat.label}
                   </p>
                 </div>
@@ -188,41 +188,53 @@ export default async function LandingPage() {
 
       {/* How It Works Section */}
       <section
-        className="w-full py-12 md:py-24 bg-background"
+        className="w-full py-12 md:py-24 bg-background relative overflow-hidden"
         id="how-it-works"
       >
+        <div className="absolute inset-0 bg-grid-white/[0.02] -z-10" />
         <div className="container mx-auto px-4 md:px-6">
           <ScrollReveal>
             <div className="text-center max-w-3xl mx-auto mb-16">
-              <h2 className="text-3xl font-bold mb-4 text-balance">
+              <SectionBadge
+                icon={<Lightbulb className="w-4 h-4" content="center" />}
+                title="Our Process"
+              />
+              <h2 className="text-3xl font-bold md:text-5xl mb-4 text-balance font-heading mt-4">
                 How It Works
               </h2>
-              <p className="text-muted-foreground text-balance">
+              <p className="text-muted-foreground text-balance md:text-xl">
                 Four simple steps to accelerate your career growth
               </p>
             </div>
           </ScrollReveal>
 
           <ScrollReveal>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 max-w-7xl mx-auto">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 max-w-7xl mx-auto relative">
+              {/* Connected Progress Line (Desktop) */}
+              <div className="hidden lg:block absolute top-[3rem] left-[12.5%] right-[12.5%] h-px border-t-2 border-dashed border-primary/80 z-0"></div>
+
               {howItWorks.map((item, index) => (
-                <Card
-                  key={index}
-                  className="glass-card border-none hover:border-primary/50 transition-all duration-300 hover:shadow-2xl hover:shadow-primary/20 hover:-translate-y-2 group relative overflow-hidden"
-                >
-                  <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                  <CardContent className="pt-8 pb-8 px-6 relative z-10 flex flex-col items-center text-center h-full">
-                    <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300  group-hover:text-primary-foreground shadow-lg shadow-primary/10">
-                      {item.icon}
+                <div key={index} className="relative z-10 group">
+                  <div className="flex flex-col items-center text-center">
+                    <div
+                      className="w-24 h-24 rounded-full bg-background border-4 border-white/10 flex items-center justify-center mb-6 relative transition-colors duration-300 shadow-xl z-10 animate-border-beam"
+                      style={{
+                        animationDelay: `${[-0.5, 0.4, 1.3, 2.2][index]}s`,
+                      }}
+                    >
+                      <div className="absolute inset-0 rounded-full bg-primary/10 blur-xl opacity-0 group-hover:opacity-100 transition-opacity" />
+                      <div className="text-primary group-hover:scale-110 transition-transform duration-300">
+                        {item.icon}
+                      </div>
                     </div>
-                    <h3 className="text-2xl font-bold mb-3 font-heading group-hover:text-primary transition-colors duration-300">
+                    <h3 className="text-xl font-bold mb-3 font-heading text-foreground">
                       {item.title}
                     </h3>
-                    <p className="text-muted-foreground leading-relaxed">
+                    <p className="text-muted-foreground text-sm leading-relaxed max-w-[250px]">
                       {item.description}
                     </p>
-                  </CardContent>
-                </Card>
+                  </div>
+                </div>
               ))}
             </div>
           </ScrollReveal>
