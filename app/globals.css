@@ -82,6 +82,23 @@ html {
   }
 }
 
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 2px;
+  height: 2px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: hsl(var(--primary));
+  border-radius: 50px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--primary));
+  box-shadow: 0 0 10px hsl(var(--primary));
+}
+
 @layer base {
   * {
     @apply border-border;
@@ -97,19 +114,23 @@ html {
   }
   .gradient-title {
     @apply bg-gradient-to-r from-orange-600 via-amber-500 to-orange-300 font-extrabold tracking-tighter text-transparent bg-clip-text pb-2 pr-2;
+    filter: drop-shadow(0 0 20px rgba(249, 115, 22, 0.4));
+  }
+
+  .text-glow {
+    text-shadow: 0 0 10px rgba(249, 115, 22, 0.5);
   }
 }
 
-
 .hero-image {
-  /* transform: rotateX(20deg) scale(0.9) translateY(-50); */
-  transform: rotateX(15deg) scale(1);
-  transition: transform 0.5s ease-out;
+  transform: rotateX(25deg) scale(0.95);
+  transition: transform 0.7s cubic-bezier(0.2, 0.8, 0.2, 1);
   will-change: transform;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
 }
 
 .hero-image.scrolled {
-  transform: rotateX(0deg) scale(1) translateY(40px);
+  transform: rotateX(0deg) scale(1) translateY(20px);
 }
 
 .grid-background {
@@ -118,13 +139,10 @@ html {
   left: 0;
   width: 100%;
   height: 100%;
-  background: linear-gradient(
-      to right,
-      rgba(255, 255, 255, 0.06) 1px,
-      transparent 1px
-    ),
-    linear-gradient(to bottom, rgba(255, 255, 255, 0.06) 1px, transparent 1px);
-  background-size: 50px 50px;
+  background:
+    linear-gradient(to right, rgba(249, 115, 22, 0.05) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(249, 115, 22, 0.05) 1px, transparent 1px);
+  background-size: 60px 60px;
   pointer-events: none;
   z-index: -1;
 }
@@ -136,29 +154,56 @@ html {
   left: 0;
   width: 100%;
   height: 100%;
-  background: radial-gradient(circle, rgba(8, 11, 19, 0), rgba(2, 6, 12, 0.92));
+  background: radial-gradient(
+    circle at center,
+    rgba(15, 23, 42, 0),
+    rgba(2, 6, 12, 1)
+  );
 }
 
 /* Enhanced card styling */
 @layer utilities {
   @keyframes float {
-    0% { transform: translateY(0px); }
-    50% { transform: translateY(-10px); }
-    100% { transform: translateY(0px); }
+    0% {
+      transform: translateY(0px) rotate(0deg);
+    }
+    50% {
+      transform: translateY(-15px) rotate(1deg);
+    }
+    100% {
+      transform: translateY(0px) rotate(0deg);
+    }
   }
 
   .animate-float {
-    animation: float 4s ease-in-out infinite;
+    animation: float 6s ease-in-out infinite;
+  }
+
+  .glass-card {
+    background: linear-gradient(
+      145deg,
+      rgba(255, 255, 255, 0.03) 0%,
+      rgba(255, 255, 255, 0.01) 100%
+    );
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+  }
+
+  .glass-card:hover {
+    border-color: rgba(249, 115, 22, 0.3);
+    box-shadow:
+      0 0 30px rgba(249, 115, 22, 0.1),
+      inset 0 0 20px rgba(249, 115, 22, 0.05);
   }
 
   .card-hover {
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: all 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
   }
-  
+
   .card-hover:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3),
-                0 8px 10px -6px rgba(0, 0, 0, 0.2);
+    transform: translateY(-8px) scale(1.02);
   }
 
   /* Smooth section transitions */
@@ -168,22 +213,15 @@ html {
 
   /* Enhanced button styling */
   .btn-primary {
-    transition: all 0.2s ease;
+    background: linear-gradient(90deg, #ea580c 0%, #d97706 100%);
+    transition: all 0.3s ease;
+    border: 1px solid rgba(255, 255, 255, 0.1);
   }
 
   .btn-primary:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(24, 94%, 63%, 0.4);
-  }
-
-  /* Subtle gradient overlays */
-  .section-gradient {
-    background: linear-gradient(
-      180deg,
-      transparent 0%,
-      hsl(var(--muted) / 0.3) 50%,
-      transparent 100%
-    );
+    transform: translateY(-2px);
+    box-shadow: 0 0 25px rgba(249, 115, 22, 0.4);
+    border-color: rgba(255, 255, 255, 0.3);
   }
 
   /* Improved text readability */
@@ -195,29 +233,39 @@ html {
   @keyframes fadeInUp {
     from {
       opacity: 0;
-      transform: translateY(20px);
+      transform: translateY(40px) scale(0.95);
     }
     to {
       opacity: 1;
-      transform: translateY(0);
+      transform: translateY(0) scale(1);
     }
   }
 
   .animate-fade-in-up {
-    animation: fadeInUp 0.6s ease-out;
+    animation: fadeInUp 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
   }
 
-  /* Card glass effect */
-  .glass-card {
-    background: hsl(var(--card) / 0.8);
-    backdrop-filter: blur(10px);
-    border: 1px solid hsl(var(--border) / 0.5);
+  /* Horizontal Marquee Animation */
+  @keyframes scroll {
+    from {
+      transform: translateX(0);
+    }
+    to {
+      transform: translateX(-100%);
+    }
+  }
+
+  .animate-scroll {
+    animation: scroll 40s linear infinite;
+  }
+
+  .animate-scroll:hover {
+    animation-play-state: paused;
   }
 
   /* Subtle border glow on hover */
   .border-glow:hover {
-    box-shadow: 0 0 0 1px hsl(var(--primary) / 0.3),
-                0 4px 12px hsl(var(--primary) / 0.1);
+    box-shadow: 0 0 15px hsl(var(--primary) / 0.3);
   }
 
   /* Hide UploadThing progress bar and percentage - be specific to avoid hiding buttons */
@@ -230,7 +278,7 @@ html {
   [data-ut-element="progress-bar"] {
     display: none !important;
   }
-  
+
   /* Ensure UploadThing button and container are visible */
   [data-ut-element="button"],
   button[data-ut-element="button"],
@@ -239,7 +287,7 @@ html {
     display: inline-flex !important;
     visibility: visible !important;
   }
-  
+
   /* Hide allowed content text */
   [data-ut-element="allowed-content"] {
     display: none !important;
@@ -248,7 +296,9 @@ html {
   /* Professional Resume Styling */
   #resume-pdf,
   #resume-pdf * {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    font-family:
+      -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue",
+      Arial, sans-serif;
     color: #000;
     line-height: 1.6;
   }
@@ -336,7 +386,9 @@ html {
 
   /* Markdown preview styling */
   .w-md-editor-preview {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    font-family:
+      -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue",
+      Arial, sans-serif;
   }
 
   .w-md-editor-preview div[align="center"] {

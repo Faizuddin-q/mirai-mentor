@@ -30,23 +30,8 @@ import { faqs } from "@/data/faqs";
 import { stats } from "@/data/stats";
 import { roadmap } from "@/data/roadmap";
 import { howItWorks } from "@/data/howItWorks";
-// import { auth } from "@clerk/nextjs/server";
-// import { redirect } from "next/navigation";
-// import { getUserOnboardingStatus } from "@/actions/user";
-
 
 export default async function LandingPage() {
-  // const { userId } = await auth();
-
-  // if (userId) {
-  //   const { isOnboarded } = await getUserOnboardingStatus();
-  //   if (isOnboarded) {
-  //     redirect("/dashboard");
-  //   } else {
-  //     redirect("/onboarding");
-  //   }
-  // }
-  
   return (
     <>
       <div className="grid-background"></div>
@@ -54,45 +39,71 @@ export default async function LandingPage() {
       {/* Hero Section */}
       <HeroSection />
 
-      {/* Features Section */}
-      <section className="w-full py-12 md:py-24 lg:py-32 bg-background relative overflow-hidden">
-        {/* Decorative background elements */}
-        {/* <div className="absolute top-0 left-0 w-full h-full bg-grid-white/[0.02] pointer-events-none" /> */}
-
+      {/* Features Section - V3: Masonry Layout */}
+      <section className="w-full py-12 md:py-24 lg:py-32 relative overflow-hidden">
         <div className="container mx-auto px-4 md:px-6 relative z-10">
           <ScrollReveal>
             <div className="text-center max-w-3xl mx-auto mb-16 space-y-4">
               <SectionBadge
                 icon={<Sparkles className="h-4 w-4" />}
-                title="Powerful Features"
+                title="Your Toolkit for the Future"
               />
               <h2 className="text-3xl font-bold tracking-tighter md:text-5xl text-balance bg-clip-text text-transparent bg-gradient-to-r from-foreground to-foreground/70">
-                Everything You Need for Career Growth
+                Beyond Standard. <br />
+                <span className="gradient-title">Architectural Precision.</span>
               </h2>
               <p className="text-muted-foreground md:text-xl/relaxed text-balance">
-                Our comprehensive suite of AI-powered tools is designed to accelerate your career journey from start to finish.
+                We've built a suite of tools that doesn't just "help" you—it
+                engineers your path to success.
               </p>
             </div>
           </ScrollReveal>
 
           <ScrollReveal>
-            <div className="flex flex-wrap justify-center gap-8 max-w-7xl mx-auto">
+            <div className="grid grid-cols-1 md:grid-cols-6 lg:grid-cols-12 gap-6 max-w-7xl mx-auto">
               {features.map((feature, index) => (
                 <Card
                   key={index}
-                  className="group relative border-border bg-card/50 backdrop-blur-sm overflow-hidden hover:border-primary/50 transition-all duration-300 hover:shadow-lg hover:-translate-y-1 w-full md:w-[calc(50%-1rem)] lg:w-[calc(33.33%-1.4rem)]"
+                  className={`
+                    transition-all duration-300 relative overflow-hidden h-full flex flex-col justify-between border-0 shadow-none
+                    bg-white/5 hover:bg-white/10 hover:shadow-2xl hover:shadow-primary/10 hover:-translate-y-2
+                    ${index === 0 ? "md:col-span-6 lg:col-span-8 lg:row-span-2 bg-white/5" : ""}
+                    ${index === 1 ? "md:col-span-6 lg:col-span-4 bg-white/5" : ""}
+                    ${index === 2 ? "md:col-span-6 lg:col-span-4 bg-white/5" : ""}
+                    ${index === 3 ? "md:col-span-6 lg:col-span-6 bg-white/5" : ""}
+                    ${index === 4 ? "md:col-span-6 lg:col-span-6 bg-white/5" : ""}
+                    group glass-card-hover
+                  `}
                 >
-                  <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                  <CardContent className="pt-8 pb-8 px-6 relative z-10 flex flex-col items-center text-center h-full">
-                    <div className="p-4 rounded-full bg-primary/10 text-primary mb-6 group-hover:scale-110 transition-transform duration-300">
-                      {feature.icon}
+                  <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+
+                  {/* Hover Border Glow */}
+                  <div className="absolute inset-0 border border-white/10 rounded-xl group-hover:border-primary/30 transition-colors duration-300" />
+
+                  <CardContent className="p-8 relative z-10 h-full flex flex-col">
+                    <div className="flex items-center justify-between mb-6">
+                      <div
+                        className={`p-4 rounded-2xl bg-white/5 text-muted-foreground transition-all duration-300 group-hover:text-primary-foreground ${index === 0 ? "scale-110" : ""}`}
+                      >
+                        {feature.icon}
+                      </div>
+                      <span className="text-4xl font-black text-white/5 group-hover:text-primary transition-colors duration-300 font-heading">
+                        {index + 1}
+                      </span>
                     </div>
-                    <h3 className="text-2xl font-bold mb-3 group-hover:text-primary transition-colors duration-300">
-                      {feature.title}
-                    </h3>
-                    <p className="text-muted-foreground leading-relaxed">
-                      {feature.description}
-                    </p>
+
+                    <div className="mt-auto space-y-3">
+                      <h3
+                        className={`font-bold font-heading text-foreground transition-colors duration-300 ${index === 0 ? "text-3xl md:text-4xl" : "text-xl"}`}
+                      >
+                        {feature.title}
+                      </h3>
+                      <p
+                        className={`text-muted-foreground leading-relaxed group-hover:text-foreground/80 transition-colors duration-300 ${index === 0 ? "text-lg md:text-xl" : ""}`}
+                      >
+                        {feature.description}
+                      </p>
+                    </div>
                   </CardContent>
                 </Card>
               ))}
@@ -105,11 +116,19 @@ export default async function LandingPage() {
       <section className="w-full py-12 md:py-24 bg-muted/30 border-y border-border">
         <div className="container mx-auto px-4 md:px-6">
           <ScrollReveal>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+            <div className="flex flex-wrap justify-center gap-8 md:gap-16 text-center max-w-6xl mx-auto relative z-10">
               {stats.map((stat, index) => (
-                <div key={index} className="space-y-2">
-                  <h3 className="text-4xl font-bold text-primary">{stat.value}</h3>
-                  <p className="text-muted-foreground font-medium">{stat.label}</p>
+                <div
+                  key={index}
+                  className="glass-card p-8 rounded-full aspect-square w-48 md:w-64 flex flex-col items-center justify-center hover:scale-110 transition-transform duration-500 animate-float shadow-[0_0_40px_-10px_rgba(249,115,22,0.3)] border-primary/20"
+                  style={{ animationDelay: `${index * 1.5}s` }}
+                >
+                  <h3 className="text-5xl md:text-6xl font-black gradient-title mb-2 tracking-tight">
+                    {stat.value}
+                  </h3>
+                  <p className="text-muted-foreground font-medium uppercase tracking-widest text-sm">
+                    {stat.label}
+                  </p>
                 </div>
               ))}
             </div>
@@ -124,38 +143,38 @@ export default async function LandingPage() {
             <div className="max-w-3xl mx-auto text-center mb-16 space-y-4">
               <SectionBadge
                 icon={<Compass className="h-4 w-4" />}
-                title="Our Approach"
+                title="The Blueprint"
               />
               <h2 className="text-3xl font-bold md:text-5xl text-balance">
-                Your Career Journey in Four Steps
+                4 Steps to <span className="gradient-title">Domination</span>
               </h2>
               <p className="text-muted-foreground md:text-xl/relaxed text-balance">
-                We guide you through a structured process to ensure you achieve your professional goals.
+                A structured execution plan to take you from applicant to hired
+                professional.
               </p>
             </div>
           </ScrollReveal>
 
           <ScrollReveal>
             <div className="space-y-12 max-w-7xl mx-auto">
-              {/* Steps could be visualized differently, but keeping grid for now with better styling */}
-              <div className="flex flex-wrap justify-center gap-8 max-w-7xl mx-auto">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 max-w-7xl mx-auto">
                 {roadmap.map((item, index) => (
                   <Card
                     key={index}
-                    className="group relative border-border bg-card/50 backdrop-blur-sm overflow-hidden hover:border-primary/50 transition-all duration-300 hover:shadow-lg hover:-translate-y-1 w-full md:w-[calc(50%-1rem)] lg:w-[calc(25%-1.5rem)]"
+                    className="glass-card border-border/50 hover:border-primary/50 transition-all duration-300 hover:shadow-2xl hover:shadow-primary/20 hover:-translate-y-2 group relative overflow-hidden"
                   >
-                    <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                    <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                     <CardContent className="pt-8 pb-8 px-6 relative z-10 flex flex-col items-center text-center h-full">
-                      <div className="p-4 rounded-full bg-primary/10 text-primary mb-6 group-hover:scale-110 transition-transform duration-300">
+                      <div className="p-4 rounded-full bg-primary/10 text-primary mb-6 group-hover:scale-110 transition-transform duration-300  shadow-lg shadow-primary/10">
                         <item.icon className="w-8 h-8" />
                       </div>
-                      <h3 className="text-2xl font-bold mb-3 group-hover:text-primary transition-colors duration-300">
+                      <h3 className="text-2xl font-bold mb-3 font-heading group-hover:text-primary transition-colors duration-300">
                         {item.title}
                       </h3>
                       <p className="text-muted-foreground leading-relaxed">
                         {item.description}
                       </p>
-                      <span className="absolute top-4 right-4 text-6xl font-black text-muted/10 pointer-events-none group-hover:text-muted/20 transition-colors">
+                      <span className="absolute top-4 right-4 text-7xl font-black text-white/5 pointer-events-none group-hover:text-primary transition-colors select-none font-heading -rotate-12">
                         {index + 1}
                       </span>
                     </CardContent>
@@ -167,14 +186,17 @@ export default async function LandingPage() {
         </div>
       </section>
 
-
-
       {/* How It Works Section */}
-      <section className="w-full py-12 md:py-24 bg-background" id="how-it-works">
+      <section
+        className="w-full py-12 md:py-24 bg-background"
+        id="how-it-works"
+      >
         <div className="container mx-auto px-4 md:px-6">
           <ScrollReveal>
             <div className="text-center max-w-3xl mx-auto mb-16">
-              <h2 className="text-3xl font-bold mb-4 text-balance">How It Works</h2>
+              <h2 className="text-3xl font-bold mb-4 text-balance">
+                How It Works
+              </h2>
               <p className="text-muted-foreground text-balance">
                 Four simple steps to accelerate your career growth
               </p>
@@ -182,18 +204,18 @@ export default async function LandingPage() {
           </ScrollReveal>
 
           <ScrollReveal>
-            <div className="flex flex-wrap justify-center gap-8 max-w-7xl mx-auto">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 max-w-7xl mx-auto">
               {howItWorks.map((item, index) => (
                 <Card
                   key={index}
-                  className="group relative border-border bg-card/50 backdrop-blur-sm overflow-hidden hover:border-primary/50 transition-all duration-300 hover:shadow-lg hover:-translate-y-1 w-full md:w-[calc(50%-1rem)] lg:w-[calc(25%-1.5rem)]"
+                  className="glass-card border-none hover:border-primary/50 transition-all duration-300 hover:shadow-2xl hover:shadow-primary/20 hover:-translate-y-2 group relative overflow-hidden"
                 >
-                  <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                  <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                   <CardContent className="pt-8 pb-8 px-6 relative z-10 flex flex-col items-center text-center h-full">
-                    <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+                    <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300  group-hover:text-primary-foreground shadow-lg shadow-primary/10">
                       {item.icon}
                     </div>
-                    <h3 className="text-2xl font-bold mb-3 group-hover:text-primary transition-colors duration-300">
+                    <h3 className="text-2xl font-bold mb-3 font-heading group-hover:text-primary transition-colors duration-300">
                       {item.title}
                     </h3>
                     <p className="text-muted-foreground leading-relaxed">
@@ -208,49 +230,62 @@ export default async function LandingPage() {
       </section>
 
       {/* User Feedback */}
-      <section className="w-full py-12 md:py-24 bg-background">
-        <div className="container mx-auto px-4 md:px-6">
+      <section className="w-full py-12 md:py-24 bg-background overflow-hidden relative">
+        <div className="absolute inset-y-0 left-0 w-32 bg-gradient-to-r from-background to-transparent z-20 pointer-events-none" />
+        <div className="absolute inset-y-0 right-0 w-32 bg-gradient-to-l from-background to-transparent z-20 pointer-events-none" />
+
+        <div className="container mx-auto px-4 md:px-6 mb-12">
           <ScrollReveal>
             <h2 className="text-3xl font-bold text-center mb-16 text-balance">
-              Trusted by Professionals
+              The Vanguard of Tomorrow
             </h2>
           </ScrollReveal>
+        </div>
 
-          <ScrollReveal>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-              {testimonial.map((testimonial, index) => (
-                <Card key={index} className="bg-muted/20 border-border hover:bg-muted/40 transition-colors">
-                  <CardContent className="pt-8">
-                    <div className="flex flex-col space-y-6">
-                      <div className="relative">
-                        <span className="text-6xl text-primary/20 font-serif absolute -top-8 -left-2">&ldquo;</span>
-                        <p className="text-muted-foreground italic relative z-10 px-2">
-                          {testimonial.quote}
-                        </p>
+        <div className="relative w-full overflow-hidden">
+          <div className="flex space-x-8 animate-scroll hover:pause px-4">
+            {[...testimonial, ...testimonial, ...testimonial].map(
+              (testimonial, index) => (
+                <Card
+                  key={index}
+                  className="glass-card w-[450px] flex-shrink-0 border-white/5 hover:border-primary/30 transition-colors bg-white/5"
+                >
+                  <CardContent className="p-10 h-full flex flex-col justify-between">
+                    <div className="relative mb-6">
+                      <span className="text-8xl text-primary/10 font-serif absolute -top-10 -left-6 pointer-events-none">
+                        “
+                      </span>
+                      <p className="text-muted-foreground italic relative z-10 text-xl leading-relaxed font-light">
+                        "{testimonial.quote}"
+                      </p>
+                    </div>
+                    <div className="flex items-center gap-4 border-t border-white/10 pt-6">
+                      <div className="relative h-14 w-14 flex-shrink-0 rounded-full overflow-hidden border-2 border-primary/20 p-0.5">
+                        <Image
+                          width={56}
+                          height={56}
+                          src={testimonial.image}
+                          alt={testimonial.author}
+                          className="rounded-full object-cover w-full h-full"
+                        />
                       </div>
-                      <div className="flex items-center space-x-4 border-t border-border pt-6">
-                        <div className="relative h-12 w-12 flex-shrink-0">
-                          <Image
-                            width={48}
-                            height={48}
-                            src={testimonial.image}
-                            alt={testimonial.author}
-                            className="rounded-full object-cover border-2 border-primary/20"
-                          />
-                        </div>
-                        <div>
-                          <p className="font-semibold">{testimonial.author}</p>
-                          <p className="text-xs text-muted-foreground">
-                            {testimonial.role} @ <span className="text-primary">{testimonial.company}</span>
-                          </p>
-                        </div>
+                      <div>
+                        <p className="font-bold font-heading text-lg">
+                          {testimonial.author}
+                        </p>
+                        <p className="text-xs text-muted-foreground uppercase tracking-wider">
+                          {testimonial.role} @{" "}
+                          <span className="text-primary font-bold">
+                            {testimonial.company}
+                          </span>
+                        </p>
                       </div>
                     </div>
                   </CardContent>
                 </Card>
-              ))}
-            </div>
-          </ScrollReveal>
+              ),
+            )}
+          </div>
         </div>
       </section>
 
@@ -272,7 +307,11 @@ export default async function LandingPage() {
             <div className="max-w-4xl mx-auto">
               <Accordion type="single" collapsible className="w-full space-y-4">
                 {faqs.map((faq, index) => (
-                  <AccordionItem key={index} value={`item-${index}`} className="border rounded-lg bg-card px-4">
+                  <AccordionItem
+                    key={index}
+                    value={`item-${index}`}
+                    className="border rounded-lg bg-card px-4"
+                  >
                     <AccordionTrigger className="text-left py-4 hover:no-underline hover:text-primary transition-colors font-medium">
                       {faq.question}
                     </AccordionTrigger>
@@ -288,27 +327,29 @@ export default async function LandingPage() {
       </section>
 
       {/* CTA Section */}
-      <section className="w-full">
-        <div className="mx-auto py-24 gradient rounded-lg">
-          <ScrollReveal>
-            <div className="flex flex-col items-center justify-center space-y-4 text-center max-w-3xl mx-auto">
-              <h2 className="text-3xl font-bold tracking-tighter gradient-title sm:text-4xl md:text-5xl">
-                Ready to Start Your Career Journey?
-              </h2>
-              <p className="mx-auto max-w-[600px] text-muted-foreground md:text-xl">
-                Get started with AI-powered guidance to help you achieve your
-                career goals.
-              </p>
-              <Link href="/dashboard" passHref>
-                <Button
-                  size="lg"
-                  className="h-11 mt-5 animate-bounce"
-                >
-                  Get Started <ArrowRight className="ml-2 h-4 w-4" />
-                </Button>
-              </Link>
-            </div>
-          </ScrollReveal>
+      <section className="w-full py-20 relative overflow-hidden">
+        <div className="mx-auto w-full max-w-5xl relative px-4">
+          <div className="absolute inset-0 bg-gradient-to-r from-primary/30 via-primary/10 to-primary/30 blur-3xl rounded-full opacity-50 pointer-events-none" />
+          <div className="glass-card p-12 md:p-24 rounded-3xl border-primary/20 relative z-10 text-center space-y-10 overflow-hidden bg-black/40 backdrop-blur-2xl">
+            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-primary to-transparent opacity-50" />
+            <div className="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-primary to-transparent opacity-50" />
+
+            <h2 className="text-5xl font-black tracking-tighter sm:text-6xl md:text-7xl font-heading text-white">
+              Ready to <span className="gradient-title">Ascend?</span>
+            </h2>
+            <p className="mx-auto max-w-[700px] text-muted-foreground md:text-2xl leading-relaxed font-light mb-8">
+              Join the elite circle of professionals who stopped guessing and
+              started engineering their careers.
+            </p>
+            <Link href="/dashboard" passHref>
+              <Button
+                size="xl"
+                className="h-16 px-12 mt-8 text-xl mt-16 animate-bounce hover:animate-none hover:scale-105 transition-all duration-5000 btn-primary rounded-full shadow-[0_0_40px_-10px_rgba(249,115,22,0.5)]"
+              >
+                Get Started Now <ArrowRight className="ml-3 h-6 w-6" />
+              </Button>
+            </Link>
+          </div>
         </div>
       </section>
     </>

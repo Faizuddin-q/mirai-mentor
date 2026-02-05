@@ -1,6 +1,12 @@
 import { FileText, Brain, Mail, TrendingUp, BriefcaseBusiness, Lightbulb } from "lucide-react";
 
 export const features = [
+    {
+    icon: <BriefcaseBusiness className="w-10 h-10 text-primary" />,
+    title: "Application Tracker",
+    description:
+      "Organize and track all your job applications in one place with status updates and reminders.",
+  },
   {
     icon: <FileText className="w-10 h-10 text-primary" />,
     title: "AI Resume Builder",
@@ -18,12 +24,6 @@ export const features = [
     title: "AI Interview Prep",
     description:
       "Practice with role-specific interview questions and get real-time feedback on your answers.",
-  },
-  {
-    icon: <BriefcaseBusiness className="w-10 h-10 text-primary" />,
-    title: "Application Tracker",
-    description:
-      "Organize and track all your job applications in one place with status updates and reminders.",
   },
   {
     icon: <Lightbulb className="w-10 h-10 text-primary" />,
