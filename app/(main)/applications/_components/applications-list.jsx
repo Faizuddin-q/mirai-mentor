@@ -20,22 +20,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import {
-  MoreVertical,
-  Trash2,
-  ExternalLink,
-  Eye,
-  Search,
-  Check,
-  ChevronDown,
-} from "lucide-react";
+import { MoreVertical, Trash2, ExternalLink, Eye, Search } from "lucide-react";
 import { format } from "date-fns";
 import {
   deleteApplication,
@@ -52,44 +37,13 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-
-const statusColors = {
-  WISHLIST: "bg-gray-500/10 text-gray-500 border-gray-500/20",
-  APPLIED: "bg-blue-500/10 text-blue-500 border-blue-500/20",
-  OA: "bg-purple-500/10 text-purple-500 border-purple-500/20",
-  INTERVIEW: "bg-amber-500/10 text-amber-500 border-amber-500/20",
-  OFFER: "bg-green-500/10 text-green-500 border-green-500/20",
-  REJECTED: "bg-red-500/10 text-red-500 border-red-500/20",
-  WITHDRAWN: "bg-black/40 text-gray-500 border-gray-500/20",
-};
-
-const dateRangeOptions = [
-  { value: "all", label: "All Time" },
-  { value: "7", label: "Last 7 Days" },
-  { value: "14", label: "Last 14 Days" },
-  { value: "30", label: "Last 30 Days" },
-];
-
-const statusMessages = {
-  WISHLIST: "Added to your wishlist!",
-  APPLIED: "Application sent! Good luck!",
-  OA: "Online Assessment received! You got this!",
-  INTERVIEW: "Interview scheduled! Go get them!",
-  OFFER: "Offer received! Congratulations!",
-  REJECTED: "Keep going! The right one is out there.",
-  WITHDRAWN: "Application withdrawn. On to the next!",
-};
-
-export const formatJobType = (jobType) => {
-  const jobTypeMap = {
-    FULL_TIME: "Full Time",
-    INTERN: "Intern",
-    REMOTE: "Remote",
-    HYBRID: "Hybrid",
-    CONTRACT: "Contract",
-  };
-  return jobTypeMap[jobType] || jobType;
-};
+import {
+  statusColors,
+  statusMessages,
+  dateRangeOptions,
+  formatJobType,
+} from "./constants";
+import StatusChangeSelector from "./status-change-selector";
 
 export default function ApplicationsList({ applications }) {
   const router = useRouter();
@@ -316,39 +270,13 @@ export default function ApplicationsList({ applications }) {
                       {formatJobType(app.jobType)}
                     </TableCell>
                     <TableCell>
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Badge
-                            variant="outline"
-                            className={`${statusColors[app.status]} cursor-pointer flex w-fit items-center gap-1 backdrop-blur-md border border-white/10 px-3 py-1`}
-                          >
-                            {app.status}
-                            <ChevronDown className="h-3 w-3 opacity-50" />
-                          </Badge>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent
-                          align="start"
-                          className="bg-black/90 backdrop-blur-xl border-white/10"
-                        >
-                          {Object.keys(statusColors).map((status) => (
-                            <DropdownMenuItem
-                              key={status}
-                              onClick={() => handleStatusChange(app.id, status)}
-                              className="focus:bg-transparent hover:bg-transparent px-3 py-1"
-                            >
-                              <Badge
-                                variant="outline"
-                                className={`w-full justify-center ${statusColors[status]} hover:border-current cursor-pointer backdrop-blur-md px-3 py-1`}
-                              >
-                                {status}
-                                {status === app.status && (
-                                  <Check className="ml-2 h-3 w-3" />
-                                )}
-                              </Badge>
-                            </DropdownMenuItem>
-                          ))}
-                        </DropdownMenuContent>
-                      </DropdownMenu>
+                      <StatusChangeSelector
+                        status={app.status}
+                        onStatusChange={(newStatus) =>
+                          handleStatusChange(app.id, newStatus)
+                        }
+                        size="sm"
+                      />
                     </TableCell>
                     <TableCell>
                       {app.jobLink ? (
