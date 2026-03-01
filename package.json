@@ -10,6 +10,7 @@
     "postinstall": "prisma generate",
     "preview": "next build && next start",
     "seed:demo": "node scripts/seed-demo.js",
+    "seed:demo:full": "node scripts/seed-demo.js --seed",
     "clean:demo": "node scripts/seed-demo.js clean"
   },
   "dependencies": {

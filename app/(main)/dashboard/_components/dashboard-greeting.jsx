@@ -57,7 +57,7 @@ export default function DashboardGreeting({ stats }) {
           {/* Left: Greeting & Primary Stat */}
           <div className="space-y-4 max-w-lg">
             <div>
-              <h2 className="text-4xl md:text-5xl font-bold tracking-tight">
+              <h2 className="text-4xl md:text-5xl font-bold tracking-tight whitespace-nowrap">
                 {greeting}, <br />
                 <span className="gradient-title">{user.name}!</span>
               </h2>

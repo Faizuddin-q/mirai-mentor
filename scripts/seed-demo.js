@@ -5,7 +5,10 @@ const db = new PrismaClient();
 async function main() {
   const EMAIL = "mirai-mentor-demo@gmail.com";
 
-  console.log(`Seeding data for ${EMAIL}...`);
+  const shouldSeed = process.argv.includes("--seed");
+  const isClean = process.argv.includes("clean");
+
+  console.log(`Running seed-demo for ${EMAIL}...`);
 
   try {
     const user = await db.user.findUnique({
@@ -19,6 +22,40 @@ async function main() {
 
     console.log(`Found user: ${user.id}`);
 
+    // Ensure the demo IndustryInsight exists (required by FK on User.industry)
+    const DEMO_INDUSTRY = "tech-software-development";
+    await db.industryInsight.upsert({
+      where: { industry: DEMO_INDUSTRY },
+      update: {},
+      create: {
+        industry: DEMO_INDUSTRY,
+        salaryRanges: [
+          { role: "Software Engineer", min: 800000, max: 2500000, median: 1500000, location: "India" },
+          { role: "Senior Software Engineer", min: 1500000, max: 4000000, median: 2800000, location: "India" },
+          { role: "Full Stack Developer", min: 700000, max: 2200000, median: 1300000, location: "India" },
+        ],
+        growthRate: 12.5,
+        demandLevel: "High",
+        topSkills: ["React", "Node.js", "TypeScript", "AWS", "Docker"],
+        marketOutlook: "Positive",
+        keyTrends: ["AI Integration", "Cloud-native Development", "DevOps & CI/CD", "Microservices"],
+        recommendedSkills: ["Kubernetes", "GraphQL", "Rust", "System Design"],
+        nextUpdate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 days from now
+      },
+    });
+
+    // Update the demo user's profile so they are fully onboarded
+    await db.user.update({
+      where: { email: EMAIL },
+      data: {
+        industry: DEMO_INDUSTRY,
+        bio: "Results-driven Software Engineer with 5+ years of experience building scalable web applications. Passionate about clean code, system design, and delivering exceptional user experiences.",
+        experience: 5,
+        skills: ["React", "Next.js", "Node.js", "TypeScript", "PostgreSQL", "AWS", "Docker", "GraphQL"],
+      },
+    });
+    console.log("Demo user profile updated (onboarded).");
+
     // Function to clean data
     async function cleanData() {
       console.log("Clearing existing data...");
@@ -29,14 +66,20 @@ async function main() {
       console.log("Existing data cleared.");
     }
 
-    // Check for "clean" argument
-    if (process.argv.includes("clean")) {
+    // "clean" arg — wipe data only, then exit
+    if (isClean) {
       await cleanData();
       console.log("Cleanup completed!");
-      return; 
+      return;
     }
 
-    // Always clean before seeding
+    // "--seed" arg — clear + re-seed demo data
+    if (!shouldSeed) {
+      console.log("Profile updated. Run with --seed to also re-seed demo data (resumes, applications, etc).");
+      return;
+    }
+
+    // Clear before seeding
     await cleanData();
 
     const companies = [
