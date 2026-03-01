@@ -231,12 +231,12 @@ html {
     box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
   }
 
-  .glass-card:hover {
+  /* .glass-card:hover {
     border-color: rgba(249, 115, 22, 0.3);
     box-shadow:
       0 0 30px rgba(249, 115, 22, 0.1),
       inset 0 0 20px rgba(249, 115, 22, 0.05);
-  }
+  } */
 
   .card-hover {
     transition: all 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);

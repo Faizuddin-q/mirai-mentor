@@ -21,13 +21,15 @@ export default async function ApplicationsPage({ searchParams }) {
   ]);
 
   return (
-    <div>
-      <div className="flex flex-col md:flex-row gap-2 items-center justify-between mb-5">
-        <h1 className="text-6xl font-bold gradient-title">Job Applications Tracker</h1>
-        <div className="flex gap-2">
+    <div className="container mx-auto px-4 py-8">
+      <div className="flex flex-col md:flex-row gap-4 items-center justify-between mb-8">
+        <h1 className="text-4xl md:text-5xl font-bold font-heading gradient-title">
+          Job Applications
+        </h1>
+        <div className="flex gap-3">
           <QuickAddDialog />
           <Link href="/applications/new">
-            <Button>
+            <Button className="btn-primary">
               <Plus className="h-4 w-4 mr-2" />
               Add Application
             </Button>
@@ -35,10 +37,10 @@ export default async function ApplicationsPage({ searchParams }) {
         </div>
       </div>
 
-      <StatsCards stats={stats} />
-
-      <ApplicationsList applications={applications} />
+      <div className="space-y-8">
+        <StatsCards stats={stats} />
+        <ApplicationsList applications={applications} />
+      </div>
     </div>
   );
 }
-

@@ -18,58 +18,69 @@ export default function StatsCards({ stats }) {
   }, [momentum, interviews]);
 
   return (
-    <div className="grid gap-4 md:grid-cols-4 mb-4">
-      <Card
-        className={`relative overflow-hidden transition-all duration-300 bg-muted/40 hover:shadow-lg hover:-translate-y-1 border-primary/50 shadow-primary/10`}
-      >
-        <CardHeader className="flex flex-row items-center justify-between space-y-0 p-4">
-          <CardTitle className="text-sm font-medium">Total Applications</CardTitle>
-          <LayoutDashboard className="h-4 w-4 text-primary" />
-        </CardHeader>
-        <CardContent className="p-4 pt-0">
-          <div className="text-2xl font-bold">{total}</div>
-          <p className="text-xs text-muted-foreground mt-1">
-            {total === 0
-              ? "Start planting your future!"
-              : "Seeds planted for growth"}
-          </p>
-        </CardContent>
-      </Card>
+    <div className="grid gap-4 md:grid-cols-4">
+      {/* Total Applications */}
+      <div className="glass-card p-6 rounded-xl border-l-4 border-l-blue-500 relative overflow-hidden group">
+        <div className="flex items-center justify-between space-y-0 pb-2">
+          <h3 className="text-sm font-medium text-muted-foreground group-hover:text-blue-400 transition-colors">
+            Total Applications
+          </h3>
+          <div className="p-2 bg-blue-500/10 rounded-lg group-hover:scale-110 transition-transform">
+            <LayoutDashboard className="h-4 w-4 text-blue-500" />
+          </div>
+        </div>
+        <div className="text-2xl font-bold text-foreground group-hover:text-blue-200 transition-colors">
+          {total}
+        </div>
+        <p className="text-xs text-muted-foreground mt-1">
+          {total === 0
+            ? "Start planting your future!"
+            : "Seeds planted for growth"}
+        </p>
+        <div className="absolute -bottom-4 -right-4 w-24 h-24 bg-blue-500/10 rounded-full blur-2xl group-hover:bg-blue-500/20 transition-all pointer-events-none" />
+      </div>
 
-      <Card
-        className={`relative overflow-hidden transition-all duration-300 hover:shadow-lg hover:-translate-y-1 bg-muted/40 border-primary/50 shadow-primary/10`}
-      >
-        <CardHeader className="flex flex-row items-center justify-between space-y-0 p-4">
-          <CardTitle className="text-sm font-medium">Interviews Scheduled</CardTitle>
-          <Target className="h-4 w-4 text-primary" />
-        </CardHeader>
-        <CardContent className="p-4 pt-0">
-          <div className="text-2xl font-bold">{interviews}</div>
-          <p className="text-xs text-muted-foreground mt-1">
-            {interviews === 0
-              ? "Keep applying, offers are coming!"
-              : "Closer to your next job!"}
-          </p>
-        </CardContent>
-      </Card>
+      {/* Interviews Scheduled */}
+      <div className="glass-card p-6 rounded-xl border-l-4 border-l-amber-500 relative overflow-hidden group">
+        <div className="flex items-center justify-between space-y-0 pb-2">
+          <h3 className="text-sm font-medium text-muted-foreground group-hover:text-amber-400 transition-colors">
+            Interviews
+          </h3>
+          <div className="p-2 bg-amber-500/10 rounded-lg group-hover:scale-110 transition-transform">
+            <Target className="h-4 w-4 text-amber-500" />
+          </div>
+        </div>
+        <div className="text-2xl font-bold text-foreground group-hover:text-amber-200 transition-colors">
+          {interviews}
+        </div>
+        <p className="text-xs text-muted-foreground mt-1">
+          {interviews === 0
+            ? "Keep applying, offers are coming!"
+            : "Closer to your next job!"}
+        </p>
+        <div className="absolute -bottom-4 -right-4 w-24 h-24 bg-amber-500/10 rounded-full blur-2xl group-hover:bg-amber-500/20 transition-all pointer-events-none" />
+      </div>
 
-      <Card
-        className={`relative overflow-hidden transition-all duration-300 hover:shadow-lg hover:-translate-y-1 bg-muted/40 border-primary/50 shadow-primary/10`}
-      >
-        <CardHeader className="flex flex-row items-center justify-between space-y-0 p-4">
-          <CardTitle className="text-sm font-medium">Monthly Momentum</CardTitle>
-          <TrendingUp className="h-4 w-4 text-primary" />
-        </CardHeader>
-        <CardContent className="p-4 pt-0">
-          <div className="text-2xl font-bold">{momentum}</div>
-          <p className="text-xs text-muted-foreground mt-1">
-            {momentum === 0
-              ? "No applications this month."
-              : "Applications this month!"}
-          </p>
-        </CardContent>
-      </Card>
-      {/* Confetti logic preserved if needed, but 'Soft Rewards' are now handled by hover states and subtle borders */}
+      {/* Monthly Momentum */}
+      <div className="glass-card p-6 rounded-xl border-l-4 border-l-green-500 relative overflow-hidden group">
+        <div className="flex items-center justify-between space-y-0 pb-2">
+          <h3 className="text-sm font-medium text-muted-foreground group-hover:text-green-400 transition-colors">
+            Momentum
+          </h3>
+          <div className="p-2 bg-green-500/10 rounded-lg group-hover:scale-110 transition-transform">
+            <TrendingUp className="h-4 w-4 text-green-500" />
+          </div>
+        </div>
+        <div className="text-2xl font-bold text-foreground group-hover:text-green-200 transition-colors">
+          {momentum}
+        </div>
+        <p className="text-xs text-muted-foreground mt-1">
+          {momentum === 0
+            ? "No applications this month."
+            : "Applications this month!"}
+        </p>
+        <div className="absolute -bottom-4 -right-4 w-24 h-24 bg-green-500/10 rounded-full blur-2xl group-hover:bg-green-500/20 transition-all pointer-events-none" />
+      </div>
     </div>
   );
 }
