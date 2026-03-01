@@ -6,13 +6,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
 import { Loader2, Copy, Check, Sparkles, Edit, Monitor } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -85,12 +78,12 @@ const SmartAnswerDesk = () => {
 
   const handleCopy = async () => {
     if (!editorContent) return;
-    
+
     try {
       await navigator.clipboard.writeText(editorContent);
       setCopied(true);
       toast.success("Answer copied to clipboard!");
-      
+
       setTimeout(() => {
         setCopied(false);
       }, 3000);
@@ -122,206 +115,216 @@ const SmartAnswerDesk = () => {
   };
 
   return (
-    <div className="space-y-6">
-      <Card>
-        <CardHeader>
-          <CardTitle>Smart Answer Desk</CardTitle>
-          <CardDescription>
-            Enter the company details and the question they asked you
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="companyName">
-                Company Name <span className="text-red-500">*</span>
-              </Label>
-              <Input
-                id="companyName"
-                placeholder="Enter company name"
-                {...register("companyName")}
-              />
-              {errors.companyName && (
-                <p className="text-sm text-red-500">
-                  {errors.companyName.message}
-                </p>
-              )}
-            </div>
+    <div className="space-y-6 animate-fade-in-up">
+      <div className="glass-card p-6 md:p-8 rounded-xl group relative overflow-hidden">
+        <div className="absolute inset-0 bg-primary/5 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
 
-            <div className="space-y-2">
-              <Label htmlFor="companyJD">
-                Company JD or Description (Optional)
-              </Label>
-              <Textarea
-                id="companyJD"
-                placeholder="Paste the company job description or company information here (optional)"
-                className="h-32"
-                {...register("companyJD")}
-              />
-              {errors.companyJD && (
-                <p className="text-sm text-red-500">
-                  {errors.companyJD.message}
-                </p>
-              )}
-            </div>
+        <form
+          onSubmit={handleSubmit(onSubmit)}
+          className="space-y-5 relative z-10"
+        >
+          <div className="space-y-2">
+            <Label htmlFor="companyName" className="font-semibold">
+              Company Name <span className="text-red-500">*</span>
+            </Label>
+            <Input
+              id="companyName"
+              placeholder="Enter company name"
+              className="bg-background/50 border-white/10 focus-visible:ring-primary/50 transition-colors rounded-md"
+              {...register("companyName")}
+            />
+            {errors.companyName && (
+              <p className="text-sm text-red-500">
+                {errors.companyName.message}
+              </p>
+            )}
+          </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="question">
-                Question Asked by Company <span className="text-red-500">*</span>
-              </Label>
-              <Textarea
-                id="question"
-                placeholder="Enter the question asked by the company"
-                className="h-32"
-                {...register("question")}
-              />
-              {errors.question && (
-                <p className="text-sm text-red-500">
-                  {errors.question.message}
-                </p>
-              )}
-            </div>
+          <div className="space-y-2">
+            <Label htmlFor="companyJD" className="font-semibold">
+              Company JD or Description (Optional)
+            </Label>
+            <Textarea
+              id="companyJD"
+              placeholder="Paste the company job description or company information here (optional)"
+              className="h-32 bg-background/50 border-white/10 focus-visible:ring-primary/50 transition-colors rounded-md"
+              {...register("companyJD")}
+            />
+            {errors.companyJD && (
+              <p className="text-sm text-red-500">{errors.companyJD.message}</p>
+            )}
+          </div>
 
-            <div className="flex justify-end">
-              <Button type="submit" disabled={generating}>
-                {generating ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Generating Answer...
-                  </>
-                ) : (
-                  "Generate Answer"
-                )}
-              </Button>
-            </div>
-          </form>
-        </CardContent>
-      </Card>
+          <div className="space-y-2">
+            <Label htmlFor="question" className="font-semibold">
+              Question Asked by Company <span className="text-red-500">*</span>
+            </Label>
+            <Textarea
+              id="question"
+              placeholder="Enter the question asked by the company"
+              className="h-32 bg-background/50 border-white/10 focus-visible:ring-primary/50 transition-colors rounded-md"
+              {...register("question")}
+            />
+            {errors.question && (
+              <p className="text-sm text-red-500">{errors.question.message}</p>
+            )}
+          </div>
+
+          <div className="flex justify-end pt-2">
+            <Button
+              type="submit"
+              disabled={generating}
+              className="btn-primary rounded"
+            >
+              {generating ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Generating Answer...
+                </>
+              ) : (
+                "Generate Answer"
+              )}
+            </Button>
+          </div>
+        </form>
+      </div>
 
       {answerData && (
-        <Card>
-          <CardHeader>
-            <CardTitle>Generated Answer</CardTitle>
-            <CardDescription>
+        <div className="glass-card p-6 md:p-8 rounded-xl group relative overflow-hidden animate-fade-in-up delay-100">
+          <div className="absolute inset-0 bg-primary/5 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
+
+          <div className="mb-6">
+            <h2 className="text-2xl font-bold font-heading mb-2">
+              Generated Answer
+            </h2>
+            <p className="text-muted-foreground">
               Answer for {answerData.companyName}
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              <div>
-                <Label className="text-sm font-semibold">Question:</Label>
-                <p className="mt-1 text-sm text-muted-foreground">
-                  {answerData.question}
-                </p>
-              </div>
-              <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-                <div className="flex justify-between items-center mb-4">
-                  <TabsList>
-                    <TabsTrigger value="edit">Edit</TabsTrigger>
-                    <TabsTrigger value="preview">Preview</TabsTrigger>
-                  </TabsList>
-                  <div className="flex gap-2">
-                    {activeTab === "edit" && (
-                      <Button
-                        onClick={handleEnhance}
-                        disabled={isEnhancing || !editorContent?.trim()}
-                        variant="outline"
-                        className="gap-2"
-                      >
-                        {isEnhancing ? (
-                          <>
-                            <Loader2 className="h-4 w-4 animate-spin" />
-                            Enhancing...
-                          </>
-                        ) : (
-                          <>
-                            <Sparkles className="h-4 w-4" />
-                            Enhance Answer
-                          </>
-                        )}
-                      </Button>
-                    )}
+            </p>
+          </div>
+
+          <div className="relative z-10 space-y-6">
+            <div className="bg-background/30 p-4 rounded-md border border-white/5">
+              <Label className="text-sm font-bold text-primary">
+                Question:
+              </Label>
+              <p className="mt-1 text-sm text-foreground/90 font-medium">
+                {answerData.question}
+              </p>
+            </div>
+            <Tabs
+              value={activeTab}
+              onValueChange={setActiveTab}
+              className="w-full"
+            >
+              <div className="flex justify-between items-center mb-4">
+                <TabsList>
+                  <TabsTrigger value="edit">Edit</TabsTrigger>
+                  <TabsTrigger value="preview">Preview</TabsTrigger>
+                </TabsList>
+                <div className="flex gap-2">
+                  {activeTab === "edit" && (
                     <Button
+                      onClick={handleEnhance}
+                      disabled={isEnhancing || !editorContent?.trim()}
                       variant="outline"
-                      onClick={handleCopy}
-                      className="gap-2"
+                      className="gap-2 border-primary/20 text-primary hover:bg-primary/10 rounded transition-all"
                     >
-                      {copied ? (
+                      {isEnhancing ? (
                         <>
-                          <Check className="h-4 w-4" />
-                          Copied!
+                          <Loader2 className="h-4 w-4 animate-spin" />
+                          Enhancing...
                         </>
                       ) : (
                         <>
-                          <Copy className="h-4 w-4" />
-                          Copy
+                          <Sparkles className="h-4 w-4" />
+                          Enhance Answer
                         </>
                       )}
                     </Button>
+                  )}
+                  <Button
+                    variant="outline"
+                    onClick={handleCopy}
+                    className="gap-2 border-white/10 hover:bg-white/5 rounded transition-all"
+                  >
+                    {copied ? (
+                      <>
+                        <Check className="h-4 w-4" />
+                        Copied!
+                      </>
+                    ) : (
+                      <>
+                        <Copy className="h-4 w-4" />
+                        Copy
+                      </>
+                    )}
+                  </Button>
+                </div>
+              </div>
+
+              <TabsContent value="edit">
+                <div className="space-y-2">
+                  {activeTab === "edit" && (
+                    <Button
+                      variant="link"
+                      type="button"
+                      className="mb-2"
+                      onClick={() =>
+                        setEditorMode(
+                          editorMode === "preview" ? "edit" : "preview",
+                        )
+                      }
+                    >
+                      {editorMode === "preview" ? (
+                        <>
+                          <Edit className="h-4 w-4 mr-2" />
+                          Edit Mode
+                        </>
+                      ) : (
+                        <>
+                          <Monitor className="h-4 w-4 mr-2" />
+                          Preview Mode
+                        </>
+                      )}
+                    </Button>
+                  )}
+                  <div className="border border-white/10 rounded-xl overflow-hidden shadow-inner bg-background/50">
+                    <MDEditor
+                      value={editorContent}
+                      onChange={setEditorContent}
+                      preview={editorMode}
+                      height={500}
+                    />
                   </div>
                 </div>
+              </TabsContent>
 
-                <TabsContent value="edit">
-                  <div className="space-y-2">
-                    {activeTab === "edit" && (
-                      <Button
-                        variant="link"
-                        type="button"
-                        className="mb-2"
-                        onClick={() =>
-                          setEditorMode(editorMode === "preview" ? "edit" : "preview")
-                        }
-                      >
-                        {editorMode === "preview" ? (
-                          <>
-                            <Edit className="h-4 w-4 mr-2" />
-                            Edit Mode
-                          </>
-                        ) : (
-                          <>
-                            <Monitor className="h-4 w-4 mr-2" />
-                            Preview Mode
-                          </>
-                        )}
-                      </Button>
-                    )}
-                    <div className="border rounded-lg">
-                      <MDEditor
-                        value={editorContent}
-                        onChange={setEditorContent}
-                        preview={editorMode}
-                        height={500}
-                      />
-                    </div>
-                  </div>
-                </TabsContent>
-
-                <TabsContent value="preview">
-                  <div className="border rounded-lg p-4">
-                    <MDEditor.Markdown source={editorContent} />
-                  </div>
-                </TabsContent>
-              </Tabs>
-              <div className="flex justify-end">
-                <Button
-                  variant="outline"
-                  onClick={() => {
-                    reset();
-                    setAnswerData(null);
-                    setFormData(null);
-                    setEditorContent("");
-                    setActiveTab("preview");
-                  }}
-                >
-                  Generate New Answer
-                </Button>
-              </div>
+              <TabsContent value="preview">
+                <div className="border border-white/10 rounded-md p-5 bg-background/50 shadow-inner prose prose-invert max-w-none prose-p:leading-relaxed prose-pre:bg-black/50 prose-pre:border prose-pre:border-white/10">
+                  <MDEditor.Markdown source={editorContent} />
+                </div>
+              </TabsContent>
+            </Tabs>
+            <div className="flex justify-end pt-4">
+              <Button
+                variant="outline"
+                onClick={() => {
+                  reset();
+                  setAnswerData(null);
+                  setFormData(null);
+                  setEditorContent("");
+                  setActiveTab("preview");
+                }}
+                className="border-primary/20 text-primary hover:bg-primary/10 rounded transition-all"
+              >
+                Generate New Answer
+              </Button>
             </div>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
       )}
     </div>
   );
-}
+};
 
 export default SmartAnswerDesk;
