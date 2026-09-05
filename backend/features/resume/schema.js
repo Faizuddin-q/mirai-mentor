@@ -29,7 +29,7 @@ export const contactSchema = z.object({
       message: "Enter a valid 10-digit mobile number",
     }),
   linkedin: z.string().optional(),
-  twitter: z.string().optional(),
+  github: z.string().optional(),
 });
 
 export const entrySchema = z

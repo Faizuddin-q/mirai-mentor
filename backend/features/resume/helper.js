@@ -1,5 +1,5 @@
-// Helper function to format date from "yyyy-MM" to "DD MMM yyyy"
-function formatDate(dateString) {
+// Helper function to format date from "yyyy-MM" to "MMM yyyy"
+export function formatDate(dateString) {
   if (!dateString) return "";
   try {
     const [year, month] = dateString.split("-");
@@ -105,13 +105,14 @@ export function parseMarkdownToFormData(markdown) {
             data.contactInfo.linkedin = trimmed;
           }
         }
-        // Check for Twitter/LeetCode/GitHub (coding profiles)
-        else if (trimmed.includes("twitter.com") || trimmed.includes("leetcode.com") || trimmed.includes("github.com") || trimmed.includes("[Twitter]")) {
-          const twitterMatch = trimmed.match(/\[Twitter\]\(([^)]+)\)/);
-          if (twitterMatch) {
-            data.contactInfo.twitter = twitterMatch[1];
+        // Check for GitHub (also recognizes older resumes saved with a
+        // Twitter/LeetCode coding-profile link before this field was renamed)
+        else if (trimmed.includes("github.com") || trimmed.includes("[GitHub]") || trimmed.includes("twitter.com") || trimmed.includes("leetcode.com") || trimmed.includes("[Twitter]")) {
+          const githubMatch = trimmed.match(/\[(?:GitHub|Twitter)\]\(([^)]+)\)/);
+          if (githubMatch) {
+            data.contactInfo.github = githubMatch[1];
           } else if (trimmed.includes("http")) {
-            data.contactInfo.twitter = trimmed;
+            data.contactInfo.github = trimmed;
           }
         }
       }
