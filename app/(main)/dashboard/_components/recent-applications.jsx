@@ -2,8 +2,8 @@
 
 import Link from "next/link";
 import { formatDistanceToNow } from "date-fns";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { Badge } from "@/frontend/components/ui/badge";
+import { Button } from "@/frontend/components/ui/button";
 import { ArrowRight, Briefcase, Building2 } from "lucide-react";
 
 const statusColors = {

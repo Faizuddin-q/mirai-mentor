@@ -2,10 +2,10 @@
 
 import React from "react";
 import Image from "next/image";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/frontend/components/ui/button";
 import Link from "next/link";
 import { ArrowRight, PlayCircle, Sparkles, Trophy, Target } from "lucide-react";
-import SectionBadge from "./ui/section-badge";
+import SectionBadge from "../ui/section-badge";
 
 const HeroSection = () => {
   return (

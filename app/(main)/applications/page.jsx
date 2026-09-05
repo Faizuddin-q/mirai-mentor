@@ -1,7 +1,7 @@
-import { getApplications, getApplicationStats } from "@/actions/application";
+import { getApplications, getApplicationStats } from "@/backend/features/applications/actions";
 import Link from "next/link";
 import { Plus } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/frontend/components/ui/button";
 import ApplicationsList from "./_components/applications-list";
 import StatsCards from "./_components/stats-cards";
 

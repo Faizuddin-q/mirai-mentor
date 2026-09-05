@@ -5,21 +5,21 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
 import { Loader2, Copy, Check, Sparkles, Edit, Monitor } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/frontend/components/ui/button";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { generateAnswer, enhanceAnswer } from "@/actions/smart-answer-desk";
-import useFetch from "@/hooks/use-fetch";
-import { smartAnswerDeskSchema } from "@/app/lib/schema";
+} from "@/frontend/components/ui/card";
+import { Input } from "@/frontend/components/ui/input";
+import { Label } from "@/frontend/components/ui/label";
+import { Textarea } from "@/frontend/components/ui/textarea";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/frontend/components/ui/tabs";
+import { generateAnswer, enhanceAnswer } from "@/backend/features/smart-answer-desk/actions";
+import useFetch from "@/frontend/hooks/use-fetch";
+import { smartAnswerDeskSchema } from "@/backend/features/smart-answer-desk/schema";
 import MDEditor from "@uiw/react-md-editor";
 
 const SmartAnswerDesk = () => {

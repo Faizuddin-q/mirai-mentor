@@ -1,10 +1,10 @@
 "use server";
 
-import { db } from "@/lib/prisma";
+import { db } from "@/backend/prisma";
 import { auth } from "@clerk/nextjs/server";
-import { checkUser } from "@/lib/checkUser";
+import { checkUser } from "@/backend/shared/checkUser";
 import { revalidatePath } from "next/cache";
-import { generateAIInsights } from "./dashboard";
+import { generateAIInsights } from "@/backend/features/dashboard/actions";
 
 export async function updateUser(data) {
   const { userId } = await auth();
@@ -145,7 +145,7 @@ export async function getCurrentUser() {
       const parsedSubIndustry = parts.slice(1).join(" ").replace(/-/g, " ") || "";
       
       // Import industries data to find exact match
-      const { industries } = await import("@/data/industries");
+      const { industries } = await import("@/frontend/data/industries");
       const industryData = industries.find((ind) => ind.id === industry);
       
       if (industryData && parsedSubIndustry) {

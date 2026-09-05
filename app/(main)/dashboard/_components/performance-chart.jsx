@@ -12,7 +12,7 @@ import {
 import { useEffect, useState } from "react";
 import { format } from "date-fns";
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/frontend/components/ui/button";
 import { ArrowRight, TrendingUp } from "lucide-react";
 
 export default function PerformanceChart({ assessments }) {

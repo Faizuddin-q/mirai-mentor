@@ -10,8 +10,8 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+} from "@/frontend/components/ui/card";
+import { Button } from "@/frontend/components/ui/button";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -22,8 +22,8 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
-import { deleteCoverLetter } from "@/actions/cover-letter";
+} from "@/frontend/components/ui/alert-dialog";
+import { deleteCoverLetter } from "@/backend/features/cover-letter/actions";
 
 export default function CoverLetterList({ coverLetters }) {
   const router = useRouter();

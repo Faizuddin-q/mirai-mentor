@@ -12,11 +12,11 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
+} from "@/frontend/components/ui/card";
+import { Button } from "@/frontend/components/ui/button";
+import { Label } from "@/frontend/components/ui/label";
+import { Input } from "@/frontend/components/ui/input";
+import { Textarea } from "@/frontend/components/ui/textarea";
 import {
   Select,
   SelectContent,
@@ -25,11 +25,11 @@ import {
   SelectLabel,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import useFetch from "@/hooks/use-fetch";
-import { onboardingSchema } from "@/app/lib/schema";
-import { updateUser } from "@/actions/user";
-import { useUser } from "@/contexts/user-context";
+} from "@/frontend/components/ui/select";
+import useFetch from "@/frontend/hooks/use-fetch";
+import { onboardingSchema } from "@/backend/features/user/schema";
+import { updateUser } from "@/backend/features/user/actions";
+import { useUser } from "@/frontend/contexts/user-context";
 
 const OnboardingForm = ({ industries }) => {
   const router = useRouter();

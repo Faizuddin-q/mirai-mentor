@@ -13,29 +13,29 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
+} from "@/frontend/components/ui/card";
+import { Button } from "@/frontend/components/ui/button";
+import { Label } from "@/frontend/components/ui/label";
+import { Input } from "@/frontend/components/ui/input";
+import { Textarea } from "@/frontend/components/ui/textarea";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { Calendar } from "@/components/ui/calendar";
+} from "@/frontend/components/ui/select";
+import { Calendar } from "@/frontend/components/ui/calendar";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/components/ui/popover";
+} from "@/frontend/components/ui/popover";
 import { cn } from "@/lib/utils";
-import { applicationSchema } from "@/app/lib/schema";
-import { createApplication, updateApplication } from "@/actions/application";
-import useFetch from "@/hooks/use-fetch";
-import { getResumes } from "@/actions/resume";
+import { applicationSchema } from "@/backend/features/applications/schema";
+import { createApplication, updateApplication } from "@/backend/features/applications/actions";
+import useFetch from "@/frontend/hooks/use-fetch";
+import { getResumes } from "@/backend/features/resume/actions";
 import { generateUploadButton } from "@uploadthing/react";
 
 const UploadButton = generateUploadButton();

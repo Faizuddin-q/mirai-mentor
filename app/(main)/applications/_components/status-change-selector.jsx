@@ -5,8 +5,8 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Badge } from "@/components/ui/badge";
+} from "@/frontend/components/ui/dropdown-menu";
+import { Badge } from "@/frontend/components/ui/badge";
 import { ChevronDown, Check, Loader2 } from "lucide-react";
 import { statusColors } from "./constants";
 

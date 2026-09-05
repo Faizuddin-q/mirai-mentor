@@ -1,7 +1,7 @@
 import React from "react";
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/frontend/components/ui/button";
+import { Card, CardContent } from "@/frontend/components/ui/card";
 import {
   ArrowRight,
   Trophy,
@@ -14,22 +14,22 @@ import {
   Lightbulb,
   Compass,
 } from "lucide-react";
-import HeroSection from "@/components/hero";
-import SectionBadge from "@/components/ui/section-badge";
-import ScrollReveal from "@/components/scroll-reveal";
+import HeroSection from "@/frontend/components/site/hero";
+import SectionBadge from "@/frontend/components/ui/section-badge";
+import ScrollReveal from "@/frontend/components/site/scroll-reveal";
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
-} from "@/components/ui/accordion";
+} from "@/frontend/components/ui/accordion";
 import Image from "next/image";
-import { features } from "@/data/features";
-import { testimonial } from "@/data/testimonial";
-import { faqs } from "@/data/faqs";
-import { stats } from "@/data/stats";
-import { roadmap } from "@/data/roadmap";
-import { howItWorks } from "@/data/howItWorks";
+import { features } from "@/frontend/data/landing/features";
+import { testimonial } from "@/frontend/data/landing/testimonial";
+import { faqs } from "@/frontend/data/landing/faqs";
+import { stats } from "@/frontend/data/landing/stats";
+import { roadmap } from "@/frontend/data/landing/roadmap";
+import { howItWorks } from "@/frontend/data/landing/howItWorks";
 
 export default async function LandingPage() {
   return (

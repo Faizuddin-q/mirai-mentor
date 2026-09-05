@@ -1,6 +1,6 @@
 "use client";
 
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent } from "@/frontend/components/ui/card";
 import {
   FileText,
   PenBox,

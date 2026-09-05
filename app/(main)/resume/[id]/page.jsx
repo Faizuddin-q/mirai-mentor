@@ -1,8 +1,8 @@
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { getResume } from "@/actions/resume";
+import { Button } from "@/frontend/components/ui/button";
+import { getResume } from "@/backend/features/resume/actions";
 import ResumeBuilder from "../_components/resume-builder";
 
 export default async function EditResumePage({ params }) {

@@ -1,6 +1,6 @@
 "use client";
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/frontend/components/ui/card";
 import { useEffect, useState } from "react";
 import { Target, TrendingUp, LayoutDashboard } from "lucide-react";
 

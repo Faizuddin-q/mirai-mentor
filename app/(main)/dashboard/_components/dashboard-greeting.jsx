@@ -1,8 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useUser } from "@/contexts/user-context";
-import { Card, CardContent } from "@/components/ui/card";
+import { useUser } from "@/frontend/contexts/user-context";
+import { Card, CardContent } from "@/frontend/components/ui/card";
 import {
   Lightbulb,
   Calendar,
