@@ -1,6 +1,6 @@
-import { getDashboardData } from "@/actions/dashboard";
-import { getAssessments } from "@/actions/interview"; // Reusing this for the chart
-import { getUserOnboardingStatus } from "@/actions/user";
+import { getDashboardData } from "@/backend/features/dashboard/actions";
+import { getAssessments } from "@/backend/features/quiz/actions"; // Reusing this for the chart
+import { getUserOnboardingStatus } from "@/backend/features/user/actions";
 import { redirect } from "next/navigation";
 import PerformanceChart from "./_components/performance-chart";
 import RecentApplications from "./_components/recent-applications";

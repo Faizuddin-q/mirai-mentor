@@ -10,22 +10,22 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
-import { Button } from "@/components/ui/button";
+} from "@/frontend/components/ui/table";
+import { Button } from "@/frontend/components/ui/button";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { Input } from "@/components/ui/input";
+} from "@/frontend/components/ui/select";
+import { Input } from "@/frontend/components/ui/input";
 import { MoreVertical, Trash2, ExternalLink, Eye, Search } from "lucide-react";
 import { format } from "date-fns";
 import {
   deleteApplication,
   updateApplicationStatus,
-} from "@/actions/application";
+} from "@/backend/features/applications/actions";
 import { toast } from "sonner";
 import {
   AlertDialog,
@@ -36,7 +36,7 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
+} from "@/frontend/components/ui/alert-dialog";
 import {
   statusColors,
   statusMessages,

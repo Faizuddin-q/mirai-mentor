@@ -14,16 +14,16 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import MDEditor from "@uiw/react-md-editor";
-import { Button } from "@/components/ui/button";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Textarea } from "@/components/ui/textarea";
-import { Input } from "@/components/ui/input";
-import { improveWithAI, saveResume } from "@/actions/resume";
+import { Button } from "@/frontend/components/ui/button";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/frontend/components/ui/tabs";
+import { Textarea } from "@/frontend/components/ui/textarea";
+import { Input } from "@/frontend/components/ui/input";
+import { improveWithAI, saveResume } from "@/backend/features/resume/actions";
 import { EntryForm } from "./entry-form";
-import useFetch from "@/hooks/use-fetch";
-import { useUser } from "@/contexts/user-context";
-import { entriesToMarkdown, parseMarkdownToFormData } from "@/app/lib/helper";
-import { resumeSchema } from "@/app/lib/schema";
+import useFetch from "@/frontend/hooks/use-fetch";
+import { useUser } from "@/frontend/contexts/user-context";
+import { entriesToMarkdown, parseMarkdownToFormData } from "@/backend/features/resume/helper";
+import { resumeSchema } from "@/backend/features/resume/schema";
 import * as html2pdf from "html2pdf.js/dist/html2pdf.min.js";
 
 export default function ResumeBuilder({ initialContent, resumeId }) {

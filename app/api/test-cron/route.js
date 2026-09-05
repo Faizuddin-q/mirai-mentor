@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { inngest } from "@/lib/inngest/client";
+import { inngest } from "@/backend/inngest/client";
 
 export async function GET() {
   try {    

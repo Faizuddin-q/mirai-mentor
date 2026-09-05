@@ -4,9 +4,9 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { format } from "date-fns";
 import { toast } from "sonner";
-import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
-import { Badge } from "@/components/ui/badge";
+import { Button } from "@/frontend/components/ui/button";
+import { Label } from "@/frontend/components/ui/label";
+import { Badge } from "@/frontend/components/ui/badge";
 import MDEditor from "@uiw/react-md-editor";
 import {
   ExternalLink,
@@ -15,8 +15,8 @@ import {
   Calendar,
   Briefcase,
 } from "lucide-react";
-import { updateApplicationStatus } from "@/actions/application";
-import { getResume } from "@/actions/resume";
+import { updateApplicationStatus } from "@/backend/features/applications/actions";
+import { getResume } from "@/backend/features/resume/actions";
 import { statusColors, formatJobType, statusDotColors } from "./constants";
 import StatusChangeSelector from "./status-change-selector";
 

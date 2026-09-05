@@ -1,12 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/frontend/components/ui/dialog";
+import { Button } from "@/frontend/components/ui/button";
+import { Textarea } from "@/frontend/components/ui/textarea";
 import { Sparkles, Loader2 } from "lucide-react";
 import ApplicationForm from "./application-form";
-import { parseJobDetails } from "@/actions/application";
+import { parseJobDetails } from "@/backend/features/applications/actions";
 import { toast } from "sonner";
 
 export default function QuickAddDialog() {

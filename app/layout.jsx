@@ -2,9 +2,9 @@ import { Space_Grotesk, Manrope } from "next/font/google";
 import "./globals.css";
 import { ClerkProvider } from "@clerk/nextjs";
 import { Toaster } from "sonner";
-import Header from "@/components/header";
-import { ThemeProvider } from "@/components/theme-provider";
-import { UserProvider } from "@/contexts/user-context";
+import Header from "@/frontend/components/site/header";
+import { ThemeProvider } from "@/frontend/components/site/theme-provider";
+import { UserProvider } from "@/frontend/contexts/user-context";
 import { dark } from "@clerk/themes";
 import { Analytics } from "@vercel/analytics/next"
 

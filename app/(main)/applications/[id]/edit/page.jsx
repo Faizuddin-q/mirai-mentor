@@ -1,8 +1,8 @@
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { getApplication } from "@/actions/application";
+import { Button } from "@/frontend/components/ui/button";
+import { getApplication } from "@/backend/features/applications/actions";
 import ApplicationForm from "../../_components/application-form";
 
 export default async function EditApplicationPage({ params }) {

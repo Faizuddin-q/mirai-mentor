@@ -3,20 +3,20 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/frontend/components/ui/button";
 import {
   Card,
   CardContent,
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
-import { generateQuiz, saveQuizResult } from "@/actions/interview";
+} from "@/frontend/components/ui/card";
+import { RadioGroup, RadioGroupItem } from "@/frontend/components/ui/radio-group";
+import { Label } from "@/frontend/components/ui/label";
+import { Input } from "@/frontend/components/ui/input";
+import { generateQuiz, saveQuizResult } from "@/backend/features/quiz/actions";
 import QuizResult from "./quiz-result";
-import useFetch from "@/hooks/use-fetch";
+import useFetch from "@/frontend/hooks/use-fetch";
 import { BarLoader } from "react-spinners";
 import { Loader2 } from "lucide-react";
 

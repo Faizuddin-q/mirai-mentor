@@ -3,11 +3,11 @@
 import React, { useState, useEffect } from "react";
 import MDEditor from "@uiw/react-md-editor";
 import { Copy, Check, Save, Sparkles, Loader2, Edit, Monitor } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Button } from "@/frontend/components/ui/button";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/frontend/components/ui/tabs";
 import { toast } from "sonner";
-import { saveCoverLetter, enhanceCoverLetter } from "@/actions/cover-letter";
-import useFetch from "@/hooks/use-fetch";
+import { saveCoverLetter, enhanceCoverLetter } from "@/backend/features/cover-letter/actions";
+import useFetch from "@/frontend/hooks/use-fetch";
 
 const CoverLetterPreview = ({ content, coverLetterId }) => {
   const [copied, setCopied] = useState(false);

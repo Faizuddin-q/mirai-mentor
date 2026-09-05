@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
-import { industries } from "@/data/industries";
+import { industries } from "@/frontend/data/industries";
 import OnboardingForm from "./_components/onboarding-form";
-import { getUserOnboardingStatus } from "@/actions/user";
+import { getUserOnboardingStatus } from "@/backend/features/user/actions";
 
 export default async function OnboardingPage() {
   const { isOnboarded } = await getUserOnboardingStatus();

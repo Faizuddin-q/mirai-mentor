@@ -10,8 +10,8 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+} from "@/frontend/components/ui/card";
+import { Button } from "@/frontend/components/ui/button";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -22,8 +22,8 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
-import { deleteResume } from "@/actions/resume";
+} from "@/frontend/components/ui/alert-dialog";
+import { deleteResume } from "@/backend/features/resume/actions";
 
 export default function ResumeList({ resumes }) {
   const router = useRouter();

@@ -2,7 +2,7 @@
 
 import { createContext, useContext, useState, useEffect, useCallback } from "react";
 import { useUser as useClerkUser } from "@clerk/nextjs";
-import { getCurrentUser } from "@/actions/user";
+import { getCurrentUser } from "@/backend/features/user/actions";
 
 const UserContext = createContext(undefined);
 

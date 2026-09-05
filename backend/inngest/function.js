@@ -1,4 +1,4 @@
-import { db } from "@/lib/prisma";
+import { db } from "@/backend/prisma";
 import { inngest } from "./client";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 

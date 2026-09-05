@@ -1,4 +1,4 @@
-import { getAssessments } from "@/actions/interview";
+import { getAssessments } from "@/backend/features/quiz/actions";
 import StatsCards from "./_components/stats-cards";
 import PerformanceChart from "./_components/performace-chart";
 import QuizList from "./_components/quiz-list";

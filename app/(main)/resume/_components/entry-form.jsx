@@ -5,21 +5,21 @@ import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { format, parse } from "date-fns";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
+import { Button } from "@/frontend/components/ui/button";
+import { Input } from "@/frontend/components/ui/input";
+import { Textarea } from "@/frontend/components/ui/textarea";
 import {
   Card,
   CardContent,
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-import { entrySchema } from "@/app/lib/schema";
+} from "@/frontend/components/ui/card";
+import { entrySchema } from "@/backend/features/resume/schema";
 import { Sparkles, PlusCircle, X, Pencil, Save, Loader2 } from "lucide-react";
-import { improveWithAI } from "@/actions/resume";
+import { improveWithAI } from "@/backend/features/resume/actions";
 import { toast } from "sonner";
-import useFetch from "@/hooks/use-fetch";
+import useFetch from "@/frontend/hooks/use-fetch";
 
 const formatDisplayDate = (dateString) => {
   if (!dateString) return "";
